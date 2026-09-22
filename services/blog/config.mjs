@@ -34,7 +34,7 @@ export async function loadConfig() {
     generationIntervalMinutes: integer("BLOG_GENERATION_INTERVAL_MINUTES", 1440, 360),
     maxRunsPerDay: integer("BLOG_AI_MAX_RUNS_PER_DAY", 1, 1),
     maxInputChars: integer("BLOG_AI_MAX_INPUT_CHARS", 28000, 4000),
-    maxOutputTokens: integer("BLOG_AI_MAX_OUTPUT_TOKENS", 2200, 500),
+    maxOutputTokens: integer("BLOG_AI_MAX_OUTPUT_TOKENS", 6000, 500),
     dailyTokenBudget: integer("BLOG_AI_DAILY_TOKEN_BUDGET", 80000, 1000),
     monthlyCostBudgetUsd: number("BLOG_AI_MONTHLY_COST_USD", 5, 0.1),
     inputPricePerMillionUsd: number("BLOG_AI_INPUT_PRICE_PER_MILLION_USD", 0.2, 0),

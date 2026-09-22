@@ -136,7 +136,10 @@ export async function generateArticle(candidates, config) {
   });
   if (!response.ok) throw new Error(`OpenAI Responses API returned HTTP ${response.status}`);
   const payload = await response.json();
-  if (payload.status !== "completed") throw new Error(`OpenAI response status is ${payload.status ?? "unknown"}`);
+  if (payload.status !== "completed") {
+    const reason = payload.incomplete_details?.reason ? ` (${payload.incomplete_details.reason})` : "";
+    throw new Error(`OpenAI response status is ${payload.status ?? "unknown"}${reason}`);
+  }
   if (payload.moderation?.input?.flagged || payload.moderation?.output?.flagged) throw new Error("article was stopped by content moderation");
   const raw = outputText(payload);
   if (!raw) throw new Error("OpenAI response did not contain structured output");

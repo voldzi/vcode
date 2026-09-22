@@ -23,7 +23,7 @@ Production defaults:
 - interval: 360 minutes;
 - maximum generations: 1 per UTC day;
 - maximum input: 28,000 characters;
-- maximum output: 2,200 tokens;
+- maximum output: 6,000 tokens for the complete bilingual draft and claim ledger;
 - daily total token ceiling: 80,000 tokens;
 - monthly model-cost ceiling: USD 5;
 - default model: `gpt-5.6-luna` with low reasoning effort;
