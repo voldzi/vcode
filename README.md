@@ -15,6 +15,7 @@ VCode je česká značka digitálních produktů pro mobilitu, bezpečnost, zdra
 
 | Produkt | Oblast | Dostupnost |
 | --- | --- | --- |
+| **PAS** | Ošetřovatelská péče, klinický kontext a strukturované záznamy | Soukromé nasazení v ÚVN |
 | **Jízda** | Evidence jízd, navigace, vozidla, cestující a komunikace | Připravujeme pro App Store |
 | **COP Mobile** | Mobilní situační přehled, hlášení a bezpečná komunikace | Připravujeme |
 | **[COP](https://cop.zeleznalady.cz/)** | Veřejná situační mapa, doprava, výstrahy a trasy | Webová aplikace |

@@ -34,6 +34,22 @@ export const products: Product[] = [
     availabilityEn: "Controlled healthcare deployment"
   },
   {
+    id: "pas",
+    name: "PAS",
+    href: "pas",
+    tone: "pas",
+    categoryCs: "Klinická péče",
+    categoryEn: "Clinical care",
+    headlineCs: "Podpora ošetřovatelské péče přímo u lůžka.",
+    headlineEn: "Bedside support for nursing care.",
+    summaryCs: "Soukromá iOS aplikace pro ÚVN pro bezpečné pracovní postupy ošetřovatelské péče, strukturovaný zápis klinických údajů a práci s pacientským kontextem.",
+    summaryEn: "A private iOS application for ÚVN supporting safe nursing workflows, structured clinical entry and patient-context work.",
+    capabilitiesCs: ["Přehled pacientů a klinický kontext", "Strukturované záznamy a EWS", "Fotodokumentace a týmová komunikace", "Lokální práce a řízená synchronizace"],
+    capabilitiesEn: ["Patient overview and clinical context", "Structured entries and EWS", "Photo documentation and team communication", "Local work and governed synchronisation"],
+    availabilityCs: "Soukromé nasazení v ÚVN",
+    availabilityEn: "Private deployment at ÚVN"
+  },
+  {
     id: "jizda",
     name: "Jízda",
     href: "jizda",

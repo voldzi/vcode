@@ -9,6 +9,7 @@ Support: mailto:podpora@zeleznalady.cz
 
 ## Products
 
+- [PAS](https://vcode.zeleznalady.cz/aplikace/pas/): a private iOS application for ÚVN supporting safe nursing workflows, structured clinical entry and patient-context work.
 - [Jízda](https://vcode.zeleznalady.cz/aplikace/jizda/): journey logging, navigation, vehicles, passengers, costs and secure communication for iPhone and Apple Watch.
 - [COP Mobile](https://vcode.zeleznalady.cz/aplikace/cop-mobile/): mobile situational awareness, field reporting, alerts and secure communication.
 - [COP](https://vcode.zeleznalady.cz/aplikace/cop/): public situation map for traffic, warnings, infrastructure and route planning.
