@@ -44,7 +44,7 @@ img, svg { display: block; max-width: 100%; }
 .menu-toggle span { display:block; width:16px; height:1.5px; margin:4px auto; border-radius:2px; background:currentColor; transition:transform .2s ease; }
 :focus-visible { outline: 3px solid rgba(0,180,255,.45); outline-offset: 4px; }
 
-.hero { position: relative; min-height: min(820px, calc(100svh - 82px)); display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: clamp(5rem,11vw,10rem) clamp(1.25rem,8vw,8rem); background: radial-gradient(circle at 80% 24%, rgba(0,180,255,.18), transparent 24%), radial-gradient(circle at 72% 48%, rgba(163,230,53,.09), transparent 22%), linear-gradient(180deg,#fff 0%,#f3f8fd 100%); isolation: isolate; }
+.hero { position: relative; min-height: min(820px, calc(100svh - 82px)); display: flex; flex-direction: column; justify-content: center; align-items: flex-start; overflow: hidden; padding: clamp(5rem,11vw,10rem) clamp(1.25rem,8vw,8rem); background: radial-gradient(circle at 80% 24%, rgba(0,180,255,.18), transparent 24%), radial-gradient(circle at 72% 48%, rgba(163,230,53,.09), transparent 22%), linear-gradient(180deg,#fff 0%,#f3f8fd 100%); isolation: isolate; }
 .hero::before { content:""; position:absolute; inset: 2rem clamp(1rem,4vw,4rem); z-index:-1; background-image: linear-gradient(rgba(11,45,91,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(11,45,91,.045) 1px,transparent 1px); background-size: 80px 80px; mask-image: linear-gradient(to right,transparent 4%,black 35%,black 80%,transparent); }
 .eyebrow, .kicker { display: flex; align-items: center; gap: .7rem; margin: 0 0 1.25rem; color: var(--navy); font: 740 .78rem/1.2 "Manrope Variable",sans-serif; text-transform: uppercase; letter-spacing: .13em; }
 .eyebrow span { width: .65rem; height: .65rem; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 .38rem rgba(163,230,53,.16); }
@@ -60,8 +60,8 @@ img, svg { display: block; max-width: 100%; }
 .button.secondary { color:var(--navy); border-color:var(--hairline); background:rgba(255,255,255,.68); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); }
 .button.secondary:hover { background:#fff; box-shadow:0 14px 34px rgba(7,32,65,.09); }
 .button.light { color:var(--navy-deep); background:var(--white); }
-.hero-signal { position:absolute; z-index:-1; right:clamp(-4rem,3vw,4rem); top:50%; transform:translateY(-47%) rotate(-7deg); opacity:.11; }
-.hero-signal .signal-mark { width:clamp(310px,40vw,650px); height:auto; filter:saturate(.7); }
+.hero-signal { position:absolute; z-index:-1; right:clamp(-3rem,2vw,3rem); top:50%; transform:translateY(-50%) rotate(-7deg); opacity:.11; pointer-events:none; }
+.hero-signal .signal-mark { width:clamp(290px,32vw,560px); height:auto; filter:saturate(.7); }
 
 .principles { display:grid; grid-template-columns:repeat(3,1fr); border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:var(--white); }
 .principles div { display:grid; gap:.2rem; padding:1.5rem clamp(1.25rem,4vw,4rem); border-right:1px solid var(--line); }
