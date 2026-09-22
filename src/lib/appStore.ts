@@ -30,6 +30,13 @@ export const appStoreProducts: AppStoreProduct[] = [
     privacyEn: "/en/cop-mobile/privacy/",
     supportCs: "/podpora/cop-mobile/",
     supportEn: "/en/support/cop-mobile/"
+  },
+  {
+    ...byId("nest"),
+    storeSlug: "nest",
+    privacyCs: "/nest/privacy/",
+    privacyEn: "/en/nest/privacy/",
+    supportCs: "/podpora/nest/",
+    supportEn: "/en/support/nest/"
   }
 ];
-

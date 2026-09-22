@@ -23,6 +23,8 @@ Support: mailto:podpora@zeleznalady.cz
 - [Technology blog](https://vcode.zeleznalady.cz/blog/): original bilingual technology briefings with direct links to source publications.
 - [Czech guides](https://vcode.zeleznalady.cz/navody/)
 - [English guides](https://vcode.zeleznalady.cz/en/guides/)
+- [NEST support](https://vcode.zeleznalady.cz/podpora/nest/)
+- [NEST privacy](https://vcode.zeleznalady.cz/nest/privacy/)
 - [Privacy](https://vcode.zeleznalady.cz/soukromi/)
 - [Support](https://vcode.zeleznalady.cz/podpora/)
 
