@@ -44,7 +44,7 @@ cp .env.example .env
 pnpm dev
 ```
 
-Web poběží na adrese, kterou vypíše Astro. Blog potřebuje PostgreSQL a tři tajné soubory popsané v [.env.example](.env.example); bez nich lze plně vyvíjet a sestavit statickou část.
+Web poběží na adrese, kterou vypíše Astro. Blog potřebuje PostgreSQL a tajné soubory popsané v [.env.example](.env.example); volitelná Telegram integrace má vlastní oddělené klíče. Bez nich lze plně vyvíjet a sestavit statickou část.
 
 ## Kontrola kvality
 
