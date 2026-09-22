@@ -73,8 +73,8 @@ export function boundCandidates(candidates, maxChars) {
     if (serialized.length > maxChars) continue;
     selected.push(item);
   }
-  const authoritativeSingleSource = selected.length === 1 && selected[0].sourceKind === "official"
-    && ["primary", "authority"].includes(selected[0].trustTier);
+  const authoritativeSingleSource = new Set(selected.map((item) => item.sourceId)).size === 1
+    && selected.every((item) => item.sourceKind === "official" && ["primary", "authority"].includes(item.trustTier));
   if (new Set(selected.map((item) => item.sourceId)).size < 2 && !authoritativeSingleSource) {
     throw new Error("input limit cannot fit two independent sources or one authoritative primary source");
   }
@@ -95,8 +95,8 @@ export function validateArticle(article, candidates) {
   if (article.source_ids.some((id) => !ids.has(id))) throw new Error("article cited an unknown source item");
   const cited = candidates.filter((item) => article.source_ids.includes(item.id));
   const sourceNames = new Set(cited.map((item) => item.sourceName));
-  const authoritativeSingleSource = cited.length === 1 && cited[0].sourceKind === "official"
-    && ["primary", "authority"].includes(cited[0].trustTier);
+  const authoritativeSingleSource = cited.length >= 1 && new Set(cited.map((item) => item.sourceId)).size === 1
+    && cited.every((item) => item.sourceKind === "official" && ["primary", "authority"].includes(item.trustTier));
   if (sourceNames.size < 2 && !authoritativeSingleSource) throw new Error("article needs independent publications or one authoritative primary source");
   for (const claim of article.claims) {
     if (!Array.isArray(claim.source_ids) || claim.source_ids.some((id) => !ids.has(id) || !article.source_ids.includes(id))) {

@@ -65,6 +65,8 @@ test("candidate bounding preserves valid JSON and independent publications", () 
 test("candidate bounding permits one authoritative primary source", () => {
   const official = { id: "a".repeat(64), sourceId: "nukib", sourceName: "NÚKIB", sourceKind: "official", trustTier: "authority", title: "Bezpečnostní upozornění", summary: "Oficiální bezpečnostní informace.", url: "https://nukib.gov.cz/a", publishedAt: null };
   assert.deepEqual(boundCandidates([official], 4000), [official]);
+  const second = { ...official, id: "b".repeat(64), title: "Navazující upozornění", url: "https://nukib.gov.cz/b" };
+  assert.deepEqual(boundCandidates([official, second], 4000), [official, second]);
   assert.throws(() => boundCandidates([{ ...official, sourceKind: "publication", trustTier: "editorial" }], 4000), /authoritative primary source/);
 });
 
@@ -100,6 +102,15 @@ test("a single source is accepted only when it is authoritative and official", (
   const article = { topic: "security", hero_variant: "signals", cs: translation, en: translation, source_ids: [candidate.id], claims };
   assert.equal(validateArticle(article, [candidate]), article);
   assert.throws(() => validateArticle(article, [{ ...candidate, trustTier: "editorial", sourceKind: "publication" }]), /independent publications/);
+});
+
+test("several items from one official authority satisfy the primary-source policy", () => {
+  const paragraph = "This sufficiently long paragraph explains the official technical change and its practical consequences without copying source wording. ".repeat(12);
+  const candidates = ["a", "b"].map((letter) => ({ id: letter.repeat(64), sourceId: "nukib", sourceName: "NÚKIB", trustTier: "authority", sourceKind: "official" }));
+  const translation = { title: "Authoritative security briefing", dek: "A careful summary of related authoritative security updates and their practical impact.", sections: [1, 2, 3].map((n) => ({ heading: `Authoritative context ${n}`, paragraphs: [paragraph], source_ids: candidates.map((item) => item.id) })), key_points: ["First practical and verifiable point", "Second practical and verifiable point", "Third practical and verifiable point"] };
+  const claims = [1, 2, 3].map((n) => ({ cs: `Ověřené tvrzení číslo ${n} z autoritativního zdroje.`, en: `Verified claim number ${n} from the authoritative source.`, kind: "fact", source_ids: candidates.map((item) => item.id) }));
+  const article = { topic: "security", hero_variant: "signals", cs: translation, en: translation, source_ids: candidates.map((item) => item.id), claims };
+  assert.equal(validateArticle(article, candidates), article);
 });
 
 test("Telegram editorial callbacks are signed and reject tampering", () => {

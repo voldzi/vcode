@@ -72,7 +72,7 @@ export function clusterCandidates(candidates, threshold = 0.42) {
   }
   return clusters.map((cluster) => {
     const publishers = new Set(cluster.items.map((item) => item.sourceId));
-    const hasPrimary = cluster.items.some((item) => ["primary", "authority"].includes(item.trustTier));
+    const hasPrimary = cluster.items.some((item) => item.sourceKind === "official" && ["primary", "authority"].includes(item.trustTier));
     return {
       ...cluster,
       publisherCount: publishers.size,
