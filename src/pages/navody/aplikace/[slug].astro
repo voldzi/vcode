@@ -1,0 +1,48 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import ProductIcon from "../../../components/ProductIcon.astro";
+import { products } from "../../../lib/products";
+
+export async function getStaticPaths() {
+  const guides = await getCollection("guides", ({ data }) => data.language === "cs" && data.status === "published");
+  return products.map(product => ({
+    params: { slug: product.href },
+    props: {
+      product,
+      guides: guides.filter(({ data }) => data.application_id === product.id).sort((a, b) => a.data.order - b.data.order)
+    }
+  }));
+}
+
+const { product, guides } = Astro.props;
+const path = `/navody/aplikace/${product.href}/`;
+const alternatePath = `/en/guides/apps/${product.href}/`;
+const pageStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: `Základní uživatelské návody – ${product.name}`,
+  description: `Ověřené základní návody pro aplikaci ${product.name}.`,
+  url: `https://vcode.zeleznalady.cz${path}`,
+  hasPart: guides.map(({ data }) => ({ "@type": "HowTo", name: data.title, url: `https://vcode.zeleznalady.cz/navody/${data.slug}/` }))
+};
+---
+<BaseLayout title={`Návody pro ${product.name} — VCode`} description={`Základní uživatelské návody a ověřené postupy pro aplikaci ${product.name}.`} lang="cs" {path} {alternatePath} {pageStructuredData}>
+  <article class:list={["app-guide-hub", `tone-${product.tone}`]}>
+    <a class="back-link" href="/navody/">← Všechny aplikace</a>
+    <header class="app-guide-heading">
+      <ProductIcon id={product.id} size={72} />
+      <div><p class="kicker">Základní uživatelské návody</p><h1>{product.name}</h1><p>{product.summaryCs}</p></div>
+    </header>
+    <section class="guide-list app-guide-list" aria-labelledby="guide-heading">
+      <h2 id="guide-heading">Začněte zde</h2>
+      {guides.length ? guides.map(({ data }, index) => (
+        <a class="guide-row" href={`/navody/${data.slug}/`}>
+          <span><small>{String(index + 1).padStart(2, "0")}</small><strong>{data.title}</strong></span>
+          <p>{data.summary}</p><b aria-hidden="true">→</b>
+        </a>
+      )) : <p class="empty-state">Návody pro tuto aplikaci právě připravujeme.</p>}
+    </section>
+    <section class="guide-next-step"><div><p class="kicker">Další informace</p><h2>Seznamte se s aplikací</h2><p>Podívejte se na hlavní možnosti, dostupnost a produktové informace.</p></div><a class="button secondary" href={`/aplikace/${product.href}/`}>O aplikaci {product.name}</a></section>
+  </article>
+</BaseLayout>

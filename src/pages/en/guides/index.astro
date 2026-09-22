@@ -7,6 +7,6 @@ const guides = (await getCollection("guides", ({ data }) => data.language === "e
 ---
 <BaseLayout title="Guides and help — VCode" description="Verified guides, common questions and support for VCode applications." lang="en" path="/en/guides/" alternatePath="/navody/">
   <section class="help-hero"><p class="kicker">Help centre</p><h1>How can we help?</h1><p>Choose an app or open one of our verified guides.</p></section>
-  <section class="help-products" aria-label="Apps">{products.map(product => <a href={`/en/apps/${product.href}/`}><ProductIcon id={product.id} size={44}/><span><strong>{product.name}</strong><small>{product.categoryEn}</small></span></a>)}</section>
+  <section class="help-products" aria-label="Apps">{products.map(product => <a href={`/en/guides/apps/${product.href}/`}><ProductIcon id={product.id} size={44}/><span><strong>{product.name}</strong><small>Essential user guides</small></span></a>)}</section>
   <section class="guide-list"><h2>App guides</h2>{guides.length ? guides.map(guide => <a class="guide-row" href={`/en/guides/${guide.data.slug}/`}><span><strong>{guide.data.title}</strong><small>{products.find(p=>p.id===guide.data.application_id)?.name}</small></span><p>{guide.data.summary}</p><b aria-hidden="true">→</b></a>) : <p class="empty-state">The first verified guides are being prepared.</p>}</section>
 </BaseLayout>

@@ -12,6 +12,6 @@ const pageStructuredData = { "@context": "https://schema.org", "@type": "Softwar
     <a class="back-link" href="/en/#apps">← All apps</a>
     <header><p class="kicker">{product.categoryEn}</p><h1>{product.name}</h1><p class="detail-headline">{product.headlineEn}</p><p class="detail-summary">{product.summaryEn}</p></header>
     <div class="detail-grid"><section><h2>What it does</h2><ul>{product.capabilitiesEn.map(item => <li>{item}</li>)}</ul></section><aside><span>Availability</span><strong>{product.availabilityEn}</strong>{storeProduct && <a class="button primary" href={`/en/app-store/${storeProduct.storeSlug}/`}>App Store information</a>}{product.externalUrl && <a class="store-link" href={product.externalUrl}>Open the app <span aria-hidden="true">↗</span></a>}</aside></div>
-    <section class="detail-support"><h2>Getting started?</h2><p>Find step-by-step guides, answers and privacy information in the help centre.</p><a class="text-link" href={`/en/guides/?app=${product.id}`}>Guides for {product.name} →</a></section>
+    <section class="detail-support"><h2>Getting started?</h2><p>Find step-by-step guides, answers and privacy information in the help centre.</p><a class="text-link" href={`/en/guides/apps/${product.href}/`}>Guides for {product.name} →</a></section>
   </article>
 </BaseLayout>

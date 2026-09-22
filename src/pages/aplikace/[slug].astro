@@ -12,6 +12,6 @@ const pageStructuredData = { "@context": "https://schema.org", "@type": "Softwar
     <a class="back-link" href="/#aplikace">← Všechny aplikace</a>
     <header><p class="kicker">{product.categoryCs}</p><h1>{product.name}</h1><p class="detail-headline">{product.headlineCs}</p><p class="detail-summary">{product.summaryCs}</p></header>
     <div class="detail-grid"><section><h2>Co umí</h2><ul>{product.capabilitiesCs.map(item => <li>{item}</li>)}</ul></section><aside><span>Dostupnost</span><strong>{product.availabilityCs}</strong>{storeProduct && <a class="button primary" href={`/app-store/${storeProduct.storeSlug}/`}>Informace pro App Store</a>}{product.externalUrl && <a class="store-link" href={product.externalUrl}>Otevřít aplikaci <span aria-hidden="true">↗</span></a>}</aside></div>
-    <section class="detail-support"><h2>Začínáte?</h2><p>Postupy, odpovědi a informace o soukromí najdete v centru nápovědy.</p><a class="text-link" href={`/navody/?aplikace=${product.id}`}>Návody pro {product.name} →</a></section>
+    <section class="detail-support"><h2>Začínáte?</h2><p>Postupy, odpovědi a informace o soukromí najdete v centru nápovědy.</p><a class="text-link" href={`/navody/aplikace/${product.href}/`}>Návody pro {product.name} →</a></section>
   </article>
 </BaseLayout>

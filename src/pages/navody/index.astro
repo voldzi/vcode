@@ -7,6 +7,6 @@ const guides = (await getCollection("guides", ({ data }) => data.language === "c
 ---
 <BaseLayout title="Návody a nápověda — VCode" description="Ověřené návody, časté otázky a podpora pro aplikace VCode." lang="cs" path="/navody/" alternatePath="/en/guides/">
   <section class="help-hero"><p class="kicker">Centrum nápovědy</p><h1>Jak vám můžeme pomoci?</h1><p>Vyberte aplikaci nebo otevřete některý z ověřených postupů.</p></section>
-  <section class="help-products" aria-label="Aplikace">{products.map(product => <a href={`/aplikace/${product.href}/`}><ProductIcon id={product.id} size={44}/><span><strong>{product.name}</strong><small>{product.categoryCs}</small></span></a>)}</section>
+  <section class="help-products" aria-label="Aplikace">{products.map(product => <a href={`/navody/aplikace/${product.href}/`}><ProductIcon id={product.id} size={44}/><span><strong>{product.name}</strong><small>Základní uživatelské návody</small></span></a>)}</section>
   <section class="guide-list"><h2>Průvodci aplikacemi</h2>{guides.length ? guides.map(guide => <a class="guide-row" href={`/navody/${guide.data.slug}/`}><span><strong>{guide.data.title}</strong><small>{products.find(p=>p.id===guide.data.application_id)?.name}</small></span><p>{guide.data.summary}</p><b aria-hidden="true">→</b></a>) : <p class="empty-state">První ověřené návody právě připravujeme.</p>}</section>
 </BaseLayout>
