@@ -1,0 +1,11 @@
+FROM node:24.20.0-alpine
+ENV NODE_ENV=production
+RUN corepack enable
+WORKDIR /app
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN pnpm install --prod --frozen-lockfile
+COPY services/blog ./services/blog
+USER node
+EXPOSE 8090
+CMD ["node", "services/blog/server.mjs"]
+HEALTHCHECK --interval=30s --timeout=4s --start-period=10s --retries=3 CMD wget -qO- http://127.0.0.1:8090/health/blog || exit 1

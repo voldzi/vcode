@@ -1,0 +1,25 @@
+name: Návrh / Feature request
+description: Navrhněte konkrétní zlepšení produktu nebo dokumentace.
+title: "[Idea] "
+labels: [enhancement]
+body:
+  - type: dropdown
+    id: product
+    attributes:
+      label: Produkt / Product
+      options: [VCode web, Jízda, COP Mobile, COP, Masáže Železná Lady, Studio Balance, STRATOS, Kalorické tabulky, Other]
+    validations:
+      required: true
+  - type: textarea
+    id: need
+    attributes:
+      label: Potřeba / User need
+      description: Jaký skutečný problém má návrh vyřešit? / What real user problem should this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Návrh / Proposal
+    validations:
+      required: true

@@ -1,0 +1,41 @@
+name: Chyba / Bug
+description: Nahlaste reprodukovatelný problém bez osobních nebo citlivých dat.
+title: "[Bug] "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Bezpečnostní chyby hlaste soukromě podle SECURITY.md. / Report security issues privately according to SECURITY.md.
+  - type: dropdown
+    id: product
+    attributes:
+      label: Produkt / Product
+      options: [VCode web, Jízda, COP Mobile, COP, Masáže Železná Lady, Studio Balance, STRATOS, Kalorické tabulky, Other]
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Popis / Description
+      description: Co se stalo a co jste očekávali? / What happened and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Kroky / Steps
+      description: Stručný postup reprodukce bez osobních údajů. / Reproduction steps without personal data.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Prostředí / Environment
+      placeholder: iPhone 17, iOS 27; Safari; app version…
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Kontrola / Check
+      options:
+        - label: Neuvádím hesla, tokeny, osobní údaje ani privátní infrastrukturu. / I included no credentials, personal data or private infrastructure details.
+          required: true

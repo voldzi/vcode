@@ -1,0 +1,78 @@
+---
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import "@fontsource-variable/manrope";
+import "@fontsource-variable/inter";
+import "../styles/global.css";
+const { title, description, lang = "cs", path = "/", alternatePath, noindex = false, pageStructuredData = null } = Astro.props;
+const origin = Astro.site ?? new URL("https://vcode.zeleznalady.cz");
+const canonical = new URL(path, origin);
+const csPath = lang === "cs" ? path : (alternatePath ?? (path.replace(/^\/en/, "") || "/"));
+const enPath = lang === "en" ? path : (alternatePath ?? `/en${path === "/" ? "/" : path}`);
+const socialImage = new URL("/vcode-social.png", origin);
+const structuredData = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": new URL("/#organization", origin).href,
+    name: "VCode",
+    url: origin.href,
+    logo: new URL("/favicon.svg", origin).href,
+    slogan: lang === "cs" ? "Technologie, na které je spoleh." : "Technology you can rely on.",
+    email: "podpora@zeleznalady.cz",
+    sameAs: ["https://github.com/voldzi/vcode"]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": new URL("/#website", origin).href,
+    name: "VCode",
+    url: origin.href,
+    inLanguage: ["cs", "en"],
+    publisher: { "@id": new URL("/#organization", origin).href }
+  },
+  ...(pageStructuredData ? [pageStructuredData] : [])
+];
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#071525" />
+    <meta name="description" content={description} />
+    <meta name="author" content="VCode" />
+    {noindex && <meta name="robots" content="noindex,nofollow" />}
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="cs" href={new URL(csPath, origin)} />
+    <link rel="alternate" hreflang="en" href={new URL(enPath, origin)} />
+    <link rel="alternate" hreflang="x-default" href={new URL(csPath, origin)} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title="VCode blog — česky" href="/blog/feed.xml" />
+    <link rel="alternate" type="application/rss+xml" title="VCode blog — English" href="/en/blog/feed.xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="VCode" />
+    <meta property="og:locale" content={lang === "cs" ? "cs_CZ" : "en_GB"} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={socialImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="VCode — technologie, na které je spoleh" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImage} />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#obsah">{lang === "cs" ? "Přeskočit na obsah" : "Skip to content"}</a>
+    <div class="shell">
+      <Header {lang} {path} {alternatePath} />
+      <main id="obsah"><slot /></main>
+      <Footer {lang} />
+    </div>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Bezpečnost / Security
+    url: mailto:podpora@zeleznalady.cz?subject=VCode%20security%20report
+    about: Bezpečnostní zranitelnosti hlaste soukromě. / Report vulnerabilities privately.
+  - name: Podpora / Support
+    url: https://vcode.zeleznalady.cz/podpora/
+    about: Pomoc s používáním aplikací. / Product support.

@@ -1,0 +1,15 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { products } from "../../lib/products";
+export function getStaticPaths() { return products.map(product => ({ params: { slug: product.href }, props: { product } })); }
+const { product } = Astro.props;
+const pageStructuredData = { "@context": "https://schema.org", "@type": "SoftwareApplication", name: product.name, description: product.summaryCs, applicationCategory: product.categoryCs, url: `https://vcode.zeleznalady.cz/aplikace/${product.href}/`, publisher: { "@type": "Organization", name: "VCode" } };
+---
+<BaseLayout title={`${product.name} — VCode`} description={product.summaryCs} lang="cs" path={`/aplikace/${product.href}/`} alternatePath={`/en/apps/${product.href}/`} {pageStructuredData}>
+  <article class:list={["product-detail", `tone-${product.tone}`]}>
+    <a class="back-link" href="/#aplikace">← Všechny aplikace</a>
+    <header><p class="kicker">{product.categoryCs}</p><h1>{product.name}</h1><p class="detail-headline">{product.headlineCs}</p><p class="detail-summary">{product.summaryCs}</p></header>
+    <div class="detail-grid"><section><h2>Co umí</h2><ul>{product.capabilitiesCs.map(item => <li>{item}</li>)}</ul></section><aside><span>Dostupnost</span><strong>{product.availabilityCs}</strong>{product.externalUrl && <a class="button primary" href={product.externalUrl}>Otevřít aplikaci <span aria-hidden="true">↗</span></a>}</aside></div>
+    <section class="detail-support"><h2>Začínáte?</h2><p>Postupy, odpovědi a informace o soukromí najdete v centru nápovědy.</p><a class="text-link" href={`/navody/?aplikace=${product.id}`}>Návody pro {product.name} →</a></section>
+  </article>
+</BaseLayout>

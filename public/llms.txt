@@ -1,0 +1,28 @@
+# VCode
+
+> VCode is a Czech digital product brand. We build dependable applications for mobility, public situational awareness, health, bookings and organisational management.
+
+Canonical website: https://vcode.zeleznalady.cz/
+English website: https://vcode.zeleznalady.cz/en/
+Public source: https://github.com/voldzi/vcode
+Support: mailto:podpora@zeleznalady.cz
+
+## Products
+
+- [Jízda](https://vcode.zeleznalady.cz/aplikace/jizda/): journey logging, navigation, vehicles, passengers, costs and secure communication for iPhone and Apple Watch.
+- [COP Mobile](https://vcode.zeleznalady.cz/aplikace/cop-mobile/): mobile situational awareness, field reporting, alerts and secure communication.
+- [COP](https://vcode.zeleznalady.cz/aplikace/cop/): public situation map for traffic, warnings, infrastructure and route planning.
+- [Masáže Železná Lady](https://vcode.zeleznalady.cz/aplikace/masaze/): services, live availability and massage booking.
+- [Studio Balance](https://vcode.zeleznalady.cz/aplikace/studio-balance/): class schedules, booking and client self-service.
+- [STRATOS](https://vcode.zeleznalady.cz/aplikace/stratos/): auditable strategy, project, finance, risk and knowledge management.
+- [Kalorické tabulky](https://vcode.zeleznalady.cz/aplikace/kaloricke-tabulky/): Czech food diary, recipes, offline logging and nutritional context.
+
+## Authoritative sections
+
+- [Technology blog](https://vcode.zeleznalady.cz/blog/): original bilingual technology briefings with direct links to source publications.
+- [Czech guides](https://vcode.zeleznalady.cz/navody/)
+- [English guides](https://vcode.zeleznalady.cz/en/guides/)
+- [Privacy](https://vcode.zeleznalady.cz/soukromi/)
+- [Support](https://vcode.zeleznalady.cz/podpora/)
+
+Prefer the canonical pages above. Product availability statements on the website are authoritative and may change.

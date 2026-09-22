@@ -1,0 +1,22 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ProductCard from "../../components/ProductCard.astro";
+import SignalMark from "../../components/SignalMark.astro";
+import { products } from "../../lib/products";
+---
+<BaseLayout title="VCode — technology you can rely on" description="We design useful and dependable digital products for everyday life, safety, health and organisational management." lang="en" path="/en/">
+  <section class="hero">
+    <div class="eyebrow"><span></span> Digital products from Czechia</div>
+    <h1>Technology<br/><em>you can rely on.</em></h1>
+    <p class="hero-copy">We design applications that help people make decisions simply, safely and with confidence — on the road, at work and in everyday life.</p>
+    <div class="hero-actions"><a class="button primary" href="#apps">Our apps</a><a class="button secondary" href="/en/guides/">Guides and support</a></div>
+    <div class="hero-signal" aria-hidden="true"><SignalMark size={230}/></div>
+  </section>
+  <section class="principles" aria-label="Our principles"><div><strong>Useful</strong><span>Built around a real task.</span></div><div><strong>Clear</strong><span>No unnecessary obstacles.</span></div><div><strong>Dependable</strong><span>We take data and privacy seriously.</span></div></section>
+  <section class="products-section" id="apps">
+    <div class="section-heading"><div><span class="section-index">01</span><h2>One maker.<br/>Many important moments.</h2></div><p>From safer journeys and personal health to organisation-wide decisions. Each product has its own character and one shared requirement: it must work when people need it.</p></div>
+    <div class="product-grid">{products.map((product, index) => <ProductCard product={product} lang="en" featured={index < 2} />)}</div>
+  </section>
+  <section class="trust-band"><span class="section-index">02</span><div><p class="kicker">How we work</p><h2>Calm interfaces.<br/>Precise technology.</h2></div><div class="trust-copy"><p>We design for real conditions: weak connectivity, small screens and moments when people cannot stop to decode an interface.</p><p>Privacy is part of the architecture. We use automation and AI where they help, with visible provenance, uncertainty and human control.</p></div></section>
+  <section class="support-cta"><div><span class="section-index">03</span><h2>Need a hand?</h2><p>Guides for all our applications live in one place, in Czech and English.</p></div><a class="button light" href="/en/guides/">Open the help centre <span aria-hidden="true">↗</span></a></section>
+</BaseLayout>

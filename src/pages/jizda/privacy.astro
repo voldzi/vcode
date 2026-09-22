@@ -1,0 +1,14 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+<BaseLayout title="Ochrana soukromí v aplikaci Jízda — VCode" description="Jak aplikace Jízda pracuje s údaji o jízdách, poloze, vozidlech a komunikaci." lang="cs" path="/jizda/privacy/">
+  <article class="guide legal"><a class="back-link" href="/aplikace/jizda/">← Jízda</a><header><p class="kicker">Ochrana soukromí</p><h1>Vaše cesty patří vám.</h1><p>Tato informace popisuje práci aplikace Jízda s údaji. Poslední aktualizace: 22. září 2026.</p></header><div class="guide-body">
+    <h2>Co aplikace ukládá</h2><p>Jízda ukládá historii jízd a tras, údaje o vozidlech, cestujících a jejich platbách, tankování, nabíjení, servisní záznamy, nastavení a místní diagnostické záznamy. Rozpracovaná jízda může dočasně obsahovat přesné body trasy pro obnovu po přerušení.</p>
+    <h2>Kde jsou údaje</h2><p>Hlavní evidence je uložena v zařízení. Pokud máte dostupný iCloud, může se synchronizovat do vaší soukromé databáze CloudKit spojené s Apple účtem. Po úspěšném uložení nebo výslovném zahození jízdy aplikace odstraní dočasný obnovovací soubor.</p>
+    <h2>Poloha a navigace</h2><p>Přístup k poloze slouží k záznamu jízdy, navigaci a funkcím, které si vyžádáte. Sdílení přesné polohy do komunikace COP je samostatná viditelná volba; aplikace ji nemá odesílat bez vašeho úkonu.</p>
+    <h2>Komunikace COP</h2><p>Pokud se přihlásíte ke komunikaci COP, aplikace používá organizační přihlášení OIDC, end-to-end šifrovaný Matrix chat, registraci zařízení pro upozornění a hlasové hovory. Přihlašovací údaje a šifrovací úložiště chrání systémová Klíčenka. Odhlášení nebo volba jiného účtu odstraní místní komunikační relaci.</p>
+    <h2>Externí služby</h2><p>Podle použitých funkcí může aplikace komunikovat se službami Apple (MapKit, CloudKit a systémová oznámení), s COP, s počasím a informacemi o vozidlech. Volitelná AI analýza používá poskytovatele zvoleného uživatelem; přesná poloha se nemá posílat, pokud ji uživatel výslovně nezahrne.</p>
+    <h2>Vaše kontrola</h2><p>Přístup k poloze, oznámením, fotografiím a pohybu můžete změnit v nastavení iPhonu. Záznamy lze spravovat nebo exportovat přímo v aplikaci. Data iCloudu se řídí vaším Apple účtem a nastavením iCloudu.</p>
+    <h2>Kontakt</h2><p>Otázky k soukromí posílejte na <a href="mailto:podpora@zeleznalady.cz">podpora@zeleznalady.cz</a>. Do zprávy nevkládejte hesla, tokeny ani úplnou historii polohy.</p>
+  </div></article>
+</BaseLayout>

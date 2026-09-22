@@ -1,0 +1,39 @@
+{
+  "name": "vcode-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.19.0",
+  "engines": {
+    "node": ">=24.0.0",
+    "pnpm": ">=11.0.0"
+  },
+  "scripts": {
+    "dev": "astro dev --host 0.0.0.0",
+    "build": "pnpm validate:content && astro check && astro build",
+    "preview": "astro preview --host 0.0.0.0",
+    "check": "pnpm validate:public && pnpm validate:openapi && pnpm validate:content && astro check",
+    "validate:public": "node scripts/validate-public-repository.mjs",
+    "validate:openapi": "node scripts/validate-openapi.mjs",
+    "validate:content": "node scripts/validate-content.mjs",
+    "test": "pnpm test:blog",
+    "test:blog": "node --test services/blog/test/*.test.mjs",
+    "blog:moderate": "node services/blog/moderate.mjs",
+    "blog:articles": "node services/blog/articles.mjs",
+    "indexnow:submit": "node scripts/submit-indexnow.mjs"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "3.7.4",
+    "@fontsource-variable/inter": "5.3.0",
+    "@fontsource-variable/manrope": "5.3.0",
+    "astro": "7.3.3",
+    "fast-xml-parser": "5.11.1",
+    "pg": "8.23.0",
+    "sharp": "0.35.4"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "@types/pg": "8.23.1",
+    "typescript": "6.0.3"
+  }
+}

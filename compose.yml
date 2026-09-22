@@ -1,0 +1,81 @@
+services:
+  web:
+    build: .
+    restart: unless-stopped
+    user: "101:101"
+    ports:
+      - "${VCODE_BIND_ADDRESS:-127.0.0.1}:${VCODE_PORT:-3280}:8080"
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx:uid=101,gid=101,mode=0755
+      - /var/run:uid=101,gid=101,mode=0755
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+  blog:
+    build:
+      context: .
+      dockerfile: Dockerfile.blog
+    restart: unless-stopped
+    user: "1000:1000"
+    read_only: true
+    environment:
+      DATABASE_URL_FILE: /run/secrets/vcode_database_url
+      OPENAI_API_KEY_FILE: /run/secrets/vcode_openai_api_key
+      BLOG_COMMENT_HASH_SECRET_FILE: /run/secrets/vcode_comment_hash_secret
+      BLOG_GENERATION_ENABLED: ${BLOG_GENERATION_ENABLED:-false}
+      BLOG_AUTO_PUBLISH: ${BLOG_AUTO_PUBLISH:-true}
+      BLOG_OPENAI_MODEL: ${BLOG_OPENAI_MODEL:-gpt-5.6-luna}
+      BLOG_AI_MAX_RUNS_PER_DAY: ${BLOG_AI_MAX_RUNS_PER_DAY:-4}
+      BLOG_AI_DAILY_TOKEN_BUDGET: ${BLOG_AI_DAILY_TOKEN_BUDGET:-80000}
+      BLOG_AI_MONTHLY_COST_USD: ${BLOG_AI_MONTHLY_COST_USD:-5}
+      PUBLIC_SITE_URL: https://vcode.zeleznalady.cz
+    secrets:
+      - vcode_database_url
+      - vcode_openai_api_key
+      - vcode_comment_hash_secret
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+  blog-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.blog
+    command: ["node", "services/blog/worker.mjs"]
+    restart: unless-stopped
+    user: "1000:1000"
+    read_only: true
+    environment:
+      DATABASE_URL_FILE: /run/secrets/vcode_database_url
+      OPENAI_API_KEY_FILE: /run/secrets/vcode_openai_api_key
+      BLOG_GENERATION_ENABLED: ${BLOG_GENERATION_ENABLED:-false}
+      BLOG_AUTO_PUBLISH: ${BLOG_AUTO_PUBLISH:-true}
+      BLOG_OPENAI_MODEL: ${BLOG_OPENAI_MODEL:-gpt-5.6-luna}
+      BLOG_RUN_INTERVAL_MINUTES: ${BLOG_RUN_INTERVAL_MINUTES:-360}
+      BLOG_AI_MAX_RUNS_PER_DAY: ${BLOG_AI_MAX_RUNS_PER_DAY:-4}
+      BLOG_AI_MAX_INPUT_CHARS: ${BLOG_AI_MAX_INPUT_CHARS:-28000}
+      BLOG_AI_MAX_OUTPUT_TOKENS: ${BLOG_AI_MAX_OUTPUT_TOKENS:-2200}
+      BLOG_AI_DAILY_TOKEN_BUDGET: ${BLOG_AI_DAILY_TOKEN_BUDGET:-80000}
+      BLOG_AI_MONTHLY_COST_USD: ${BLOG_AI_MONTHLY_COST_USD:-5}
+      BLOG_AI_INPUT_PRICE_PER_MILLION_USD: ${BLOG_AI_INPUT_PRICE_PER_MILLION_USD:-0.20}
+      BLOG_AI_OUTPUT_PRICE_PER_MILLION_USD: ${BLOG_AI_OUTPUT_PRICE_PER_MILLION_USD:-1.20}
+      PUBLIC_SITE_URL: https://vcode.zeleznalady.cz
+    secrets:
+      - vcode_database_url
+      - vcode_openai_api_key
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    healthcheck:
+      disable: true
+
+secrets:
+  vcode_database_url:
+    file: ${VCODE_SECRETS_DIR:-.secrets}/database_url
+  vcode_openai_api_key:
+    file: ${VCODE_SECRETS_DIR:-.secrets}/openai_api_key
+  vcode_comment_hash_secret:
+    file: ${VCODE_SECRETS_DIR:-.secrets}/comment_hash_secret

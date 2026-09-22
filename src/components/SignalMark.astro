@@ -1,0 +1,9 @@
+---
+const { size = 40, labelled = false } = Astro.props;
+---
+<svg class="signal-mark" width={size} height={size} viewBox="0 0 64 64" role={labelled ? "img" : undefined} aria-hidden={!labelled} aria-label={labelled ? "VCode" : undefined}>
+  <defs><linearGradient id="vcode-navy" x1="8" y1="8" x2="42" y2="56" gradientUnits="userSpaceOnUse"><stop stop-color="#07518c"/><stop offset="1" stop-color="#0b2d5b"/></linearGradient><linearGradient id="vcode-cyan" x1="46" y1="9" x2="24" y2="48" gradientUnits="userSpaceOnUse"><stop stop-color="#0ac4ff"/><stop offset="1" stop-color="#009be6"/></linearGradient></defs>
+  <path d="M7.3 12.2c-1.6-3 0-5.2 3.3-5.2h9.2c2 0 3.2.8 4.1 2.6l11.8 24.1c1.3 2.7 3.2 4 5.8 3.8l-5.2 10.2c-2.4 4.7-8.8 5.2-12 .9-2-2.8-3.9-6.1-5.5-9.5L7.3 12.2Z" fill="url(#vcode-navy)"/>
+  <path d="M47.6 8.1h8.1c2.6 0 3.8 2 2.5 4.3L42.1 42.7c-2.5 4.6-9 4.8-11.8.4l-4.7-7.5 6.5-12.2 4.6 9.3L44 11c.6-1.9 1.8-2.9 3.6-2.9Z" fill="url(#vcode-cyan)"/>
+  <circle cx="30" cy="8.5" r="7.3" fill="#a3e635"/>
+</svg>

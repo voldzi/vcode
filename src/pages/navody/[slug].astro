@@ -1,0 +1,9 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+export async function getStaticPaths() { const all=await getCollection("guides", ({data})=>data.status==="published"); const items=all.filter(({data})=>data.language==="cs"); return items.map(entry=>{const other=all.find(({data})=>data.language==="en"&&data.translation_key===entry.data.translation_key);return {params:{slug:entry.data.slug},props:{entry,alternatePath:other?`/en/guides/${other.data.slug}/`:undefined}}}); }
+const { entry, alternatePath }=Astro.props; const { Content }=await render(entry);
+---
+<BaseLayout title={`${entry.data.title} — VCode`} description={entry.data.summary} lang="cs" path={`/navody/${entry.data.slug}/`} {alternatePath}>
+  <article class="guide"><a class="back-link" href="/navody/">← Centrum nápovědy</a><header><p class="kicker">Ověřený návod</p><h1>{entry.data.title}</h1><p>{entry.data.summary}</p><div class="guide-meta"><span>Revize {entry.data.document_revision}</span><span>Ověřeno {entry.data.reviewed_on.toLocaleDateString("cs-CZ")}</span></div></header><div class="guide-body"><Content /></div></article>
+</BaseLayout>

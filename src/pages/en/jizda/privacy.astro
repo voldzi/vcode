@@ -1,0 +1,14 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+---
+<BaseLayout title="Jízda privacy information — VCode" description="How Jízda handles ride, location, vehicle and communication data." lang="en" path="/en/jizda/privacy/">
+  <article class="guide legal"><a class="back-link" href="/en/apps/jizda/">← Jízda</a><header><p class="kicker">Privacy</p><h1>Your journeys belong to you.</h1><p>This notice explains how Jízda handles data. Last updated 22 September 2026.</p></header><div class="guide-body">
+    <h2>Data stored by the app</h2><p>Jízda stores ride and route history, vehicle details, passengers and their payments, fuel, charging and service records, settings and local diagnostics. An unfinished ride may temporarily contain precise route points for recovery.</p>
+    <h2>Where data is stored</h2><p>The main record is held on your device. When iCloud is available, it may sync to the private CloudKit database associated with your Apple Account. The app removes the temporary recovery file after a successful save or an explicit discard.</p>
+    <h2>Location and navigation</h2><p>Location access supports ride recording, navigation and features you request. Sharing precise location into COP communication is a separate visible action; the app should not send it without your request.</p>
+    <h2>COP communication</h2><p>If you sign in to COP communication, the app uses organisational OIDC sign-in, end-to-end encrypted Matrix messaging, device notification registration and voice calling. Credentials and encrypted stores are protected by the system Keychain. Signing out or choosing another account removes the local communication session.</p>
+    <h2>External services</h2><p>Depending on the features used, the app may contact Apple services, COP, weather services and vehicle-information services. Optional AI analysis uses the provider chosen by the user; precise location should not be sent unless the user explicitly includes it.</p>
+    <h2>Your control</h2><p>You can change access to location, notifications, photos and motion in iPhone Settings. Records can be managed or exported in the app. iCloud data follows your Apple Account and iCloud settings.</p>
+    <h2>Contact</h2><p>Send privacy questions to <a href="mailto:podpora@zeleznalady.cz">podpora@zeleznalady.cz</a>. Do not include passwords, tokens or complete location history.</p>
+  </div></article>
+</BaseLayout>

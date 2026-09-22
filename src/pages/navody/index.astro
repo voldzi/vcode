@@ -1,0 +1,11 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { products } from "../../lib/products";
+const guides = (await getCollection("guides", ({ data }) => data.language === "cs" && data.status === "published")).sort((a,b) => a.data.order-b.data.order);
+---
+<BaseLayout title="Návody a nápověda — VCode" description="Ověřené návody, časté otázky a podpora pro aplikace VCode." lang="cs" path="/navody/" alternatePath="/en/guides/">
+  <section class="help-hero"><p class="kicker">Centrum nápovědy</p><h1>Jak vám můžeme pomoci?</h1><p>Vyberte aplikaci nebo otevřete některý z ověřených postupů.</p></section>
+  <section class="help-products" aria-label="Aplikace">{products.map(product => <a href={`/aplikace/${product.href}/`}><strong>{product.name}</strong><span>{product.categoryCs}</span></a>)}</section>
+  <section class="guide-list"><h2>Nejčastější postupy</h2>{guides.length ? guides.map(guide => <a class="guide-row" href={`/navody/${guide.data.slug}/`}><span><strong>{guide.data.title}</strong><small>{products.find(p=>p.id===guide.data.application_id)?.name}</small></span><p>{guide.data.summary}</p><b aria-hidden="true">→</b></a>) : <p class="empty-state">První ověřené návody právě připravujeme.</p>}</section>
+</BaseLayout>

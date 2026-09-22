@@ -1,0 +1,45 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ProductCard from "../components/ProductCard.astro";
+import SignalMark from "../components/SignalMark.astro";
+import { products } from "../lib/products";
+---
+<BaseLayout title="VCode — technologie, na které je spoleh" description="Navrhujeme užitečné a důvěryhodné digitální produkty pro každodenní život, bezpečnost, zdraví a řízení organizací." lang="cs" path="/">
+  <section class="hero">
+    <div class="eyebrow"><span></span> Digitální produkty z Česka</div>
+    <h1>Technologie,<br/><em>na které je spoleh.</em></h1>
+    <p class="hero-copy">Navrhujeme aplikace, které lidem pomáhají rozhodovat se jednoduše, bezpečně a s jistotou — na cestách, v práci i v každodenním životě.</p>
+    <div class="hero-actions">
+      <a class="button primary" href="#aplikace">Naše aplikace</a>
+      <a class="button secondary" href="/navody/">Návody a podpora</a>
+    </div>
+    <div class="hero-signal" aria-hidden="true"><SignalMark size={230}/></div>
+  </section>
+
+  <section class="principles" aria-label="Naše zásady">
+    <div><strong>Užitečné</strong><span>Řeší skutečný úkol.</span></div>
+    <div><strong>Srozumitelné</strong><span>Bez zbytečných překážek.</span></div>
+    <div><strong>Důvěryhodné</strong><span>Data a soukromí bereme vážně.</span></div>
+  </section>
+
+  <section class="products-section" id="aplikace">
+    <div class="section-heading">
+      <div><span class="section-index">01</span><h2>Jedna značka.<br/>Různé důležité chvíle.</h2></div>
+      <p>Od bezpečné cesty přes péči o zdraví až po rozhodování celé organizace. Každý produkt má vlastní charakter, společné má ale jedno: musí fungovat, když jej člověk potřebuje.</p>
+    </div>
+    <div class="product-grid">
+      {products.map((product, index) => <ProductCard product={product} lang="cs" featured={index < 2} />)}
+    </div>
+  </section>
+
+  <section class="trust-band">
+    <span class="section-index">02</span>
+    <div><p class="kicker">Jak pracujeme</p><h2>Klidné rozhraní.<br/>Přesná technologie.</h2></div>
+    <div class="trust-copy"><p>Rozhraní navrhujeme pro skutečné situace, včetně slabého připojení, malého displeje a chvílí, kdy není prostor přemýšlet nad ovládáním.</p><p>Citlivá data chráníme od návrhu. Automatizace a AI používáme tam, kde pomohou — s viditelným původem, nejistotou a kontrolou člověka.</p></div>
+  </section>
+
+  <section class="support-cta">
+    <div><span class="section-index">03</span><h2>Potřebujete poradit?</h2><p>Návody pro všechny naše aplikace vznikají na jednom místě, v češtině i angličtině.</p></div>
+    <a class="button light" href="/navody/">Otevřít centrum nápovědy <span aria-hidden="true">↗</span></a>
+  </section>
+</BaseLayout>

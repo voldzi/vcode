@@ -1,0 +1,9 @@
+node_modules
+dist
+.astro
+.git
+.env
+.sites-runtime
+.DS_Store
+._*
+**/._*

@@ -1,0 +1,18 @@
+---
+const { lang = "cs" } = Astro.props;
+const cs = lang === "cs";
+---
+<footer class="site-footer">
+  <div>
+    <strong>VCode</strong>
+    <p>{cs ? "Technologie, na které je spoleh." : "Technology you can rely on."}</p>
+  </div>
+  <div class="footer-links">
+    <a href={cs ? "/blog/" : "/en/blog/"}>Blog</a>
+    <a href={cs ? "/navody/" : "/en/guides/"}>{cs ? "Návody" : "Guides"}</a>
+    <a href={cs ? "/podpora/" : "/en/support/"}>{cs ? "Podpora" : "Support"}</a>
+    <a href={cs ? "/soukromi/" : "/en/privacy/"}>{cs ? "Soukromí" : "Privacy"}</a>
+    <a href={cs ? "/jizda/terms/" : "/en/jizda/terms/"}>{cs ? "Podmínky" : "Terms"}</a>
+  </div>
+  <small>© {new Date().getFullYear()} VCode</small>
+</footer>

@@ -1,0 +1,69 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "VCode public blog API",
+    "version": "1.0.0",
+    "description": "Public health and moderated comment submission contract. Blog pages are server-rendered HTML."
+  },
+  "servers": [{ "url": "https://vcode.zeleznalady.cz" }],
+  "paths": {
+    "/health/blog": {
+      "get": {
+        "operationId": "getBlogHealth",
+        "responses": {
+          "200": {
+            "description": "Blog service and database are ready",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Health" } } }
+          },
+          "500": { "description": "Dependency is unavailable" }
+        }
+      }
+    },
+    "/api/blog/{slug}/comments": {
+      "post": {
+        "operationId": "submitBlogComment",
+        "parameters": [{ "name": "slug", "in": "path", "required": true, "schema": { "type": "string", "pattern": "^[a-z0-9-]+$" } }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["name", "body", "lang"],
+                "properties": {
+                  "name": { "type": "string", "minLength": 2, "maxLength": 60 },
+                  "email": { "type": "string", "format": "email", "maxLength": 160 },
+                  "body": { "type": "string", "minLength": 10, "maxLength": 2000 },
+                  "lang": { "type": "string", "enum": ["cs", "en"] },
+                  "website": { "type": "string", "description": "Spam honeypot; normal clients leave it empty." }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "303": { "description": "Comment accepted and redirected to the article" },
+          "400": { "description": "Invalid comment" },
+          "403": { "description": "Origin check failed" },
+          "404": { "description": "Published article not found" },
+          "413": { "description": "Request exceeds 16 KiB" },
+          "429": { "description": "Per-origin rate limit reached", "headers": { "Retry-After": { "schema": { "type": "integer" } } } }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Health": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["status", "generationEnabled"],
+        "properties": {
+          "status": { "type": "string", "const": "ok" },
+          "generationEnabled": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}
