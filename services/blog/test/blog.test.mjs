@@ -51,6 +51,13 @@ test("renderer escapes article list content", () => {
   assert.equal(escapeHtml(`\"<&'`), "&quot;&lt;&amp;&#39;");
 });
 
+test("blog uses the shared responsive site navigation", () => {
+  const html = renderIndex([], "cs");
+  assert.ok(html.includes('id="site-navigation"'));
+  assert.ok(html.includes('class="menu-toggle"'));
+  assert.ok(html.includes('src="/site.js"'));
+});
+
 test("candidate bounding preserves valid JSON and independent publications", () => {
   const candidates = [
     { id: "a".repeat(64), sourceId: "root", sourceName: "Root.cz", title: "A", summary: "a".repeat(800), url: "https://www.root.cz/a", publishedAt: null },

@@ -7,7 +7,7 @@ const guides = defineCollection({
   schema: z.object({
     title: z.string(),
     summary: z.string(),
-    application_id: z.enum(["jizda", "cop", "cop-mobile", "masaze", "stratos", "kaloricke-tabulky"]),
+    application_id: z.enum(["apsyd", "jizda", "cop", "cop-mobile", "masaze", "studio-balance", "stratos", "kaloricke-tabulky"]),
     external_ref: z.string(),
     translation_key: z.string(),
     language: z.enum(["cs", "en"]),

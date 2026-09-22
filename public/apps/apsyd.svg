@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">APSYD site application icon</title>
+  <desc id="desc">Dark rounded APSYD site icon with a clinical cyan signal mark.</desc>
+  <defs>
+    <linearGradient id="site-bg" x1="76" y1="48" x2="436" y2="464" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#07111f"/>
+      <stop offset="0.55" stop-color="#0b2238"/>
+      <stop offset="1" stop-color="#063f46"/>
+    </linearGradient>
+    <linearGradient id="site-mark" x1="132" y1="108" x2="386" y2="394" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#67e8f9"/>
+      <stop offset="1" stop-color="#2dd4bf"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#site-bg)"/>
+  <path d="M131 302c36 42 81 63 134 63 61 0 105-25 132-75" fill="none" stroke="#67e8f9" stroke-width="28" stroke-linecap="round"/>
+  <path d="M155 244c30-55 69-82 116-82 36 0 66 16 90 47" fill="none" stroke="url(#site-mark)" stroke-width="36" stroke-linecap="round"/>
+  <circle cx="151" cy="306" r="18" fill="#99f6e4"/>
+  <circle cx="392" cy="287" r="18" fill="#99f6e4"/>
+  <text x="256" y="271" fill="#f8fafc" font-family="Outfit, Inter, Arial, sans-serif" font-size="72" font-weight="800" letter-spacing="18" text-anchor="middle">APSYD</text>
+  <text x="256" y="332" fill="#a7f3d0" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="8" text-anchor="middle">SITE</text>
+</svg>

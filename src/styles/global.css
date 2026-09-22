@@ -94,7 +94,7 @@ img, svg { display: block; max-width: 100%; }
 .text-link { display:inline-flex; align-items:center; gap:.5rem; width:max-content; margin-top:auto; color:var(--navy); font:720 .9rem "Manrope Variable",sans-serif; }
 .text-link span { color:var(--accent); transition:transform .2s ease; }
 .text-link:hover span { transform:translate(3px,-3px); }
-.tone-azure { --accent:#16b879; } .tone-cyan { --accent:#00aee8; } .tone-navy { --accent:#305888; } .tone-coral { --accent:#ed678c; } .tone-balance { --accent:#a35678; } .tone-violet { --accent:#7e58e8; } .tone-lime { --accent:#ef8a1f; }
+.tone-teal { --accent:#15b8a6; } .tone-azure { --accent:#16b879; } .tone-cyan { --accent:#00aee8; } .tone-navy { --accent:#305888; } .tone-coral { --accent:#ed678c; } .tone-balance { --accent:#a35678; } .tone-violet { --accent:#7e58e8; } .tone-lime { --accent:#ef8a1f; }
 
 .trust-band { display:grid; grid-template-columns:auto .9fr 1fr; gap:clamp(1.5rem,6vw,6rem); padding:clamp(5rem,10vw,9rem) clamp(1.25rem,5vw,5rem); color:var(--white); background:var(--navy); }
 .trust-band h2 { color:var(--white); }
@@ -126,10 +126,12 @@ img, svg { display: block; max-width: 100%; }
 
 .help-hero { padding:clamp(5rem,10vw,10rem) clamp(1.25rem,8vw,8rem) 4rem; background:linear-gradient(180deg,#fff,#f5f9fd); }
 .help-hero p:last-child { max-width:680px; color:var(--muted); font-size:1.18rem; }
-.help-products { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; padding:0 clamp(1.25rem,8vw,8rem) 5rem; background:linear-gradient(to right,transparent clamp(1.25rem,8vw,8rem),var(--line) clamp(1.25rem,8vw,8rem),var(--line) calc(100% - clamp(1.25rem,8vw,8rem)),transparent 0); }
-.help-products a { display:flex; flex-direction:column; min-height:120px; padding:1.5rem; background:var(--white); }
+.help-products { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; padding:0 clamp(1.25rem,8vw,8rem) 5rem; background:linear-gradient(to right,transparent clamp(1.25rem,8vw,8rem),var(--line) clamp(1.25rem,8vw,8rem),var(--line) calc(100% - clamp(1.25rem,8vw,8rem)),transparent 0); }
+.help-products a { display:flex; align-items:center; gap:1rem; min-height:120px; padding:1.5rem; background:var(--white); transition:background .2s ease,transform .25s ease; }
+.help-products a:hover { position:relative; z-index:1; transform:translateY(-3px); background:#f7fbff; }
+.help-products a>span { display:flex; flex-direction:column; min-width:0; }
 .help-products strong { font:720 1.05rem "Manrope Variable",sans-serif; color:var(--navy); }
-.help-products span { color:var(--muted); font-size:.85rem; }
+.help-products small { color:var(--muted); font-size:.78rem; }
 .guide-list { padding:0 clamp(1.25rem,8vw,8rem) clamp(6rem,10vw,10rem); }
 .guide-list h2 { margin-bottom:2rem; }
 .guide-row { display:grid; grid-template-columns:minmax(200px,.7fr) 1fr auto; align-items:center; gap:2rem; padding:1.5rem 0; border-top:1px solid var(--line); }

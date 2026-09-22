@@ -4,6 +4,7 @@ const files = (await readdir(root)).filter((file) => file.endsWith(".md"));
 const required = ["title", "summary", "application_id", "external_ref", "translation_key", "language", "classification", "status", "document_type", "documentation_profile", "document_revision", "reviewed_on", "slug", "order"];
 const externalRefs = new Set();
 const slugs = new Set();
+const translations = new Map();
 const errors = [];
 
 for (const file of files) {
@@ -20,7 +21,14 @@ for (const file of files) {
   if (externalRefs.has(values.external_ref)) errors.push(`${file}: duplicate external_ref`); else externalRefs.add(values.external_ref);
   const slugKey = `${values.language}:${values.slug}`;
   if (slugs.has(slugKey)) errors.push(`${file}: duplicate language/slug`); else slugs.add(slugKey);
+  const languages = translations.get(values.translation_key) ?? new Set();
+  languages.add(values.language);
+  translations.set(values.translation_key, languages);
   if (/password|heslo|token\s*[:=]|secret\s*[:=]/i.test(text.replace(match[0], ""))) errors.push(`${file}: possible secret-like instruction`);
+}
+
+for (const [key, languages] of translations) {
+  if (!languages.has("cs") || !languages.has("en")) errors.push(`${key}: missing Czech or English translation`);
 }
 
 if (errors.length) { console.error(errors.join("\n")); process.exit(1); }

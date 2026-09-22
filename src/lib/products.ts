@@ -18,6 +18,22 @@ export type Product = {
 
 export const products: Product[] = [
   {
+    id: "apsyd",
+    name: "APSYD",
+    href: "apsyd",
+    tone: "teal",
+    categoryCs: "Psychodiagnostika",
+    categoryEn: "Psychodiagnostics",
+    headlineCs: "Vyšetření jako bezpečný, řízený proces.",
+    headlineEn: "Assessment as a secure, controlled workflow.",
+    summaryCs: "Klinické a provozní prostředí pro příjem probanda, psychodiagnostické vyšetření, odborné posouzení výsledků a koordinaci pracovišť.",
+    summaryEn: "A clinical and operational environment for participant intake, psychodiagnostic assessment, professional result review and site coordination.",
+    capabilitiesCs: ["Příjem a příprava vyšetření", "Řízené testování", "Odborná kontrola výsledků", "Audit a koordinace pracovišť"],
+    capabilitiesEn: ["Intake and assessment preparation", "Controlled test delivery", "Professional result review", "Audit and site coordination"],
+    availabilityCs: "Řízené zdravotnické nasazení",
+    availabilityEn: "Controlled healthcare deployment"
+  },
+  {
     id: "jizda",
     name: "Jízda",
     href: "jizda",
