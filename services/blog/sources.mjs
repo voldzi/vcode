@@ -5,6 +5,7 @@ const source = (definition) => Object.freeze({
   trustTier: "editorial",
   sourceKind: "publication",
   retentionPolicy: "metadata-only",
+  licenseNote: "RSS metadata only; full-content retention requires separate review.",
   topics: [],
   ...definition
 });
