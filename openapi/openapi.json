@@ -51,6 +51,20 @@
           "429": { "description": "Per-origin rate limit reached", "headers": { "Retry-After": { "schema": { "type": "integer" } } } }
         }
       }
+    },
+    "/api/blog/telegram/webhook": {
+      "post": {
+        "operationId": "receiveTelegramEditorialUpdate",
+        "description": "Private Telegram callback receiver. It is unavailable while editorial integration is disabled.",
+        "parameters": [{ "name": "X-Telegram-Bot-Api-Secret-Token", "in": "header", "required": true, "schema": { "type": "string", "minLength": 32 } }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["update_id"], "properties": { "update_id": { "type": "integer" } }, "additionalProperties": true } } } },
+        "responses": {
+          "200": { "description": "Update accepted or already processed" },
+          "403": { "description": "Webhook secret is invalid" },
+          "404": { "description": "Integration is disabled" },
+          "413": { "description": "Request exceeds 64 KiB" }
+        }
+      }
     }
   },
   "components": {

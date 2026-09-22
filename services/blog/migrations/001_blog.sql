@@ -150,3 +150,26 @@ CREATE TABLE IF NOT EXISTS blog_runs (
   article_id bigint REFERENCES blog_articles(id),
   message text
 );
+
+CREATE TABLE IF NOT EXISTS blog_review_requests (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  article_id bigint NOT NULL REFERENCES blog_articles(id) ON DELETE CASCADE,
+  token_hash text NOT NULL UNIQUE,
+  status text NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'consumed', 'expired', 'revoked')),
+  telegram_chat_id text,
+  telegram_message_id text,
+  intended_user_id text,
+  expires_at timestamptz NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  consumed_at timestamptz
+);
+CREATE INDEX IF NOT EXISTS blog_review_requests_pending_idx ON blog_review_requests (article_id, expires_at) WHERE status='pending';
+
+CREATE TABLE IF NOT EXISTS blog_telegram_updates (
+  update_id bigint PRIMARY KEY,
+  event_type text NOT NULL,
+  article_id bigint REFERENCES blog_articles(id) ON DELETE SET NULL,
+  handled boolean NOT NULL DEFAULT false,
+  detail jsonb NOT NULL DEFAULT '{}'::jsonb,
+  received_at timestamptz NOT NULL DEFAULT now()
+);

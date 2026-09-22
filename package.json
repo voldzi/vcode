@@ -21,7 +21,9 @@
     "blog:moderate": "node services/blog/moderate.mjs",
     "blog:articles": "node services/blog/articles.mjs",
     "blog:validate-sources": "node scripts/validate-blog-sources.mjs",
-    "indexnow:submit": "node scripts/submit-indexnow.mjs"
+    "indexnow:submit": "node scripts/submit-indexnow.mjs",
+    "telegram:webhook": "node scripts/configure-telegram-webhook.mjs",
+    "brand:assets": "node scripts/generate-brand-assets.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "3.7.4",

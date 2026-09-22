@@ -1,5 +1,8 @@
 # Observability
 
+- Telegram delivery emits `telegram_notification_sent`, `telegram_notification_skipped` or `telegram_notification_failed`. Logs contain article and request identifiers but never bot tokens or review URLs.
+- Review actions are recorded in `blog_editorial_events`; Telegram update IDs are retained in `blog_telegram_updates` for replay protection and incident diagnosis.
+
 The static service exposes `/health`. The blog exposes `/health/blog`, including a live PostgreSQL query. Container health checks cover both request-serving services independently. The scheduled worker has no listener; monitor its structured run outcomes and logs.
 
 Production monitoring should probe both health routes through the private service network and the public HTTPS origin. The two probes matter: a healthy static site does not prove that the database-backed blog is available.

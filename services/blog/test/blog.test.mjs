@@ -3,7 +3,9 @@ import test from "node:test";
 import { cleanText, parseFeed, privateAddress } from "../feeds.mjs";
 import { boundCandidates, validateArticle } from "../openai.mjs";
 import { buildEvidencePack, canonicalizeUrl, clusterCandidates, selectEvidenceCluster, titleSimilarity } from "../pipeline.mjs";
-import { escapeHtml, renderIndex } from "../render.mjs";
+import { escapeHtml, renderIndex, renderReviewPage } from "../render.mjs";
+import { callbackData, parseCallbackData, reviewTokenHash } from "../review.mjs";
+import { validWebhookSecret } from "../telegram.mjs";
 import { activeSources, defaultSources } from "../sources.mjs";
 
 const source = { id: "root", name: "Root.cz", homepageUrl: "https://www.root.cz/" };
@@ -92,4 +94,27 @@ test("a single source is accepted only when it is authoritative and official", (
   const article = { topic: "security", hero_variant: "signals", cs: translation, en: translation, source_ids: [candidate.id], claims };
   assert.equal(validateArticle(article, [candidate]), article);
   assert.throws(() => validateArticle(article, [{ ...candidate, trustTier: "editorial", sourceKind: "publication" }]), /independent publications/);
+});
+
+test("Telegram editorial callbacks are signed and reject tampering", () => {
+  const secret = "s".repeat(48);
+  const value = callbackData("p", 42, secret);
+  assert.deepEqual(parseCallbackData(value, secret), { action: "p", requestId: "42" });
+  assert.equal(parseCallbackData(value.replace(":42:", ":43:"), secret), null);
+  assert.notEqual(reviewTokenHash("first", secret), reviewTokenHash("second", secret));
+  assert.equal(validWebhookSecret(secret, secret), true);
+  assert.equal(validWebhookSecret(`${secret}x`, secret), false);
+});
+
+test("private review page is noindex, escaped and requires explicit confirmation", () => {
+  const translation = { title: "Bezpečný <návrh>", dek: "Souhrn", sections: [{ heading: "Část", paragraphs: ["Text"] }], key_points: [] };
+  const html = renderReviewPage({
+    review_status: "pending", status: "draft", expires_at: "2099-01-01T00:00:00Z", intended_user_id: "1",
+    model: "test", estimated_cost_usd: 0.01, sources: [{ title: "Zdroj", sourceName: "Redakce", url: "https://example.com/a" }],
+    translations: { cs: translation, en: { ...translation, title: "English" } }
+  }, "a".repeat(43));
+  assert.ok(html.includes('name="confirm" value="publish" required'));
+  assert.ok(html.includes('name="robots" content="noindex,nofollow,noarchive"'));
+  assert.ok(html.includes("Bezpečný &lt;návrh&gt;"));
+  assert.ok(!html.includes("Bezpečný <návrh>"));
 });

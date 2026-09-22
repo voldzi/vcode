@@ -24,6 +24,13 @@ services:
       DATABASE_URL_FILE: /run/secrets/vcode_database_url
       OPENAI_API_KEY_FILE: /run/secrets/vcode_openai_api_key
       BLOG_COMMENT_HASH_SECRET_FILE: /run/secrets/vcode_comment_hash_secret
+      TELEGRAM_BOT_TOKEN_FILE: /run/secrets/vcode_telegram_bot_token
+      TELEGRAM_WEBHOOK_SECRET_FILE: /run/secrets/vcode_telegram_webhook_secret
+      BLOG_REVIEW_SIGNING_SECRET_FILE: /run/secrets/vcode_review_signing_secret
+      BLOG_TELEGRAM_ENABLED: ${BLOG_TELEGRAM_ENABLED:-false}
+      BLOG_TELEGRAM_CHAT_ID: ${BLOG_TELEGRAM_CHAT_ID:-}
+      BLOG_TELEGRAM_USER_ID: ${BLOG_TELEGRAM_USER_ID:-}
+      BLOG_REVIEW_TTL_HOURS: ${BLOG_REVIEW_TTL_HOURS:-72}
       BLOG_GENERATION_ENABLED: ${BLOG_GENERATION_ENABLED:-false}
       BLOG_AUTO_PUBLISH: ${BLOG_AUTO_PUBLISH:-false}
       BLOG_COMMENT_AUTO_APPROVE: ${BLOG_COMMENT_AUTO_APPROVE:-false}
@@ -36,6 +43,9 @@ services:
       - vcode_database_url
       - vcode_openai_api_key
       - vcode_comment_hash_secret
+      - vcode_telegram_bot_token
+      - vcode_telegram_webhook_secret
+      - vcode_review_signing_secret
     security_opt:
       - no-new-privileges:true
     cap_drop:
@@ -51,6 +61,12 @@ services:
     environment:
       DATABASE_URL_FILE: /run/secrets/vcode_database_url
       OPENAI_API_KEY_FILE: /run/secrets/vcode_openai_api_key
+      TELEGRAM_BOT_TOKEN_FILE: /run/secrets/vcode_telegram_bot_token
+      BLOG_REVIEW_SIGNING_SECRET_FILE: /run/secrets/vcode_review_signing_secret
+      BLOG_TELEGRAM_ENABLED: ${BLOG_TELEGRAM_ENABLED:-false}
+      BLOG_TELEGRAM_CHAT_ID: ${BLOG_TELEGRAM_CHAT_ID:-}
+      BLOG_TELEGRAM_USER_ID: ${BLOG_TELEGRAM_USER_ID:-}
+      BLOG_REVIEW_TTL_HOURS: ${BLOG_REVIEW_TTL_HOURS:-72}
       BLOG_GENERATION_ENABLED: ${BLOG_GENERATION_ENABLED:-false}
       BLOG_AUTO_PUBLISH: ${BLOG_AUTO_PUBLISH:-false}
       BLOG_OPENAI_MODEL: ${BLOG_OPENAI_MODEL:-gpt-5.6-luna}
@@ -71,6 +87,8 @@ services:
     secrets:
       - vcode_database_url
       - vcode_openai_api_key
+      - vcode_telegram_bot_token
+      - vcode_review_signing_secret
     security_opt:
       - no-new-privileges:true
     cap_drop:
@@ -85,3 +103,9 @@ secrets:
     file: ${VCODE_SECRETS_DIR:-.secrets}/openai_api_key
   vcode_comment_hash_secret:
     file: ${VCODE_SECRETS_DIR:-.secrets}/comment_hash_secret
+  vcode_telegram_bot_token:
+    file: ${VCODE_SECRETS_DIR:-.secrets}/telegram_bot_token
+  vcode_telegram_webhook_secret:
+    file: ${VCODE_SECRETS_DIR:-.secrets}/telegram_webhook_secret
+  vcode_review_signing_secret:
+    file: ${VCODE_SECRETS_DIR:-.secrets}/review_signing_secret

@@ -6,7 +6,9 @@ import { fileURLToPath } from "node:url";
 import { loadConfig } from "./config.mjs";
 import { createPool, migrate } from "./db.mjs";
 import { moderateComment } from "./openai.mjs";
-import { renderArticle, renderHeroSvg, renderIndex } from "./render.mjs";
+import { renderArticle, renderHeroSvg, renderIndex, renderReviewPage, renderReviewResult } from "./render.mjs";
+import { applyEditorialAction, findReviewByToken } from "./review.mjs";
+import { handleTelegramUpdate, telegramReady, validWebhookSecret } from "./telegram.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const css = await readFile(join(here, "blog.css"), "utf8");
@@ -31,6 +33,18 @@ async function bodyParams(request) {
     chunks.push(chunk);
   }
   return new URLSearchParams(Buffer.concat(chunks).toString("utf8"));
+}
+
+async function bodyJson(request) {
+  const chunks = [];
+  let size = 0;
+  for await (const chunk of request) {
+    size += chunk.length;
+    if (size > 65_536) throw Object.assign(new Error("request body too large"), { status: 413 });
+    chunks.push(chunk);
+  }
+  try { return JSON.parse(Buffer.concat(chunks).toString("utf8")); }
+  catch { throw Object.assign(new Error("invalid JSON"), { status: 400 }); }
 }
 
 function validOrigin(request) {
@@ -104,6 +118,28 @@ async function submitComment(request, response, slug) {
   response.writeHead(303, { Location: `${path}?comment=received` }).end();
 }
 
+const privateHeaders = { "Cache-Control": "no-store", "X-Robots-Tag": "noindex, nofollow", "Referrer-Policy": "no-referrer" };
+
+async function telegramWebhook(request, response) {
+  if (!telegramReady(config)) return send(response, 404, "text/plain; charset=utf-8", "Not found");
+  if (!validWebhookSecret(request.headers["x-telegram-bot-api-secret-token"], config.telegramWebhookSecret)) return send(response, 403, "text/plain; charset=utf-8", "Forbidden");
+  await handleTelegramUpdate(pool, await bodyJson(request), config);
+  return send(response, 200, "application/json; charset=utf-8", '{"ok":true}', { "Cache-Control": "no-store" });
+}
+
+async function reviewPage(request, response, token, action = false) {
+  if (!telegramReady(config)) return send(response, 404, "text/plain; charset=utf-8", "Not found");
+  const review = await findReviewByToken(pool, token, config);
+  if (!review) return send(response, 404, "text/plain; charset=utf-8", "Not found", privateHeaders);
+  if (!action) return send(response, 200, "text/html; charset=utf-8", renderReviewPage(review, token), privateHeaders);
+  if (!validOrigin(request)) return send(response, 403, "text/plain; charset=utf-8", "Forbidden", privateHeaders);
+  const form = await bodyParams(request);
+  const requested = form.get("action");
+  if (!["publish", "reject"].includes(requested) || form.get("confirm") !== requested) return send(response, 400, "text/plain; charset=utf-8", "Akci je nutné potvrdit.", privateHeaders);
+  const result = await applyEditorialAction(pool, review.request_id, requested, `telegram-link:${review.intended_user_id}`);
+  return send(response, 200, "text/html; charset=utf-8", renderReviewResult(result.status), privateHeaders);
+}
+
 const server = createServer(async (request, response) => {
   const started = Date.now();
   try {
@@ -113,6 +149,9 @@ const server = createServer(async (request, response) => {
       await pool.query("SELECT 1");
       return send(response, 200, "application/json; charset=utf-8", JSON.stringify({ status: "ok", generationEnabled: config.generationEnabled }));
     }
+    if (method === "POST" && url.pathname === "/api/blog/telegram/webhook") return await telegramWebhook(request, response);
+    const reviewMatch = url.pathname.match(/^\/blog\/review\/([A-Za-z0-9_-]{40,80})(\/action)?$/);
+    if (reviewMatch && ((method === "GET" && !reviewMatch[2]) || (method === "POST" && reviewMatch[2]))) return await reviewPage(request, response, reviewMatch[1], Boolean(reviewMatch[2]));
     if (method === "GET" && url.pathname === "/blog-sitemap.xml") return send(response, 200, "application/xml; charset=utf-8", await renderSitemap(), { "Cache-Control": "public,max-age=300" });
     if (method === "GET" && ["/blog/feed.xml", "/en/blog/feed.xml"].includes(url.pathname)) return send(response, 200, "application/rss+xml; charset=utf-8", await renderFeed(url.pathname.startsWith("/en/") ? "en" : "cs"), { "Cache-Control": "public,max-age=300" });
     if (method === "GET" && url.pathname === "/blog-assets/blog.css") return send(response, 200, "text/css; charset=utf-8", css, { "Cache-Control": "public,max-age=3600" });
@@ -138,7 +177,8 @@ const server = createServer(async (request, response) => {
     send(response, 404, "text/plain; charset=utf-8", "Not found");
   } catch (error) {
     const status = Number(error.status) || 500;
-    console.error(JSON.stringify({ time: new Date().toISOString(), service: "vcode-blog", event: "request_failed", path: request.url, status, durationMs: Date.now() - started, error: error.message }));
+    const safePath = String(request.url ?? "").replace(/(\/blog\/review\/)[A-Za-z0-9_-]+/g, "$1[redacted]");
+    console.error(JSON.stringify({ time: new Date().toISOString(), service: "vcode-blog", event: "request_failed", path: safePath, status, durationMs: Date.now() - started, error: error.message }));
     if (!response.headersSent) send(response, status, "text/plain; charset=utf-8", status === 500 ? "Internal server error" : error.message);
   }
 });

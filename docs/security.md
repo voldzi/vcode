@@ -9,6 +9,8 @@
 - The feed collector accepts only HTTPS links on allowlisted publisher domains, validates every redirect and DNS result, rejects private/link-local destinations, bounds streamed responses and treats all source text as untrusted data.
 - OpenAI generation has no tools, uses structured output with a source-linked claim ledger, disables response storage and is blocked by conservative daily/monthly budget reservations.
 - Generated articles and comments default to pending review. Publication requires a named reviewer and creates an editorial audit event.
+- Telegram editorial review is disabled by default. When enabled, Telegram authenticates the webhook with a secret header; VCode also restricts actions to one configured user and chat, signs callback payloads, deduplicates update IDs and requires a second confirmation.
+- Browser review links are random, short-lived bearer capabilities. Only a hash is stored, responses are never cached or indexed, referrers are suppressed and review tokens are redacted from application logs.
 # Runtime hardening
 
 The production container runs as the unprivileged Nginx user (`101:101`) with a read-only root filesystem, all Linux capabilities dropped and `no-new-privileges` enabled. Only the Nginx cache and runtime directories are ephemeral `tmpfs` mounts owned by that user.

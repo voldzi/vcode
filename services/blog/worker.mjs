@@ -5,6 +5,7 @@ import { fetchFeed } from "./feeds.mjs";
 import { defaultSources } from "./sources.mjs";
 import { buildEvidencePack, canonicalizeUrl, normalizeText, relevance, selectEvidenceCluster, titleFingerprint } from "./pipeline.mjs";
 import { generateArticle } from "./openai.mjs";
+import { notifyDraft } from "./telegram.mjs";
 
 const config = await loadConfig();
 const pool = createPool(config.databaseUrl);
@@ -198,6 +199,14 @@ export async function runOnce() {
     await client.query("UPDATE blog_runs SET status=$2, finished_at=now(), feed_items_seen=$3, article_id=$4 WHERE id=$1", [runId, config.autoPublish ? "published" : "draft", seen, articleId]);
     await client.query("COMMIT");
     log("article_created", { articleId, slug, published: config.autoPublish, model: config.openaiModel, costUsd: generated.costUsd });
+    if (!config.autoPublish) {
+      try {
+        const notification = await notifyDraft(client, articleId, config);
+        log(notification.skipped ? "telegram_notification_skipped" : "telegram_notification_sent", { articleId, requestId: notification.requestId });
+      } catch (error) {
+        log("telegram_notification_failed", { articleId, error: error.message });
+      }
+    }
   } catch (error) {
     await client.query("ROLLBACK").catch(() => {});
     if (runId) await client.query("UPDATE blog_runs SET status='failed', finished_at=now(), message=$2 WHERE id=$1", [runId, String(error.message).slice(0, 500)]).catch(() => {});
