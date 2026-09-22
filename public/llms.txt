@@ -12,6 +12,7 @@ Support: mailto:podpora@zeleznalady.cz
 - [Jízda](https://vcode.zeleznalady.cz/aplikace/jizda/): journey logging, navigation, vehicles, passengers, costs and secure communication for iPhone and Apple Watch.
 - [COP Mobile](https://vcode.zeleznalady.cz/aplikace/cop-mobile/): mobile situational awareness, field reporting, alerts and secure communication.
 - [COP](https://vcode.zeleznalady.cz/aplikace/cop/): public situation map for traffic, warnings, infrastructure and route planning.
+- [NEST](https://vcode.zeleznalady.cz/aplikace/nest/): turn-based strategy game for iPhone and iPad with local play, an on-device AI opponent and Game Center multiplayer; preparing for App Store release.
 - [Masáže Železná Lady](https://vcode.zeleznalady.cz/aplikace/masaze/): services, live availability and massage booking.
 - [Studio Balance](https://vcode.zeleznalady.cz/aplikace/studio-balance/): class schedules, booking and client self-service.
 - [STRATOS](https://vcode.zeleznalady.cz/aplikace/stratos/): auditable strategy, project, finance, risk and knowledge management.

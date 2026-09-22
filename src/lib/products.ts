@@ -84,6 +84,22 @@ export const products: Product[] = [
     availabilityEn: "Available as a web app"
   },
   {
+    id: "nest",
+    name: "NEST",
+    href: "nest",
+    tone: "nest",
+    categoryCs: "Strategická hra",
+    categoryEn: "Strategy game",
+    headlineCs: "Klidná strategie. Každý tah má význam.",
+    headlineEn: "Calm strategy. Every move matters.",
+    summaryCs: "Tahová strategická hra pro iPhone a iPad, ve které dva hráči vedou ptačí figurky na společném šestiúhelníkovém hnízdě.",
+    summaryEn: "A turn-based strategy game for iPhone and iPad, where two players guide bird pieces across a shared hexagonal nest.",
+    capabilitiesCs: ["Hra na jednom zařízení", "Soupeř s lokální AI", "Online hra přes Game Center", "Pravidla pro začátečníky i pokročilé"],
+    capabilitiesEn: ["Play on one device", "On-device AI opponent", "Game Center multiplayer", "Rules for beginners and experienced players"],
+    availabilityCs: "Připravujeme vydání v App Store",
+    availabilityEn: "Preparing for release on the App Store"
+  },
+  {
     id: "masaze",
     name: "Masáže Železná Lady",
     href: "masaze",
