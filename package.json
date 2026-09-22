@@ -20,6 +20,7 @@
     "test:blog": "node --test services/blog/test/*.test.mjs",
     "blog:moderate": "node services/blog/moderate.mjs",
     "blog:articles": "node services/blog/articles.mjs",
+    "blog:validate-sources": "node scripts/validate-blog-sources.mjs",
     "indexnow:submit": "node scripts/submit-indexnow.mjs"
   },
   "dependencies": {

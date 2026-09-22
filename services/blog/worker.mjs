@@ -1,7 +1,9 @@
 import { createHash } from "node:crypto";
 import { loadConfig } from "./config.mjs";
 import { createPool, migrate } from "./db.mjs";
-import { defaultSources, fetchFeed } from "./feeds.mjs";
+import { fetchFeed } from "./feeds.mjs";
+import { defaultSources } from "./sources.mjs";
+import { buildEvidencePack, canonicalizeUrl, normalizeText, relevance, selectEvidenceCluster, titleFingerprint } from "./pipeline.mjs";
 import { generateArticle } from "./openai.mjs";
 
 const config = await loadConfig();
@@ -19,21 +21,40 @@ function slugify(value) {
 
 async function collectFeeds(client) {
   let seen = 0;
+  await client.query("UPDATE blog_sources SET enabled=false WHERE NOT (id = ANY($1::text[]))", [defaultSources.map((source) => source.id)]);
   for (const source of defaultSources) {
     await client.query(
-      `INSERT INTO blog_sources (id, name, feed_url, homepage_url) VALUES ($1,$2,$3,$4)
-       ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, feed_url=EXCLUDED.feed_url, homepage_url=EXCLUDED.homepage_url`,
-      [source.id, source.name, source.feedUrl, source.homepageUrl]
+      `INSERT INTO blog_sources
+         (id, name, feed_url, homepage_url, enabled, collection_mode, language, trust_tier, source_kind, retention_policy, license_note, allowed_hosts, topics)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+       ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, feed_url=EXCLUDED.feed_url, homepage_url=EXCLUDED.homepage_url,
+         collection_mode=EXCLUDED.collection_mode, language=EXCLUDED.language, trust_tier=EXCLUDED.trust_tier,
+         source_kind=EXCLUDED.source_kind, retention_policy=EXCLUDED.retention_policy, license_note=EXCLUDED.license_note,
+         allowed_hosts=EXCLUDED.allowed_hosts, topics=EXCLUDED.topics`,
+      [source.id, source.name, source.feedUrl, source.homepageUrl, source.enabled, source.collectionMode, source.language,
+       source.trustTier, source.sourceKind, source.retentionPolicy, source.licenseNote ?? null,
+       JSON.stringify(source.allowedHosts), JSON.stringify(source.topics)]
     );
-    const cache = (await client.query("SELECT etag, last_modified FROM blog_sources WHERE id=$1", [source.id])).rows[0];
+    const cache = (await client.query("SELECT enabled, etag, last_modified FROM blog_sources WHERE id=$1", [source.id])).rows[0];
+    if (!cache.enabled || source.collectionMode !== "rss" || !source.feedUrl) continue;
     try {
-      const feed = await fetchFeed(source, cache, config.feedUserAgent);
+      const feed = await fetchFeed(source, cache, config.feedUserAgent, {
+        maxBytes: config.feedMaxBytes, maxItems: config.feedMaxItems,
+        timeoutMs: config.feedTimeoutMs, maxRedirects: config.feedMaxRedirects
+      });
       for (const item of feed.items) {
+        const enriched = { ...item, trustTier: source.trustTier, sourceKind: source.sourceKind, language: source.language };
+        const itemRelevance = relevance(enriched);
         await client.query(
-          `INSERT INTO blog_feed_items (id, source_id, title, url, summary, author, published_at)
-           VALUES ($1,$2,$3,$4,$5,$6,$7)
-           ON CONFLICT (id) DO UPDATE SET title=EXCLUDED.title, summary=EXCLUDED.summary, author=EXCLUDED.author, published_at=EXCLUDED.published_at`,
-          [item.id, item.sourceId, item.title, item.url, item.summary, item.author, item.publishedAt]
+          `INSERT INTO blog_feed_items
+             (id, source_id, title, url, canonical_url, summary, author, published_at, normalized_title, title_fingerprint, relevance_score)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+           ON CONFLICT (id) DO UPDATE SET title=EXCLUDED.title, summary=EXCLUDED.summary, author=EXCLUDED.author,
+             published_at=EXCLUDED.published_at, canonical_url=EXCLUDED.canonical_url,
+             normalized_title=EXCLUDED.normalized_title, title_fingerprint=EXCLUDED.title_fingerprint,
+             relevance_score=EXCLUDED.relevance_score`,
+          [item.id, item.sourceId, item.title, item.url, canonicalizeUrl(item.url), item.summary, item.author, item.publishedAt,
+           normalizeText(item.title), titleFingerprint(item.title), itemRelevance.score]
         );
       }
       seen += feed.items.length;
@@ -63,6 +84,40 @@ async function budgetAllows(client) {
     && Number(monthly.cost) + worstCost <= config.monthlyCostBudgetUsd;
 }
 
+function worstCaseReservation() {
+  const inputTokens = Math.ceil(config.maxInputChars / 3);
+  const outputTokens = config.maxOutputTokens;
+  return {
+    inputTokens,
+    outputTokens,
+    costUsd: (inputTokens * config.inputPricePerMillionUsd + outputTokens * config.outputPricePerMillionUsd) / 1_000_000
+  };
+}
+
+async function reserveBudget(client) {
+  const reserved = worstCaseReservation();
+  await client.query(
+    `INSERT INTO blog_ai_usage (usage_day, runs, input_tokens, output_tokens, estimated_cost_usd)
+     VALUES (CURRENT_DATE,1,$1,$2,$3)
+     ON CONFLICT (usage_day) DO UPDATE SET runs=blog_ai_usage.runs+1,
+       input_tokens=blog_ai_usage.input_tokens+EXCLUDED.input_tokens,
+       output_tokens=blog_ai_usage.output_tokens+EXCLUDED.output_tokens,
+       estimated_cost_usd=blog_ai_usage.estimated_cost_usd+EXCLUDED.estimated_cost_usd, updated_at=now()`,
+    [reserved.inputTokens, reserved.outputTokens, reserved.costUsd]
+  );
+  return reserved;
+}
+
+async function reconcileBudget(client, reserved, usage, actualCost) {
+  await client.query(
+    `UPDATE blog_ai_usage SET
+       input_tokens=GREATEST(0,input_tokens-$1+$2), output_tokens=GREATEST(0,output_tokens-$3+$4),
+       estimated_cost_usd=GREATEST(0,estimated_cost_usd-$5+$6), updated_at=now()
+     WHERE usage_day=CURRENT_DATE`,
+    [reserved.inputTokens, usage.input_tokens ?? 0, reserved.outputTokens, usage.output_tokens ?? 0, reserved.costUsd, actualCost]
+  );
+}
+
 export async function runOnce() {
   const client = await pool.connect();
   let locked = false;
@@ -79,7 +134,7 @@ export async function runOnce() {
       await client.query("UPDATE blog_runs SET status='skipped', finished_at=now(), feed_items_seen=$2, message=$3 WHERE id=$1", [runId, seen, "generation disabled"]);
       return log("run_skipped", { reason: "generation disabled", feedItems: seen });
     }
-    const recent = await client.query("SELECT 1 FROM blog_runs WHERE status='published' AND finished_at > now() - ($1::text || ' minutes')::interval LIMIT 1", [config.runIntervalMinutes - 5]);
+    const recent = await client.query("SELECT 1 FROM blog_runs WHERE status IN ('draft','published') AND finished_at > now() - ($1::text || ' minutes')::interval LIMIT 1", [config.generationIntervalMinutes - 5]);
     if (recent.rowCount) {
       await client.query("UPDATE blog_runs SET status='skipped', finished_at=now(), feed_items_seen=$2, message=$3 WHERE id=$1", [runId, seen, "publication interval not elapsed"]);
       return log("run_skipped", { reason: "publication interval not elapsed" });
@@ -91,25 +146,39 @@ export async function runOnce() {
 
     const candidates = (await client.query(
       `SELECT i.id, i.source_id AS "sourceId", s.name AS "sourceName", i.title, i.url, i.summary,
-              i.published_at AS "publishedAt"
+              i.published_at AS "publishedAt", s.trust_tier AS "trustTier", s.source_kind AS "sourceKind",
+              s.language, i.relevance_score::float8 AS "storedScore"
        FROM blog_feed_items i JOIN blog_sources s ON s.id=i.source_id
-       WHERE i.used_at IS NULL AND i.summary <> '' AND COALESCE(i.published_at, i.collected_at) > now() - interval '7 days'
-       ORDER BY COALESCE(i.published_at, i.collected_at) DESC LIMIT 24`
+       WHERE i.used_at IS NULL AND i.summary <> '' AND s.enabled
+         AND COALESCE(i.published_at, i.collected_at) > now() - interval '14 days'
+       ORDER BY i.relevance_score DESC NULLS LAST, COALESCE(i.published_at, i.collected_at) DESC LIMIT 120`
     )).rows;
-    if (new Set(candidates.map((item) => item.sourceId)).size < 2) {
-      await client.query("UPDATE blog_runs SET status='skipped', finished_at=now(), feed_items_seen=$2, message=$3 WHERE id=$1", [runId, seen, "not enough independent fresh sources"]);
-      return log("run_skipped", { reason: "not enough independent fresh sources" });
+    const cluster = selectEvidenceCluster(candidates);
+    const evidence = buildEvidencePack(cluster);
+    if (!cluster || !evidence) {
+      await client.query("UPDATE blog_runs SET status='skipped', finished_at=now(), feed_items_seen=$2, message=$3 WHERE id=$1", [runId, seen, "no eligible evidence cluster"]);
+      return log("run_skipped", { reason: "no eligible evidence cluster" });
     }
 
-    const generated = await generateArticle(candidates, config);
+    await client.query(
+      `INSERT INTO blog_story_clusters (id, representative_title, item_ids, evidence, score)
+       VALUES ($1,$2,$3,$4,$5)
+       ON CONFLICT (id) DO UPDATE SET item_ids=EXCLUDED.item_ids, evidence=EXCLUDED.evidence, score=EXCLUDED.score, updated_at=now()`,
+      [cluster.id, cluster.items[0].title, JSON.stringify(cluster.items.map((item) => item.id)), JSON.stringify(evidence), cluster.score]
+    );
+
+    const reservedBudget = await reserveBudget(client);
+    const generated = await generateArticle(cluster.items, config);
     const selected = generated.inputCandidates.filter((item) => generated.article.source_ids.includes(item.id));
     const slug = slugify(generated.article.cs.title);
+    const articleEvidence = { ...evidence, claims: generated.article.claims };
     await client.query("BEGIN");
     const inserted = await client.query(
-      `INSERT INTO blog_articles (slug, topic, sources, hero_variant, status, model, input_tokens, output_tokens, estimated_cost_usd, generation_id, published_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,CASE WHEN $5='published' THEN now() ELSE NULL END) RETURNING id`,
-      [slug, generated.article.topic, JSON.stringify(selected), generated.article.hero_variant, config.autoPublish ? "published" : "draft",
-       config.openaiModel, generated.usage.input_tokens ?? 0, generated.usage.output_tokens ?? 0, generated.costUsd, generated.responseId]
+      `INSERT INTO blog_articles (slug, topic, sources, evidence, hero_variant, status, model, input_tokens, output_tokens, estimated_cost_usd, generation_id, published_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,CASE WHEN $6='published' THEN now() ELSE NULL END) RETURNING id`,
+      [slug, generated.article.topic, JSON.stringify(selected), JSON.stringify(articleEvidence), generated.article.hero_variant,
+       config.autoPublish ? "published" : "draft", config.openaiModel, generated.usage.input_tokens ?? 0,
+       generated.usage.output_tokens ?? 0, generated.costUsd, generated.responseId]
     );
     const articleId = inserted.rows[0].id;
     for (const locale of ["cs", "en"]) {
@@ -120,15 +189,12 @@ export async function runOnce() {
       );
     }
     await client.query("UPDATE blog_feed_items SET used_at=now() WHERE id = ANY($1::text[])", [generated.article.source_ids]);
+    await client.query("UPDATE blog_story_clusters SET status=$2, updated_at=now() WHERE id=$1", [cluster.id, config.autoPublish ? "published" : "drafted"]);
     await client.query(
-      `INSERT INTO blog_ai_usage (usage_day, runs, input_tokens, output_tokens, estimated_cost_usd)
-       VALUES (CURRENT_DATE,1,$1,$2,$3)
-       ON CONFLICT (usage_day) DO UPDATE SET runs=blog_ai_usage.runs+1,
-         input_tokens=blog_ai_usage.input_tokens+EXCLUDED.input_tokens,
-         output_tokens=blog_ai_usage.output_tokens+EXCLUDED.output_tokens,
-         estimated_cost_usd=blog_ai_usage.estimated_cost_usd+EXCLUDED.estimated_cost_usd, updated_at=now()`,
-      [generated.usage.input_tokens ?? 0, generated.usage.output_tokens ?? 0, generated.costUsd]
+      "INSERT INTO blog_editorial_events (article_id, action, actor, detail) VALUES ($1,'generated','vcode-blog-worker',$2)",
+      [articleId, JSON.stringify({ cluster_id: cluster.id, model: config.openaiModel, auto_publish: config.autoPublish })]
     );
+    await reconcileBudget(client, reservedBudget, generated.usage, generated.costUsd);
     await client.query("UPDATE blog_runs SET status=$2, finished_at=now(), feed_items_seen=$3, article_id=$4 WHERE id=$1", [runId, config.autoPublish ? "published" : "draft", seen, articleId]);
     await client.query("COMMIT");
     log("article_created", { articleId, slug, published: config.autoPublish, model: config.openaiModel, costUsd: generated.costUsd });

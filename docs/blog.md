@@ -2,18 +2,26 @@
 
 ## Editorial flow
 
-Every six hours the worker reads allowlisted RSS/Atom feeds using conditional HTTP requests. It stores titles, publisher summaries, publication time and canonical links. A feed failure is isolated and never stops collection from the remaining publishers.
+Every six hours the worker reads an allowlisted registry of RSS/Atom feeds using conditional HTTP requests. It stores titles, publisher summaries, publication time, canonical links, trust metadata and a deterministic title fingerprint. Feed redirects remain inside explicitly allowed public HTTPS hosts; private, loopback and link-local destinations are rejected. A feed failure is isolated and never stops collection from the remaining publishers.
 
-When generation is enabled, one run selects recent unused items from at least two publishers. The model receives only bounded feed metadata, never browser credentials, database access, tools or arbitrary web access. Structured output must contain matching Czech and English editions, three to six sections, key points and IDs of cited inputs. Deterministic validation rejects unknown sources, single-publisher articles and text outside the editorial length limits.
+Collection and generation have separate schedules. Collection runs every six hours; generation runs no more than once per day. Deterministic relevance scoring and near-duplicate headline clustering create one evidence pack. A cluster is eligible when it includes an official primary/authority source or at least two independent publications. This avoids forcing an official release or authority warning through a second-hand article merely to satisfy a source count.
 
-The published page clearly links every input used to create the briefing. VCode writes an original synthesis and does not republish full source articles. Generated illustrations are deterministic VCode SVG compositions and do not create additional API cost. The first production article remains a draft until both language versions and their sources have been reviewed with the private `articles.mjs` command. Public articles clearly disclose the automated newsroom process.
+The model receives only the bounded evidence pack, never browser credentials, database access, tools or arbitrary web access. Structured output must contain matching Czech and English editions, three to six sections, key points, a claim ledger and IDs of cited inputs. Deterministic validation rejects unknown sources, unsupported claims and text outside the editorial length limits.
+
+The published page clearly links every input used to create the briefing. VCode writes an original synthesis and does not republish full source articles. Generated illustrations are deterministic VCode SVG compositions and do not create additional API cost. Every generated article is a draft by default. Publication records a named reviewer and an immutable editorial event after both language versions, claims and sources have been checked. Public articles clearly disclose the assisted newsroom process.
+
+## Source registry
+
+The first registry contains Root.cz, Zdroják, Vzhůru dolů, Blog CZ.NIC, NÚKIB, CSIRT.CZ, Lupa.cz, CESNET CyberFeed, Hugging Face, OpenAI, Ollama and Anthropic Engineering. Anthropic remains disabled until a stable official machine-readable feed is verified. Each source records language, trust tier, content kind, allowed hosts, topics, retention policy and a licensing note. Operators can disable an active source in PostgreSQL without a release.
+
+Only publisher-provided metadata and summaries are retained. Docling/AKB ingestion is reserved for individually selected official documents whose retention and processing terms have been reviewed. News pages are not bulk-copied into AKB or object storage.
 
 ## Hard limits
 
 Production defaults:
 
 - interval: 360 minutes;
-- maximum generations: 4 per UTC day;
+- maximum generations: 1 per UTC day;
 - maximum input: 28,000 characters;
 - maximum output: 2,200 tokens;
 - daily total token ceiling: 80,000 tokens;
@@ -21,7 +29,7 @@ Production defaults:
 - default model: `gpt-5.6-luna` with low reasoning effort;
 - OpenAI response storage: disabled.
 
-The worker holds a PostgreSQL advisory lock while checking and recording the budget, so restarts or duplicate containers cannot generate concurrently. Hitting any ceiling produces a recorded skipped run and no API call.
+The worker holds a PostgreSQL advisory lock while checking and recording the budget, so restarts or duplicate containers cannot generate concurrently. It reserves worst-case tokens and cost before calling OpenAI, then reconciles the reservation with actual usage. A failed or uncertain request retains the conservative reservation. Hitting any ceiling produces a recorded skipped run and no API call. The OpenAI project must also have its own independent usage limit.
 
 ## Comments
 
@@ -29,12 +37,22 @@ Comment submission uses a same-origin form, a 16 KiB body limit, a hidden spam f
 
 Public removal requests go through `podpora@zeleznalady.cz`.
 
-Pending comments are reviewed from the private Docker host; no moderation endpoint is exposed publicly:
+Comments default to pending. Pending comments are reviewed from the private Docker host; no moderation endpoint is exposed publicly:
 
 ```bash
 docker compose -p vcode-prod run --rm blog node services/blog/moderate.mjs list
 docker compose -p vcode-prod run --rm blog node services/blog/moderate.mjs approve <id>
 docker compose -p vcode-prod run --rm blog node services/blog/moderate.mjs reject <id>
+```
+
+Draft review also stays private:
+
+```bash
+docker compose -p vcode-prod run --rm blog node services/blog/articles.mjs list-drafts
+docker compose -p vcode-prod run --rm blog node services/blog/articles.mjs show <id>
+docker compose -p vcode-prod run --rm blog node services/blog/articles.mjs review <id> <reviewer>
+docker compose -p vcode-prod run --rm blog node services/blog/articles.mjs publish <id> <reviewer>
+docker compose -p vcode-prod run --rm blog node services/blog/articles.mjs reject <id> <reviewer>
 ```
 
 ## Activation checklist
@@ -43,4 +61,5 @@ docker compose -p vcode-prod run --rm blog node services/blog/moderate.mjs rejec
 2. Mount database URL, comment hash secret and the dedicated VCode OpenAI key as Docker secret files.
 3. Start with `BLOG_GENERATION_ENABLED=false` and verify `/health/blog`, empty blog pages, source collection and comment moderation queue.
 4. Run one controlled generation, review both language versions, source links, usage and cost.
-5. Enable scheduling and verify that a second run inside the interval is skipped.
+5. Evaluate at least 20 historical clusters and review the first 10-20 generated drafts.
+6. Keep `BLOG_AUTO_PUBLISH=false` until a separately approved low-risk publication policy exists.

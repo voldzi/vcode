@@ -17,7 +17,7 @@ The repository contains no production hostname, address, credential, secret path
 
 Before release, run `pnpm check`, `pnpm test` and `pnpm build`, validate `openapi/openapi.json`, build immutable container images and record their digests in the private release record. Verify both health routes, Czech and English pages, a product page, a guide in both languages, sitemap, feed, security headers and broken links.
 
-The blog generator remains disabled until the database and a dedicated OpenAI project key have passed a controlled draft-only run. Never enable automatic publication before both language variants, citations, usage and budget enforcement have been reviewed.
+The blog generator remains disabled until the database and a dedicated, project-limited OpenAI key have passed a controlled draft-only run. Collection may run independently. Never enable automatic publication before both language variants, the claim ledger, evidence links, usage reservation and reviewer audit have been inspected across at least 10-20 drafts.
 
 ## Rollback
 

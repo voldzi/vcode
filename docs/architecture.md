@@ -30,3 +30,5 @@ The website never calls Registry, object storage, Qdrant or the LLM directly fro
 ## Technology blog
 
 The blog pipeline and its trust boundaries are documented in [blog.md](blog.md). OpenAI, PostgreSQL and feed requests originate only from server-side containers. The browser receives rendered pages and the same-origin comment form; it never receives provider endpoints or credentials.
+
+PostgreSQL is the authoritative workflow store. OpenSearch and Qdrant remain behind AKB and may later assist with evidence retrieval and cross-article similarity through an authenticated service contract; VCode must not connect to their storage APIs directly. Docling is appropriate for reviewed official PDF/DOCX evidence, not routine news scraping. Until that AKB contract is implemented and tested, the worker uses a local metadata-only evidence pack and fails closed rather than inventing an internal endpoint.
