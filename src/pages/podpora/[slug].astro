@@ -1,0 +1,12 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { appStoreProducts } from "../../lib/appStore";
+export function getStaticPaths() { return appStoreProducts.map(product => ({ params:{slug:product.storeSlug}, props:{product} })); }
+const { product } = Astro.props;
+const path = `/podpora/${product.storeSlug}/`;
+const alternatePath = `/en/support/${product.storeSlug}/`;
+---
+<BaseLayout title={`Podpora pro ${product.name} — VCode`} description={`Návody, kontakt a technická podpora pro aplikaci ${product.name}.`} lang="cs" {path} {alternatePath}>
+  <section class="support-page"><p class="kicker">Podpora aplikace</p><h1>{product.name}</h1><p class="lead">Nejrychlejší pomoc najdete v návodech. Pokud problém přetrvává, napište nám název zařízení, verzi systému, čas problému a kroky, které mu předcházely.</p><div class="support-options"><a href={`/navody/?aplikace=${product.id}`}><strong>Návody pro {product.name}</strong><span>Ověřené postupy →</span></a><a href={`mailto:podpora@zeleznalady.cz?subject=Podpora ${product.name}`}><strong>Napsat podpoře</strong><span>podpora@zeleznalady.cz →</span></a></div><div class="store-links"><a class="store-link" href={product.privacyCs}>Ochrana soukromí</a><a class="store-link" href={`/app-store/${product.storeSlug}/`}>Stránka aplikace</a></div><p class="privacy-note">Do zprávy neposílejte hesla, přístupové tokeny ani úplnou historii polohy.</p></section>
+</BaseLayout>
+

@@ -1,14 +1,16 @@
 ---
 import type { Product } from "../lib/products";
+import ProductIcon from "./ProductIcon.astro";
 const { product, lang = "cs", featured = false } = Astro.props as { product: Product; lang?: "cs" | "en"; featured?: boolean };
 const cs = lang === "cs";
 const href = cs ? `/aplikace/${product.href}/` : `/en/apps/${product.href}/`;
 ---
 <article class:list={["product-card", `tone-${product.tone}`, { featured }]}>
   <div class="product-topline">
-    <span>{cs ? product.categoryCs : product.categoryEn}</span>
+    <ProductIcon id={product.id} size={featured ? 72 : 60} />
     <span class="availability">{cs ? product.availabilityCs : product.availabilityEn}</span>
   </div>
+  <span class="product-category">{cs ? product.categoryCs : product.categoryEn}</span>
   <h3>{product.name}</h3>
   <p class="product-headline">{cs ? product.headlineCs : product.headlineEn}</p>
   <p>{cs ? product.summaryCs : product.summaryEn}</p>

@@ -4,13 +4,15 @@
   --blue: #00b4ff;
   --lime: #a3e635;
   --surface: #f8fafc;
+  --surface-raised: rgba(255,255,255,.82);
   --white: #fff;
   --ink: #07172c;
   --muted: #5f6f82;
   --line: #dce4ec;
   --signal: var(--lime);
-  --radius: 1.4rem;
-  --shadow: 0 28px 80px rgba(7, 32, 65, .12);
+  --radius: 1.75rem;
+  --shadow: 0 30px 90px rgba(7, 32, 65, .14), 0 2px 8px rgba(7,32,65,.05);
+  --hairline: rgba(11,45,91,.11);
   font-family: "Inter Variable", Inter, system-ui, sans-serif;
   color: var(--ink);
   background: var(--surface);
@@ -19,26 +21,30 @@
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; background: var(--navy-deep); }
-body { margin: 0; min-width: 320px; background: var(--surface); color: var(--ink); font-size: 1rem; line-height: 1.6; text-rendering: optimizeLegibility; }
+body { margin: 0; min-width: 320px; background: #eaf0f6; color: var(--ink); font-size: 1rem; line-height: 1.6; text-rendering: optimizeLegibility; -webkit-font-smoothing:antialiased; }
 a { color: inherit; text-decoration: none; }
 button, a { -webkit-tap-highlight-color: transparent; }
 img, svg { display: block; max-width: 100%; }
 ::selection { background: rgba(0,180,255,.22); }
-.shell { max-width: 1600px; margin: 0 auto; background: var(--surface); overflow: hidden; }
+.shell { max-width: 1600px; margin: 0 auto; background: var(--surface); overflow: clip; box-shadow:0 0 80px rgba(5,25,50,.08); }
 .skip-link { position: fixed; z-index: 100; left: 1rem; top: -5rem; padding: .8rem 1rem; border-radius: .7rem; background: var(--white); color: var(--navy); box-shadow: var(--shadow); }
 .skip-link:focus { top: 1rem; }
 
-.site-header { position: relative; z-index: 20; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 2rem; min-height: 88px; padding: 1rem clamp(1.25rem,5vw,5rem); border-bottom: 1px solid rgba(11,45,91,.1); background: rgba(248,250,252,.9); backdrop-filter: blur(18px); }
+.site-header { position: sticky; top:0; z-index: 20; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 2rem; min-height: 82px; padding: .85rem clamp(1.25rem,5vw,5rem); border-bottom: 1px solid var(--hairline); background: rgba(248,250,252,.78); -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%); }
 .brand { justify-self: start; display: inline-flex; align-items: center; gap: .65rem; font-family: "Manrope Variable", sans-serif; font-size: 1.6rem; font-weight: 760; letter-spacing: -.05em; color: var(--navy); }
 .brand .signal-mark { flex: none; }
 .site-header nav { display: flex; align-items: center; gap: 2rem; font-family: "Manrope Variable", sans-serif; font-weight: 650; color: #314763; }
 .site-header nav a, .language { position: relative; padding: .65rem .1rem; }
 .site-header nav a::after { content: ""; position: absolute; left: 0; right: 100%; bottom: .25rem; height: 2px; background: var(--blue); transition: right .2s ease; }
 .site-header nav a:hover::after, .site-header nav a:focus-visible::after { right: 0; }
-.language { justify-self: end; width: 2.8rem; height: 2.8rem; display: grid; place-items: center; padding: 0; border: 1px solid var(--line); border-radius: 50%; font: 700 .82rem "Manrope Variable", sans-serif; color: var(--navy); background: var(--white); }
+.header-actions { justify-self:end; display:flex; align-items:center; gap:.65rem; }
+.language { width: 2.8rem; height: 2.8rem; display: grid; place-items: center; padding: 0; border: 1px solid var(--hairline); border-radius: 50%; font: 700 .82rem "Manrope Variable", sans-serif; color: var(--navy); background: rgba(255,255,255,.78); transition:transform .2s ease,background .2s ease,box-shadow .2s ease; }
+.language:hover { transform:translateY(-2px); background:#fff; box-shadow:0 10px 24px rgba(7,32,65,.1); }
+.menu-toggle { display:none; width:2.8rem; height:2.8rem; border:1px solid var(--hairline); border-radius:50%; background:rgba(255,255,255,.78); color:var(--navy); }
+.menu-toggle span { display:block; width:16px; height:1.5px; margin:4px auto; border-radius:2px; background:currentColor; transition:transform .2s ease; }
 :focus-visible { outline: 3px solid rgba(0,180,255,.45); outline-offset: 4px; }
 
-.hero { position: relative; min-height: min(780px, calc(100vh - 88px)); display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: clamp(5rem,11vw,10rem) clamp(1.25rem,8vw,8rem); background: radial-gradient(circle at 80% 28%, rgba(0,180,255,.12), transparent 28%), linear-gradient(180deg,#fbfdff 0%,#f5f9fd 100%); isolation: isolate; }
+.hero { position: relative; min-height: min(820px, calc(100svh - 82px)); display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: clamp(5rem,11vw,10rem) clamp(1.25rem,8vw,8rem); background: radial-gradient(circle at 80% 24%, rgba(0,180,255,.18), transparent 24%), radial-gradient(circle at 72% 48%, rgba(163,230,53,.09), transparent 22%), linear-gradient(180deg,#fff 0%,#f3f8fd 100%); isolation: isolate; }
 .hero::before { content:""; position:absolute; inset: 2rem clamp(1rem,4vw,4rem); z-index:-1; background-image: linear-gradient(rgba(11,45,91,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(11,45,91,.045) 1px,transparent 1px); background-size: 80px 80px; mask-image: linear-gradient(to right,transparent 4%,black 35%,black 80%,transparent); }
 .eyebrow, .kicker { display: flex; align-items: center; gap: .7rem; margin: 0 0 1.25rem; color: var(--navy); font: 740 .78rem/1.2 "Manrope Variable",sans-serif; text-transform: uppercase; letter-spacing: .13em; }
 .eyebrow span { width: .65rem; height: .65rem; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 .38rem rgba(163,230,53,.16); }
@@ -47,11 +53,12 @@ img, svg { display: block; max-width: 100%; }
 .hero h1 em { color: var(--blue); font-style: normal; }
 .hero-copy { max-width: 700px; margin: 2.25rem 0 0; font-size: clamp(1.12rem,1.8vw,1.42rem); line-height: 1.55; color: #425773; }
 .hero-actions { display:flex; flex-wrap:wrap; gap:.8rem; margin-top:2.5rem; }
-.button { min-height: 3.25rem; display:inline-flex; align-items:center; justify-content:center; gap:.65rem; padding:.85rem 1.35rem; border:1px solid transparent; border-radius:999px; font:700 .92rem "Manrope Variable",sans-serif; transition:transform .2s ease,box-shadow .2s ease,background .2s ease; }
+.button { min-height: 3.25rem; display:inline-flex; align-items:center; justify-content:center; gap:.65rem; padding:.85rem 1.35rem; border:1px solid transparent; border-radius:999px; font:700 .92rem "Manrope Variable",sans-serif; transition:transform .28s cubic-bezier(.2,.8,.2,1),box-shadow .28s ease,background .2s ease; }
 .button:hover { transform:translateY(-2px); }
 .button.primary { color:var(--white); background:var(--navy); box-shadow:0 12px 30px rgba(11,45,91,.2); }
 .button.primary:hover { background:#103b74; box-shadow:0 16px 36px rgba(11,45,91,.25); }
-.button.secondary { color:var(--navy); border-color:var(--line); background:rgba(255,255,255,.75); }
+.button.secondary { color:var(--navy); border-color:var(--hairline); background:rgba(255,255,255,.68); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); }
+.button.secondary:hover { background:#fff; box-shadow:0 14px 34px rgba(7,32,65,.09); }
 .button.light { color:var(--navy-deep); background:var(--white); }
 .hero-signal { position:absolute; z-index:-1; right:clamp(-4rem,3vw,4rem); top:50%; transform:translateY(-47%) rotate(-7deg); opacity:.11; }
 .hero-signal .signal-mark { width:clamp(310px,40vw,650px); height:auto; filter:saturate(.7); }
@@ -69,10 +76,17 @@ img, svg { display: block; max-width: 100%; }
 .section-heading h2, .trust-band h2, .support-cta h2 { font-size:clamp(2.5rem,5vw,5.3rem); }
 .section-heading>p { margin:0; color:var(--muted); font-size:1.08rem; line-height:1.72; }
 .product-grid { display:grid; grid-template-columns:repeat(12,1fr); gap:1rem; }
-.product-card { --accent:var(--blue); grid-column:span 4; min-height:420px; display:flex; flex-direction:column; padding:clamp(1.5rem,3vw,2.3rem); border:1px solid var(--line); border-radius:var(--radius); background:var(--white); box-shadow:0 1px 0 rgba(11,45,91,.03); transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease; }
+.product-card { --accent:var(--blue); position:relative; overflow:hidden; isolation:isolate; grid-column:span 4; min-height:420px; display:flex; flex-direction:column; padding:clamp(1.5rem,3vw,2.3rem); border:1px solid var(--hairline); border-radius:var(--radius); background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(248,251,254,.82)); box-shadow:0 1px 0 rgba(11,45,91,.03); transition:transform .38s cubic-bezier(.2,.8,.2,1),box-shadow .38s ease,border-color .25s ease; }
+.product-card::before { content:""; position:absolute; z-index:-1; width:240px; height:240px; right:-100px; top:-110px; border-radius:50%; background:color-mix(in srgb,var(--accent) 12%,transparent); filter:blur(2px); transition:transform .45s cubic-bezier(.2,.8,.2,1),opacity .3s ease; }
 .product-card.featured { grid-column:span 6; min-height:460px; }
-.product-card:hover { transform:translateY(-5px); border-color:color-mix(in srgb,var(--accent) 42%,var(--line)); box-shadow:var(--shadow); }
-.product-topline { display:flex; justify-content:space-between; gap:1rem; min-height:2.6rem; font:700 .72rem "Manrope Variable",sans-serif; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); }
+.product-card:hover { transform:translateY(-8px) scale(1.008); border-color:color-mix(in srgb,var(--accent) 40%,var(--line)); box-shadow:var(--shadow); }
+.product-card:hover::before { transform:scale(1.22) translate(-8px,8px); }
+.product-topline { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; min-height:4.5rem; font:700 .72rem "Manrope Variable",sans-serif; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); }
+.product-icon { width:var(--icon-size); height:var(--icon-size); display:grid; place-items:center; flex:none; border-radius:22%; color:var(--accent); background:linear-gradient(145deg,#fff,color-mix(in srgb,var(--accent) 10%,#fff)); box-shadow:0 14px 34px color-mix(in srgb,var(--accent) 16%,transparent), inset 0 0 0 1px rgba(255,255,255,.8), 0 0 0 1px color-mix(in srgb,var(--accent) 18%,transparent); transition:transform .38s cubic-bezier(.2,.8,.2,1),box-shadow .38s ease; }
+.product-icon img { width:100%; height:100%; border-radius:inherit; object-fit:cover; }
+.product-icon-studio-balance img { object-fit:contain; padding:10%; background:#fff; }
+.product-card:hover .product-icon { transform:translateY(-3px) rotate(-2deg) scale(1.04); box-shadow:0 20px 42px color-mix(in srgb,var(--accent) 24%,transparent),inset 0 0 0 1px rgba(255,255,255,.9); }
+.product-category { margin-top:1.25rem; color:var(--accent); font:750 .72rem "Manrope Variable",sans-serif; letter-spacing:.1em; text-transform:uppercase; }
 .availability { max-width:44%; text-align:right; color:#758396; letter-spacing:0; text-transform:none; font-weight:600; }
 .product-card h3 { margin:auto 0 .7rem; font:760 clamp(2rem,4vw,4rem)/1 "Manrope Variable",sans-serif; letter-spacing:-.055em; color:var(--navy); }
 .product-headline { margin:0 0 .8rem!important; font:700 1.05rem/1.35 "Manrope Variable",sans-serif; color:var(--ink)!important; }
@@ -100,7 +114,7 @@ img, svg { display: block; max-width: 100%; }
 .detail-headline { margin:1rem 0; font:700 clamp(1.5rem,3vw,3rem)/1.2 "Manrope Variable",sans-serif; color:var(--accent); }
 .detail-summary { max-width:760px; margin:1.5rem 0 0; color:var(--muted); font-size:1.2rem; }
 .detail-grid { display:grid; grid-template-columns:1.4fr .7fr; gap:2rem; margin-top:5rem; }
-.detail-grid section, .detail-grid aside, .detail-support { padding:clamp(1.5rem,4vw,3rem); border:1px solid var(--line); border-radius:var(--radius); background:var(--white); }
+.detail-grid section, .detail-grid aside, .detail-support { padding:clamp(1.5rem,4vw,3rem); border:1px solid var(--hairline); border-radius:var(--radius); background:var(--surface-raised); box-shadow:0 18px 54px rgba(7,32,65,.055); -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px); }
 .detail-grid h2, .detail-support h2, .guide-list h2, .guide-body h2 { font:750 1.5rem "Manrope Variable",sans-serif; color:var(--navy); }
 .detail-grid ul { list-style:none; padding:0; margin:2rem 0 0; }
 .detail-grid li { padding:1rem 0; border-top:1px solid var(--line); font-weight:650; }
@@ -138,7 +152,8 @@ img, svg { display: block; max-width: 100%; }
 .support-page { min-height:70vh; }
 .support-page .lead { max-width:820px; margin:2rem 0 4rem; color:var(--muted); font-size:1.22rem; }
 .support-options { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; max-width:900px; }
-.support-options a { display:flex; flex-direction:column; gap:.5rem; padding:2rem; border:1px solid var(--line); border-radius:var(--radius); background:var(--white); }
+.support-options a { display:flex; flex-direction:column; gap:.5rem; padding:2rem; border:1px solid var(--hairline); border-radius:var(--radius); background:var(--surface-raised); transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s ease,border-color .3s ease; }
+.support-options a:hover { transform:translateY(-5px); border-color:rgba(0,180,255,.35); box-shadow:0 22px 60px rgba(7,32,65,.1); }
 .support-options strong { font:750 1.35rem "Manrope Variable",sans-serif; color:var(--navy); }
 .support-options span { color:var(--blue); }
 .privacy-note { margin-top:2rem; color:var(--muted); font-size:.9rem; }
@@ -149,9 +164,38 @@ img, svg { display: block; max-width: 100%; }
 .footer-links { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:1.5rem; color:var(--white); font-weight:650; }
 .site-footer small { grid-column:1/-1; padding-top:2rem; border-top:1px solid rgba(255,255,255,.12); color:#8293a7; }
 
+.reveal { opacity:0; transform:translateY(18px); transition:opacity .65s ease var(--reveal-delay,0ms),transform .65s cubic-bezier(.2,.8,.2,1) var(--reveal-delay,0ms); }
+.reveal.is-visible { opacity:1; transform:none; }
+
+.store-links { display:flex; flex-wrap:wrap; gap:.75rem; margin-top:1.5rem; }
+.store-link { display:inline-flex; align-items:center; gap:.55rem; padding:.75rem 1rem; border:1px solid var(--hairline); border-radius:999px; color:var(--navy); background:rgba(255,255,255,.72); font:700 .84rem "Manrope Variable",sans-serif; transition:transform .2s ease,background .2s ease; }
+.store-link:hover { transform:translateY(-2px); background:#fff; }
+.app-store-page { background:radial-gradient(circle at 80% 12%,rgba(0,180,255,.12),transparent 25%),linear-gradient(180deg,#fff,#f5f9fd 44rem); }
+.app-store-hero { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(280px,.65fr); gap:clamp(3rem,8vw,8rem); align-items:center; padding:clamp(4rem,9vw,9rem) clamp(1.25rem,8vw,8rem); }
+.app-store-hero h1 { margin:.8rem 0 1.2rem; font:760 clamp(3.3rem,7vw,7rem)/.95 "Manrope Variable",sans-serif; letter-spacing:-.06em; color:var(--navy); }
+.app-store-hero .lead { max-width:720px; color:var(--muted); font-size:clamp(1.1rem,2vw,1.35rem); }
+.app-store-emblem { justify-self:center; width:min(300px,65vw); aspect-ratio:1; display:grid; place-items:center; border-radius:29%; background:linear-gradient(145deg,#fff,color-mix(in srgb,var(--accent) 13%,#fff)); box-shadow:0 45px 100px color-mix(in srgb,var(--accent) 24%,transparent),inset 0 0 0 1px rgba(255,255,255,.9),0 0 0 1px color-mix(in srgb,var(--accent) 18%,transparent); }
+.app-store-emblem .product-icon { width:68%; height:68%; border:0; border-radius:22%; background:none; box-shadow:0 22px 55px color-mix(in srgb,var(--accent) 20%,transparent); }
+.app-store-content { display:grid; grid-template-columns:1.25fr .75fr; gap:1.25rem; padding:0 clamp(1.25rem,8vw,8rem) clamp(6rem,10vw,10rem); }
+.app-store-content section { padding:clamp(1.6rem,4vw,3rem); border:1px solid var(--hairline); border-radius:var(--radius); background:rgba(255,255,255,.82); box-shadow:0 18px 60px rgba(7,32,65,.06); }
+.app-store-content h2 { margin:0 0 1rem; font:750 clamp(1.6rem,3vw,2.4rem) "Manrope Variable",sans-serif; color:var(--navy); }
+.app-store-content ul { list-style:none; margin:0; padding:0; }
+.app-store-content li { padding:1rem 0; border-top:1px solid var(--line); font-weight:650; }
+.app-store-content li::before { content:"✓"; margin-right:.7rem; color:var(--accent); }
+.app-store-meta { display:grid; gap:.65rem; align-content:start; }
+.app-store-meta a { color:var(--blue); font-weight:700; }
+
 @media (max-width:900px) {
   .site-header { grid-template-columns:1fr auto; min-height:74px; padding:.8rem 1rem; }
-  .site-header nav { grid-row:2; grid-column:1/-1; width:100%; justify-content:space-between; gap:.8rem; padding-top:.2rem; font-size:.86rem; }
+  .site-header { grid-template-columns:1fr auto; }
+  .site-header nav { position:absolute; top:calc(100% + .5rem); left:1rem; right:1rem; display:grid; gap:.2rem; padding:.7rem; border:1px solid var(--hairline); border-radius:1.4rem; background:rgba(255,255,255,.94); box-shadow:0 24px 70px rgba(7,32,65,.18); -webkit-backdrop-filter:blur(24px); backdrop-filter:blur(24px); opacity:0; transform:translateY(-8px) scale(.98); pointer-events:none; transition:opacity .2s ease,transform .2s ease; }
+  .site-header nav a { padding:.8rem 1rem; border-radius:.8rem; }
+  .site-header nav a:hover { background:#f1f7fc; }
+  .site-header nav a::after { display:none; }
+  .site-header.menu-open nav { opacity:1; transform:none; pointer-events:auto; }
+  .menu-toggle { display:block; }
+  .site-header.menu-open .menu-toggle span:first-child { transform:translateY(2.75px) rotate(45deg); }
+  .site-header.menu-open .menu-toggle span:last-child { transform:translateY(-2.75px) rotate(-45deg); }
   .hero { min-height:690px; }
   .hero-signal { right:-10rem; opacity:.08; }
   .section-heading, .trust-band { grid-template-columns:1fr; }
@@ -162,6 +206,8 @@ img, svg { display: block; max-width: 100%; }
   .support-cta { align-items:flex-start; flex-direction:column; }
   .detail-grid { grid-template-columns:1fr; }
   .help-products { grid-template-columns:repeat(2,1fr); }
+  .app-store-hero,.app-store-content { grid-template-columns:1fr; }
+  .app-store-emblem { grid-row:1; width:min(230px,58vw); }
 }
 
 @media (max-width:600px) {
@@ -184,3 +230,5 @@ img, svg { display: block; max-width: 100%; }
 }
 
 @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } *,*::before,*::after { transition:none!important; animation:none!important; } }
+
+@media (hover:none) { .product-card:hover,.support-options a:hover,.button:hover,.language:hover { transform:none; } }

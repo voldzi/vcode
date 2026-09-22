@@ -1,0 +1,22 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ProductIcon from "../../components/ProductIcon.astro";
+import { appStoreProducts } from "../../lib/appStore";
+export function getStaticPaths() { return appStoreProducts.map(product => ({ params: { slug: product.storeSlug }, props: { product } })); }
+const { product } = Astro.props;
+const path = `/app-store/${product.storeSlug}/`;
+const alternatePath = `/en/app-store/${product.storeSlug}/`;
+const pageStructuredData = { "@context":"https://schema.org", "@type":"MobileApplication", name:product.name, description:product.summaryCs, operatingSystem:"iOS", applicationCategory:product.categoryCs, url:new URL(path, Astro.site).href, publisher:{"@type":"Organization",name:"VCode"} };
+---
+<BaseLayout title={`${product.name} pro iPhone — VCode`} description={product.summaryCs} lang="cs" {path} {alternatePath} {pageStructuredData}>
+  <div class:list={["app-store-page", `tone-${product.tone}`]}>
+    <section class="app-store-hero">
+      <div><p class="kicker">Aplikace pro iPhone</p><h1>{product.name}</h1><p class="detail-headline">{product.headlineCs}</p><p class="lead">{product.summaryCs}</p><div class="store-links"><a class="button primary" href={product.supportCs}>Podpora aplikace</a><a class="store-link" href={product.privacyCs}>Ochrana soukromí</a></div></div>
+      <div class="app-store-emblem"><ProductIcon id={product.id} size={180}/></div>
+    </section>
+    <div class="app-store-content">
+      <section><h2>To podstatné v jedné aplikaci</h2><ul>{product.capabilitiesCs.map(item => <li>{item}</li>)}</ul></section>
+      <section class="app-store-meta"><h2>Informace a pomoc</h2><p>{product.availabilityCs}</p><a href={product.supportCs}>Technická podpora →</a><a href={product.privacyCs}>Ochrana soukromí →</a><a href={`/aplikace/${product.href}/`}>Více o aplikaci →</a></section>
+    </div>
+  </div>
+</BaseLayout>
