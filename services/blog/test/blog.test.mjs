@@ -5,7 +5,7 @@ import { boundCandidates, validateArticle } from "../openai.mjs";
 import { buildEvidencePack, canonicalizeUrl, clusterCandidates, selectEvidenceCluster, titleSimilarity } from "../pipeline.mjs";
 import { escapeHtml, renderIndex, renderReviewPage } from "../render.mjs";
 import { callbackData, parseCallbackData, reviewTokenHash } from "../review.mjs";
-import { validWebhookSecret } from "../telegram.mjs";
+import { telegramNotificationReady, telegramReady, validWebhookSecret } from "../telegram.mjs";
 import { activeSources, defaultSources } from "../sources.mjs";
 
 const source = { id: "root", name: "Root.cz", homepageUrl: "https://www.root.cz/" };
@@ -134,4 +134,11 @@ test("private review page is noindex, escaped and requires explicit confirmation
   assert.ok(html.includes('name="robots" content="noindex,nofollow,noarchive"'));
   assert.ok(html.includes("Bezpečný &lt;návrh&gt;"));
   assert.ok(!html.includes("Bezpečný <návrh>"));
+});
+
+test("outbound Telegram notification does not require inbound webhook secret", () => {
+  const config = { telegramEnabled: true, telegramBotToken: "bot-token", reviewSigningSecret: "s".repeat(32), telegramChatId: "1", telegramUserId: "1", telegramWebhookSecret: "" };
+  assert.equal(telegramNotificationReady(config), true);
+  assert.equal(telegramReady(config), false);
+  assert.equal(telegramReady({ ...config, telegramWebhookSecret: "w".repeat(32) }), true);
 });

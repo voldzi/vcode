@@ -2,7 +2,11 @@ import { callbackData, createReviewRequest, parseCallbackData, applyEditorialAct
 import { timingSafeEqual } from "node:crypto";
 
 export function telegramReady(config) {
-  return Boolean(config.telegramEnabled && config.telegramBotToken && config.telegramWebhookSecret?.length >= 32 && config.reviewSigningSecret?.length >= 32 && config.telegramChatId && config.telegramUserId);
+  return Boolean(telegramNotificationReady(config) && config.telegramWebhookSecret?.length >= 32);
+}
+
+export function telegramNotificationReady(config) {
+  return Boolean(config.telegramEnabled && config.telegramBotToken && config.reviewSigningSecret?.length >= 32 && config.telegramChatId && config.telegramUserId);
 }
 
 export function validWebhookSecret(supplied, expected) {
@@ -28,7 +32,7 @@ const keyboard = (requestId, reviewUrl, secret) => ({ inline_keyboard: [
 ] });
 
 export async function notifyDraft(client, articleId, config) {
-  if (!telegramReady(config)) return { skipped: true };
+  if (!telegramNotificationReady(config)) return { skipped: true };
   const article = (await client.query(`SELECT a.id,a.sources,t.title,t.dek FROM blog_articles a JOIN blog_article_translations t ON t.article_id=a.id AND t.locale='cs' WHERE a.id=$1 AND a.status='draft'`, [articleId])).rows[0];
   if (!article) return { skipped: true };
   const review = await createReviewRequest(client, articleId, config);
