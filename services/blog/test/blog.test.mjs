@@ -62,6 +62,12 @@ test("candidate bounding preserves valid JSON and independent publications", () 
   assert.ok(JSON.stringify(selected).length < 3000);
 });
 
+test("candidate bounding permits one authoritative primary source", () => {
+  const official = { id: "a".repeat(64), sourceId: "nukib", sourceName: "NÚKIB", sourceKind: "official", trustTier: "authority", title: "Bezpečnostní upozornění", summary: "Oficiální bezpečnostní informace.", url: "https://nukib.gov.cz/a", publishedAt: null };
+  assert.deepEqual(boundCandidates([official], 4000), [official]);
+  assert.throws(() => boundCandidates([{ ...official, sourceKind: "publication", trustTier: "editorial" }], 4000), /authoritative primary source/);
+});
+
 test("source registry starts with verified feeds and keeps unverified adapters disabled", () => {
   assert.equal(defaultSources.length, 12);
   assert.equal(activeSources().length, 11);

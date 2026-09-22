@@ -4,7 +4,7 @@ import { createPool, migrate } from "./db.mjs";
 import { fetchFeed } from "./feeds.mjs";
 import { defaultSources } from "./sources.mjs";
 import { buildEvidencePack, canonicalizeUrl, normalizeText, relevance, selectEvidenceCluster, titleFingerprint } from "./pipeline.mjs";
-import { generateArticle } from "./openai.mjs";
+import { boundCandidates, generateArticle } from "./openai.mjs";
 import { notifyDraft } from "./telegram.mjs";
 
 const config = await loadConfig();
@@ -168,6 +168,8 @@ export async function runOnce() {
       [cluster.id, cluster.items[0].title, JSON.stringify(cluster.items.map((item) => item.id)), JSON.stringify(evidence), cluster.score]
     );
 
+    // Reject deterministic input-policy failures before reserving the daily AI budget.
+    boundCandidates(cluster.items, config.maxInputChars);
     const reservedBudget = await reserveBudget(client);
     const generated = await generateArticle(cluster.items, config);
     const selected = generated.inputCandidates.filter((item) => generated.article.source_ids.includes(item.id));

@@ -73,7 +73,11 @@ export function boundCandidates(candidates, maxChars) {
     if (serialized.length > maxChars) continue;
     selected.push(item);
   }
-  if (new Set(selected.map((item) => item.sourceId)).size < 2) throw new Error("input limit cannot fit two independent sources");
+  const authoritativeSingleSource = selected.length === 1 && selected[0].sourceKind === "official"
+    && ["primary", "authority"].includes(selected[0].trustTier);
+  if (new Set(selected.map((item) => item.sourceId)).size < 2 && !authoritativeSingleSource) {
+    throw new Error("input limit cannot fit two independent sources or one authoritative primary source");
+  }
   return selected;
 }
 
