@@ -126,7 +126,7 @@ export async function runOnce() {
   let runId;
   try {
     locked = (await client.query("SELECT pg_try_advisory_lock($1) AS locked", [726_341_903])).rows[0].locked;
-    if (!locked) return log("run_skipped", { reason: "another worker owns the run lock" });
+    if (!locked) { log("run_skipped", { reason: "another worker owns the run lock" }); return "retry"; }
     runId = (await client.query("INSERT INTO blog_runs (status) VALUES ('running') RETURNING id")).rows[0].id;
     await client.query("DELETE FROM blog_comments WHERE status IN ('pending','rejected','spam') AND created_at < now() - interval '90 days'");
     await client.query("DELETE FROM blog_feed_items WHERE used_at IS NULL AND collected_at < now() - interval '30 days'");
@@ -134,20 +134,24 @@ export async function runOnce() {
 
     if (!config.generationEnabled) {
       await client.query("UPDATE blog_runs SET status='skipped', finished_at=now(), feed_items_seen=$2, message=$3 WHERE id=$1", [runId, seen, "generation disabled"]);
-      return log("run_skipped", { reason: "generation disabled", feedItems: seen });
+      log("run_skipped", { reason: "generation disabled", feedItems: seen });
+      return "disabled";
     }
     if (!pragueSchedule().due) {
       await client.query("UPDATE blog_runs SET status='skipped', finished_at=now(), feed_items_seen=$2, message=$3 WHERE id=$1", [runId, seen, "before 06:20 Europe/Prague"]);
-      return log("run_skipped", { reason: "before 06:20 Europe/Prague" });
+      log("run_skipped", { reason: "before 06:20 Europe/Prague" });
+      return "before_due";
     }
     const recent = await client.query("SELECT 1 FROM blog_runs WHERE status IN ('draft','published') AND (finished_at AT TIME ZONE 'Europe/Prague')::date = (now() AT TIME ZONE 'Europe/Prague')::date LIMIT 1");
     if (recent.rowCount) {
       await client.query("UPDATE blog_runs SET status='skipped', finished_at=now(), feed_items_seen=$2, message=$3 WHERE id=$1", [runId, seen, "draft already created today"]);
-      return log("run_skipped", { reason: "draft already created today" });
+      log("run_skipped", { reason: "draft already created today" });
+      return "complete";
     }
     if (!(await budgetAllows(client))) {
       await client.query("UPDATE blog_runs SET status='skipped', finished_at=now(), feed_items_seen=$2, message=$3 WHERE id=$1", [runId, seen, "hard AI budget reached"]);
-      return log("run_skipped", { reason: "hard AI budget reached" });
+      log("run_skipped", { reason: "hard AI budget reached" });
+      return "budget";
     }
 
     const candidates = (await client.query(
@@ -163,7 +167,8 @@ export async function runOnce() {
     const evidence = buildEvidencePack(cluster);
     if (!cluster || !evidence) {
       await client.query("UPDATE blog_runs SET status='skipped', finished_at=now(), feed_items_seen=$2, message=$3 WHERE id=$1", [runId, seen, "no eligible evidence cluster"]);
-      return log("run_skipped", { reason: "no eligible evidence cluster" });
+      log("run_skipped", { reason: "no eligible evidence cluster" });
+      return "retry";
     }
 
     await client.query(
@@ -214,10 +219,12 @@ export async function runOnce() {
         log("telegram_notification_failed", { articleId, error: error.message });
       }
     }
+    return "complete";
   } catch (error) {
     await client.query("ROLLBACK").catch(() => {});
     if (runId) await client.query("UPDATE blog_runs SET status='failed', finished_at=now(), message=$2 WHERE id=$1", [runId, String(error.message).slice(0, 500)]).catch(() => {});
     log("run_failed", { error: error.message });
+    return "retry";
   } finally {
     if (locked) await client.query("SELECT pg_advisory_unlock($1)", [726_341_903]).catch(() => {});
     client.release();
@@ -226,20 +233,27 @@ export async function runOnce() {
 
 let inFlight = false;
 let scheduledDay = null;
+let nextMorningAttemptAt = 0;
 async function runSafely() {
   if (inFlight) return;
   inFlight = true;
-  try { await runOnce(); } finally { inFlight = false; }
+  try {
+    let result;
+    try { result = await runOnce(); }
+    catch (error) { log("run_failed", { error: error.message }); result = "retry"; }
+    const schedule = pragueSchedule();
+    if (schedule.due) {
+      if (["complete", "budget", "disabled"].includes(result)) scheduledDay = schedule.day;
+      else nextMorningAttemptAt = Date.now() + 15 * 60_000;
+    }
+  } finally { inFlight = false; }
 }
 
-const startup = pragueSchedule();
-if (startup.due) scheduledDay = startup.day;
 await runSafely();
 const collectionTimer = setInterval(runSafely, config.runIntervalMinutes * 60_000);
 const morningTimer = setInterval(() => {
   const schedule = pragueSchedule();
-  if (schedule.due && schedule.day !== scheduledDay && !inFlight) {
-    scheduledDay = schedule.day;
+  if (schedule.due && schedule.day !== scheduledDay && !inFlight && Date.now() >= nextMorningAttemptAt) {
     void runSafely();
   }
 }, 15_000);
