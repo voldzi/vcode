@@ -94,7 +94,7 @@ img, svg { display: block; max-width: 100%; }
 .text-link { display:inline-flex; align-items:center; gap:.5rem; width:max-content; margin-top:auto; color:var(--navy); font:720 .9rem "Manrope Variable",sans-serif; }
 .text-link span { color:var(--accent); transition:transform .2s ease; }
 .text-link:hover span { transform:translate(3px,-3px); }
-.tone-teal { --accent:#15b8a6; } .tone-azure { --accent:#16b879; } .tone-cyan { --accent:#00aee8; } .tone-navy { --accent:#305888; } .tone-coral { --accent:#ed678c; } .tone-balance { --accent:#a35678; } .tone-violet { --accent:#7e58e8; } .tone-lime { --accent:#ef8a1f; }
+.tone-teal { --accent:#15b8a6; } .tone-azure { --accent:#16b879; } .tone-cyan { --accent:#00aee8; } .tone-navy { --accent:#305888; } .tone-coral { --accent:#ed678c; } .tone-balance { --accent:#a35678; } .tone-violet { --accent:#7e58e8; } .tone-lime { --accent:#ef8a1f; } .tone-forest { --accent:#285a47; }
 
 .trust-band { display:grid; grid-template-columns:auto .9fr 1fr; gap:clamp(1.5rem,6vw,6rem); padding:clamp(5rem,10vw,9rem) clamp(1.25rem,5vw,5rem); color:var(--white); background:var(--navy); }
 .trust-band h2 { color:var(--white); }

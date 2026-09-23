@@ -11,7 +11,7 @@ const href = cs ? `/aplikace/${product.href}/` : `/en/apps/${product.href}/`;
     <span class="availability">{cs ? product.availabilityCs : product.availabilityEn}</span>
   </div>
   <span class="product-category">{cs ? product.categoryCs : product.categoryEn}</span>
-  <h3>{product.name}</h3>
+  <h3>{cs ? product.name : (product.nameEn ?? product.name)}</h3>
   <p class="product-headline">{cs ? product.headlineCs : product.headlineEn}</p>
   <p>{cs ? product.summaryCs : product.summaryEn}</p>
   <a class="text-link" href={href}>{cs ? "Poznat aplikaci" : "Explore the app"}<span aria-hidden="true">↗</span></a>

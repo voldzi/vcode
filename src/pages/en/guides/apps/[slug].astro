@@ -16,23 +16,24 @@ export async function getStaticPaths() {
 }
 
 const { product, guides } = Astro.props;
+const name = product.nameEn ?? product.name;
 const path = `/en/guides/apps/${product.href}/`;
 const alternatePath = `/navody/aplikace/${product.href}/`;
 const pageStructuredData = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
-  name: `Essential user guides – ${product.name}`,
-  description: `Verified essential guides for ${product.name}.`,
+  name: `Essential user guides – ${name}`,
+  description: `Verified essential guides for ${name}.`,
   url: `https://vcode.zeleznalady.cz${path}`,
   hasPart: guides.map(({ data }) => ({ "@type": "HowTo", name: data.title, url: `https://vcode.zeleznalady.cz/en/guides/${data.slug}/` }))
 };
 ---
-<BaseLayout title={`${product.name} guides — VCode`} description={`Essential user guides and verified instructions for ${product.name}.`} lang="en" {path} {alternatePath} {pageStructuredData}>
+<BaseLayout title={`${name} guides — VCode`} description={`Essential user guides and verified instructions for ${name}.`} lang="en" {path} {alternatePath} {pageStructuredData}>
   <article class:list={["app-guide-hub", `tone-${product.tone}`]}>
     <a class="back-link" href="/en/guides/">← All apps</a>
     <header class="app-guide-heading">
       <ProductIcon id={product.id} size={72} />
-      <div><p class="kicker">Essential user guides</p><h1>{product.name}</h1><p>{product.summaryEn}</p></div>
+      <div><p class="kicker">Essential user guides</p><h1>{name}</h1><p>{product.summaryEn}</p></div>
     </header>
     <section class="guide-list app-guide-list" aria-labelledby="guide-heading">
       <h2 id="guide-heading">Start here</h2>
@@ -43,6 +44,6 @@ const pageStructuredData = {
         </a>
       )) : <p class="empty-state">Guides for this application are being prepared.</p>}
     </section>
-    <section class="guide-next-step"><div><p class="kicker">More information</p><h2>Meet the application</h2><p>Explore its main capabilities, availability and product information.</p></div><a class="button secondary" href={`/en/apps/${product.href}/`}>About {product.name}</a></section>
+    <section class="guide-next-step"><div><p class="kicker">More information</p><h2>Meet the application</h2><p>Explore its main capabilities, availability and product information.</p></div><a class="button secondary" href={`/en/apps/${product.href}/`}>About {name}</a></section>
   </article>
 </BaseLayout>
