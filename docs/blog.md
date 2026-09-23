@@ -21,9 +21,10 @@ Only publisher-provided metadata and summaries are retained. Docling/AKB ingesti
 Production defaults:
 
 - interval: 360 minutes;
-- maximum generations: 1 per Prague calendar day;
+- maximum successful drafts: 1 per Prague calendar day;
+- maximum model attempts: 3 per Prague calendar day, including failures;
 - maximum input: 28,000 characters;
-- maximum output: 6,000 tokens for the complete bilingual draft and claim ledger;
+- maximum output: 16,000 tokens for the complete bilingual draft and claim ledger;
 - daily total token ceiling: 80,000 tokens;
 - monthly model-cost ceiling: USD 5;
 - default model: `gpt-6-luna` with low reasoning effort;
