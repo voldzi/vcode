@@ -6,6 +6,7 @@ import { defaultSources } from "./sources.mjs";
 import { buildEvidencePack, canonicalizeUrl, normalizeText, relevance, selectEvidenceCluster, titleFingerprint } from "./pipeline.mjs";
 import { boundCandidates, generateArticle } from "./openai.mjs";
 import { notifyDraft } from "./telegram.mjs";
+import { pragueSchedule } from "./schedule.mjs";
 
 const config = await loadConfig();
 const pool = createPool(config.databaseUrl);
@@ -73,10 +74,10 @@ async function collectFeeds(client) {
 
 async function budgetAllows(client) {
   const daily = (await client.query(
-    "SELECT runs, input_tokens + output_tokens AS tokens FROM blog_ai_usage WHERE usage_day=CURRENT_DATE"
+    "SELECT runs, input_tokens + output_tokens AS tokens FROM blog_ai_usage WHERE usage_day=(now() AT TIME ZONE 'Europe/Prague')::date"
   )).rows[0] ?? { runs: 0, tokens: 0 };
   const monthly = (await client.query(
-    "SELECT COALESCE(SUM(estimated_cost_usd),0)::float8 AS cost FROM blog_ai_usage WHERE usage_day >= date_trunc('month', CURRENT_DATE)::date"
+    "SELECT COALESCE(SUM(estimated_cost_usd),0)::float8 AS cost FROM blog_ai_usage WHERE usage_day >= date_trunc('month', now() AT TIME ZONE 'Europe/Prague')::date"
   )).rows[0];
   const worstInputTokens = Math.ceil(config.maxInputChars / 3);
   const worstCost = (worstInputTokens * config.inputPricePerMillionUsd + config.maxOutputTokens * config.outputPricePerMillionUsd) / 1_000_000;
@@ -99,7 +100,7 @@ async function reserveBudget(client) {
   const reserved = worstCaseReservation();
   await client.query(
     `INSERT INTO blog_ai_usage (usage_day, runs, input_tokens, output_tokens, estimated_cost_usd)
-     VALUES (CURRENT_DATE,1,$1,$2,$3)
+     VALUES ((now() AT TIME ZONE 'Europe/Prague')::date,1,$1,$2,$3)
      ON CONFLICT (usage_day) DO UPDATE SET runs=blog_ai_usage.runs+1,
        input_tokens=blog_ai_usage.input_tokens+EXCLUDED.input_tokens,
        output_tokens=blog_ai_usage.output_tokens+EXCLUDED.output_tokens,
@@ -114,7 +115,7 @@ async function reconcileBudget(client, reserved, usage, actualCost) {
     `UPDATE blog_ai_usage SET
        input_tokens=GREATEST(0,input_tokens-$1+$2), output_tokens=GREATEST(0,output_tokens-$3+$4),
        estimated_cost_usd=GREATEST(0,estimated_cost_usd-$5+$6), updated_at=now()
-     WHERE usage_day=CURRENT_DATE`,
+     WHERE usage_day=(now() AT TIME ZONE 'Europe/Prague')::date`,
     [reserved.inputTokens, usage.input_tokens ?? 0, reserved.outputTokens, usage.output_tokens ?? 0, reserved.costUsd, actualCost]
   );
 }
@@ -135,10 +136,14 @@ export async function runOnce() {
       await client.query("UPDATE blog_runs SET status='skipped', finished_at=now(), feed_items_seen=$2, message=$3 WHERE id=$1", [runId, seen, "generation disabled"]);
       return log("run_skipped", { reason: "generation disabled", feedItems: seen });
     }
-    const recent = await client.query("SELECT 1 FROM blog_runs WHERE status IN ('draft','published') AND finished_at > now() - ($1::text || ' minutes')::interval LIMIT 1", [config.generationIntervalMinutes - 5]);
+    if (!pragueSchedule().due) {
+      await client.query("UPDATE blog_runs SET status='skipped', finished_at=now(), feed_items_seen=$2, message=$3 WHERE id=$1", [runId, seen, "before 06:20 Europe/Prague"]);
+      return log("run_skipped", { reason: "before 06:20 Europe/Prague" });
+    }
+    const recent = await client.query("SELECT 1 FROM blog_runs WHERE status IN ('draft','published') AND (finished_at AT TIME ZONE 'Europe/Prague')::date = (now() AT TIME ZONE 'Europe/Prague')::date LIMIT 1");
     if (recent.rowCount) {
-      await client.query("UPDATE blog_runs SET status='skipped', finished_at=now(), feed_items_seen=$2, message=$3 WHERE id=$1", [runId, seen, "publication interval not elapsed"]);
-      return log("run_skipped", { reason: "publication interval not elapsed" });
+      await client.query("UPDATE blog_runs SET status='skipped', finished_at=now(), feed_items_seen=$2, message=$3 WHERE id=$1", [runId, seen, "draft already created today"]);
+      return log("run_skipped", { reason: "draft already created today" });
     }
     if (!(await budgetAllows(client))) {
       await client.query("UPDATE blog_runs SET status='skipped', finished_at=now(), feed_items_seen=$2, message=$3 WHERE id=$1", [runId, seen, "hard AI budget reached"]);
@@ -219,7 +224,24 @@ export async function runOnce() {
   }
 }
 
-await runOnce();
-const timer = setInterval(runOnce, config.runIntervalMinutes * 60_000);
-process.on("SIGTERM", async () => { clearInterval(timer); await pool.end(); process.exit(0); });
-process.on("SIGINT", async () => { clearInterval(timer); await pool.end(); process.exit(0); });
+let inFlight = false;
+let scheduledDay = null;
+async function runSafely() {
+  if (inFlight) return;
+  inFlight = true;
+  try { await runOnce(); } finally { inFlight = false; }
+}
+
+const startup = pragueSchedule();
+if (startup.due) scheduledDay = startup.day;
+await runSafely();
+const collectionTimer = setInterval(runSafely, config.runIntervalMinutes * 60_000);
+const morningTimer = setInterval(() => {
+  const schedule = pragueSchedule();
+  if (schedule.due && schedule.day !== scheduledDay && !inFlight) {
+    scheduledDay = schedule.day;
+    void runSafely();
+  }
+}, 15_000);
+process.on("SIGTERM", async () => { clearInterval(collectionTimer); clearInterval(morningTimer); await pool.end(); process.exit(0); });
+process.on("SIGINT", async () => { clearInterval(collectionTimer); clearInterval(morningTimer); await pool.end(); process.exit(0); });

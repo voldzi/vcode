@@ -7,6 +7,15 @@ import { escapeHtml, renderIndex, renderReviewPage } from "../render.mjs";
 import { callbackData, parseCallbackData, reviewTokenHash } from "../review.mjs";
 import { telegramNotificationReady, telegramReady, validWebhookSecret } from "../telegram.mjs";
 import { activeSources, defaultSources } from "../sources.mjs";
+import { pragueSchedule } from "../schedule.mjs";
+
+test("morning draft follows Prague local time through daylight-saving changes", () => {
+  assert.deepEqual(pragueSchedule(new Date("2026-03-28T05:19:00Z")), { day: "2026-03-28", due: false });
+  assert.deepEqual(pragueSchedule(new Date("2026-03-28T05:20:00Z")), { day: "2026-03-28", due: true });
+  assert.deepEqual(pragueSchedule(new Date("2026-03-29T04:19:00Z")), { day: "2026-03-29", due: false });
+  assert.deepEqual(pragueSchedule(new Date("2026-03-29T04:20:00Z")), { day: "2026-03-29", due: true });
+  assert.deepEqual(pragueSchedule(new Date("2026-10-25T05:20:00Z")), { day: "2026-10-25", due: true });
+});
 
 const source = { id: "root", name: "Root.cz", homepageUrl: "https://www.root.cz/" };
 

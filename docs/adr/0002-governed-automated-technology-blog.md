@@ -16,7 +16,7 @@ VCode needs a bilingual technology blog that can collect public Czech technology
 - Collect every six hours and generate at most one draft per UTC day.
 - Build a deterministic evidence cluster before generation. Accept either an official primary/authority source or at least two independent publications and show direct source links.
 - Generate one Czech and one English version in one structured OpenAI Responses API call.
-- Default to `gpt-5.6-luna`, low reasoning effort, no tools and no stored response; model choice remains configurable and must be quality-evaluated before changing tiers.
+- Default to `gpt-6-luna`, low reasoning effort, no tools and no stored response; model choice remains configurable and must be quality-evaluated before changing tiers.
 - Enforce one run per day, fixed input/output limits, a daily token ceiling and a monthly cost ceiling in PostgreSQL before any generation call. Reserve worst-case usage before the call and reconcile it afterward.
 - Keep generation disabled until the dedicated VCode project key is mounted and an explicit production smoke test passes.
 - Use deterministic branded SVG artwork instead of paid image generation in the first release.
