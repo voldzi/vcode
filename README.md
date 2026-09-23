@@ -20,7 +20,7 @@ VCode je česká značka digitálních produktů pro mobilitu, bezpečnost, zdra
 | **COP Mobile** | Mobilní situační přehled, hlášení a bezpečná komunikace | Připravujeme |
 | **[COP](https://cop.zeleznalady.cz/)** | Veřejná situační mapa, doprava, výstrahy a trasy | Webová aplikace |
 | **NEST** | Tahová strategická hra pro iPhone a iPad | Připravujeme vydání v App Store |
-| **[Masáže Železná Lady](https://masaze.zeleznalady.cz/)** | Služby, termíny a rezervace | V provozu |
+| **[Masáže](https://masaze.zeleznalady.cz/)** | Služby, termíny a rezervace | V provozu |
 | **[Studio Balance](https://studio-balance.cz/)** | Lekce, rozvrh, rezervace a klientská samoobsluha | V provozu |
 | **[STRATOS](https://stratos.zeleznalady.cz/)** | Strategie, projekty, finance, rizika a řízené znalosti | Soukromé nasazení |
 | **[Kalorické tabulky](https://kaloricketabulky.zeleznalady.cz/)** | Jídelní deník, recepty a výživový kontext | PWA |
