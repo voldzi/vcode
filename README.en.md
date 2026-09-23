@@ -20,6 +20,7 @@ VCode is a Czech digital product brand focused on mobility, safety, health and o
 | **COP Mobile** | Mobile situational awareness, field reports and secure communication | In preparation |
 | **[COP](https://cop.zeleznalady.cz/)** | Public situation map, traffic, warnings and routes | Web app |
 | **NEST** | Turn-based strategy game for iPhone and iPad | Preparing for release on the App Store |
+| **[Play the City](https://games.zeleznalady.cz/mestem-hrou/?lang=en)** | Free outdoor story games across Czechia | Public beta on the web |
 | **[Masáže](https://masaze.zeleznalady.cz/)** | Services, appointments and booking | Live |
 | **[Studio Balance](https://studio-balance.cz/)** | Classes, schedules, booking and client self-service | Live |
 | **[STRATOS](https://stratos.zeleznalady.cz/)** | Strategy, projects, finance, risk and governed knowledge | Private deployment |

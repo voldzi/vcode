@@ -1,6 +1,7 @@
 export type Product = {
   id: string;
   name: string;
+  nameEn?: string;
   href: string;
   tone: string;
   categoryCs: string;
@@ -12,6 +13,7 @@ export type Product = {
   capabilitiesCs: string[];
   capabilitiesEn: string[];
   externalUrl?: string;
+  externalUrlEn?: string;
   availabilityCs: string;
   availabilityEn: string;
 };
@@ -114,6 +116,25 @@ export const products: Product[] = [
     capabilitiesEn: ["Play on one device", "On-device AI opponent", "Game Center multiplayer", "Rules for beginners and experienced players"],
     availabilityCs: "Připravujeme vydání v App Store",
     availabilityEn: "Preparing for release on the App Store"
+  },
+  {
+    id: "mestem-hrou",
+    name: "Městem hrou",
+    nameEn: "Play the City",
+    href: "mestem-hrou",
+    tone: "forest",
+    categoryCs: "Příběhová hra v terénu",
+    categoryEn: "Outdoor story game",
+    headlineCs: "Město není seznam. Je to příběh.",
+    headlineEn: "Every city hides a story.",
+    summaryCs: "Bezplatná webová hra s příběhovými výpravami po českých městech a obcích. Na zastaveních řešíte otázky a postupně odkrýváte příběh.",
+    summaryEn: "Free outdoor story games across Czechia. Solve questions at each stop and uncover the story as you go.",
+    capabilitiesCs: ["Výpravy po městech a obcích", "Otázky na jednotlivých zastaveních", "Příběhy a tajenky", "Hra zdarma bez povinného účtu"],
+    capabilitiesEn: ["Story trails across Czechia", "Questions at each stop", "Clues and story reveals", "Free play without an account"],
+    externalUrl: "https://games.zeleznalady.cz/mestem-hrou/",
+    externalUrlEn: "https://games.zeleznalady.cz/mestem-hrou/?lang=en",
+    availabilityCs: "Veřejná beta na webu",
+    availabilityEn: "Public beta on the web"
   },
   {
     id: "masaze",

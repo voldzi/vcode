@@ -4,14 +4,15 @@ import { products } from "../../../lib/products";
 import { appStoreProducts } from "../../../lib/appStore";
 export function getStaticPaths() { return products.map(product => ({ params: { slug: product.href }, props: { product } })); }
 const { product } = Astro.props;
+const name = product.nameEn ?? product.name;
 const storeProduct = appStoreProducts.find(item => item.id === product.id);
-const pageStructuredData = { "@context": "https://schema.org", "@type": "SoftwareApplication", name: product.name, description: product.summaryEn, applicationCategory: product.categoryEn, url: `https://vcode.zeleznalady.cz/en/apps/${product.href}/`, publisher: { "@type": "Organization", name: "VCode" } };
+const pageStructuredData = { "@context": "https://schema.org", "@type": "SoftwareApplication", name, description: product.summaryEn, applicationCategory: product.categoryEn, url: `https://vcode.zeleznalady.cz/en/apps/${product.href}/`, publisher: { "@type": "Organization", name: "VCode" } };
 ---
-<BaseLayout title={`${product.name} — VCode`} description={product.summaryEn} lang="en" path={`/en/apps/${product.href}/`} alternatePath={`/aplikace/${product.href}/`} {pageStructuredData}>
+<BaseLayout title={`${name} — VCode`} description={product.summaryEn} lang="en" path={`/en/apps/${product.href}/`} alternatePath={`/aplikace/${product.href}/`} {pageStructuredData}>
   <article class:list={["product-detail", `tone-${product.tone}`]}>
     <a class="back-link" href="/en/#apps">← All apps</a>
-    <header><p class="kicker">{product.categoryEn}</p><h1>{product.name}</h1><p class="detail-headline">{product.headlineEn}</p><p class="detail-summary">{product.summaryEn}</p></header>
-    <div class="detail-grid"><section><h2>What it does</h2><ul>{product.capabilitiesEn.map(item => <li>{item}</li>)}</ul></section><aside><span>Availability</span><strong>{product.availabilityEn}</strong>{storeProduct && <a class="button primary" href={`/en/app-store/${storeProduct.storeSlug}/`}>App Store information</a>}{product.externalUrl && <a class="store-link" href={product.externalUrl}>Open the app <span aria-hidden="true">↗</span></a>}</aside></div>
-    <section class="detail-support"><h2>Getting started?</h2><p>Find step-by-step guides, answers and privacy information in the help centre.</p><a class="text-link" href={`/en/guides/apps/${product.href}/`}>Guides for {product.name} →</a></section>
+    <header><p class="kicker">{product.categoryEn}</p><h1>{name}</h1><p class="detail-headline">{product.headlineEn}</p><p class="detail-summary">{product.summaryEn}</p></header>
+    <div class="detail-grid"><section><h2>What it does</h2><ul>{product.capabilitiesEn.map(item => <li>{item}</li>)}</ul></section><aside><span>Availability</span><strong>{product.availabilityEn}</strong>{storeProduct && <a class="button primary" href={`/en/app-store/${storeProduct.storeSlug}/`}>App Store information</a>}{product.externalUrl && <a class="store-link" href={product.externalUrlEn ?? product.externalUrl}>Open the app <span aria-hidden="true">↗</span></a>}</aside></div>
+    <section class="detail-support"><h2>Getting started?</h2><p>Find step-by-step guides, answers and privacy information in the help centre.</p><a class="text-link" href={`/en/guides/apps/${product.href}/`}>Guides for {name} →</a></section>
   </article>
 </BaseLayout>
