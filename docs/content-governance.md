@@ -19,7 +19,7 @@ Use one dedicated AKB application space, `vcode-help`, on the existing AKB platf
 Suggested metadata:
 
 - application: `vcode-help`
-- component: product id (`jizda`, `cop`, `cop-mobile`, `masaze`, `stratos`, `kaloricke-tabulky`)
+- component: product id from `src/lib/products.ts`; guide metadata is checked against this catalogue
 - types: `manual`, `knowledge_base_article`
 - classification: `public` only for deliberately anonymous help
 - source system: `git`

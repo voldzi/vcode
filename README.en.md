@@ -15,6 +15,7 @@ VCode is a Czech digital product brand focused on mobility, safety, health and o
 
 | Product | Focus | Availability |
 | --- | --- | --- |
+| **APSYD** | Psychodiagnostic assessment and site coordination | Controlled healthcare deployment |
 | **PAS** | Nursing care, clinical context and structured entries | Private deployment at ÚVN |
 | **Jízda** | Journey logging, navigation, vehicles, passengers and communication | Preparing for the App Store |
 | **COP Mobile** | Mobile situational awareness, field reports and secure communication | In preparation |
