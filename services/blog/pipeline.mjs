@@ -4,10 +4,12 @@ const trackingParameters = new Set(["fbclid", "gclid", "dclid", "mc_cid", "mc_ei
 const stopWords = new Set(["a", "an", "and", "are", "as", "at", "be", "by", "for", "from", "in", "is", "it", "of", "on", "or", "that", "the", "to", "with", "a", "aby", "ale", "do", "i", "jak", "je", "jsou", "na", "o", "od", "po", "pro", "se", "s", "u", "v", "ve", "z", "za"]);
 const topicKeywords = new Map([
   ["ai", ["ai", "agent", "artificial intelligence", "embedding", "gpt", "inference", "jazykov", "llm", "model", "neural", "uměl"]],
-  ["security", ["attack", "bezpeč", "cve", "malware", "ransomware", "security", "vulnerability", "zranitel"]],
-  ["software", ["api", "database", "developer", "framework", "javascript", "open source", "program", "software", "typescript", "web"]],
+  ["security", ["attack", "bezpeč", "cve", "malware", "phishing", "ransomware", "security", "vulnerability", "zranitel"]],
+  ["software", ["api", "app store", "browser", "database", "developer", "framework", "ios", "ipados", "javascript", "kubernetes", "macos", "open source", "program", "python", "runtime", "sdk", "software", "storekit", "swift", "typescript", "visionos", "watchos", "web", "workers", "xcode"]],
   ["internet", ["cloud", "datacenter", "dns", "domain", "internet", "network", "síť"]],
-  ["infrastructure", ["container", "gpu", "kubernetes", "linux", "postgres", "server", "storage"]]
+  ["infrastructure", ["container", "gpu", "kubernetes", "linux", "postgres", "server", "storage"]],
+  ["hardware", ["airpods", "apple watch", "chip", "device", "hardware", "iphone", "ipad", "laptop", "mac", "processor", "silicon"]],
+  ["science", ["research", "scientific", "study", "věda", "výzkum"]]
 ]);
 const keywordMatches = (haystack, keyword) => {
   const normalized = normalizeText(keyword);
@@ -75,7 +77,7 @@ export function relevance(item) {
 }
 
 export function clusterCandidates(candidates, threshold = 0.42) {
-  const ranked = candidates.map((item) => ({ ...item, ...relevance(item) })).filter((item) => item.score >= 0.25)
+  const ranked = candidates.map((item) => ({ ...item, ...relevance(item) })).filter((item) => item.score >= 0.25 && item.primaryTopic)
     .sort((a, b) => b.score - a.score || String(b.publishedAt ?? "").localeCompare(String(a.publishedAt ?? "")));
   const clusters = [];
   for (const item of ranked) {

@@ -2,7 +2,7 @@ const articleSchema = {
   type: "object",
   additionalProperties: false,
   properties: {
-    topic: { type: "string", enum: ["ai", "security", "software", "internet", "business", "science"] },
+    topic: { type: "string", enum: ["ai", "security", "software", "internet", "hardware", "business", "science"] },
     hero_variant: { type: "string", enum: ["signals", "grid", "orbit", "layers", "network"] },
     cs: { $ref: "#/$defs/translation" },
     en: { $ref: "#/$defs/translation" },

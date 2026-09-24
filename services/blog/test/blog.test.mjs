@@ -87,14 +87,29 @@ test("candidate bounding permits one authoritative primary source", () => {
 });
 
 test("source registry starts with verified feeds and keeps unverified adapters disabled", () => {
-  assert.equal(defaultSources.length, 16);
-  assert.equal(activeSources().length, 15);
+  assert.equal(defaultSources.length, 20);
+  assert.equal(activeSources().length, 19);
+  for (const id of ["applenews", "appledev", "googleai", "msresearch"]) {
+    assert.equal(defaultSources.find((item) => item.id === id)?.enabled, true);
+  }
   assert.equal(defaultSources.find((item) => item.id === "anthropic")?.enabled, false);
 });
 
 test("short AI keyword does not match ordinary words", () => {
   const result = relevance({ title: "Email delivery changes", summary: "A mailing service update", trustTier: "editorial" });
   assert.ok(!result.topics.includes("ai"));
+});
+
+test("Apple device and AI research stories qualify while unrelated culture news does not", () => {
+  const base = { publishedAt: new Date().toISOString(), sourceKind: "official", trustTier: "primary", language: "en" };
+  const candidates = [
+    { ...base, id: "music", sourceId: "applenews", title: "Apple Music opens a new concert hall", summary: "Live performances and artists in a new venue." },
+    { ...base, id: "iphone", sourceId: "applenews", title: "Apple introduces a new iPhone chip", summary: "The device includes a faster processor and improved battery life." },
+    { ...base, id: "research", sourceId: "msresearch", title: "New AI model improves robotic inference", summary: "Research shows more efficient neural model inference." }
+  ];
+  const clusters = clusterCandidates(candidates);
+  assert.equal(clusters.length, 2);
+  assert.deepEqual(new Set(clusters.map((cluster) => cluster.primaryTopic)), new Set(["hardware", "ai"]));
 });
 
 test("recent security coverage gives another eligible topic priority", () => {

@@ -7,6 +7,7 @@ const topicLabel = (topic, lang) => ({
   security: lang === "cs" ? "Bezpečnost" : "Security",
   software: lang === "cs" ? "Software" : "Software",
   internet: lang === "cs" ? "Internet" : "Internet",
+  hardware: lang === "cs" ? "Zařízení" : "Hardware",
   business: lang === "cs" ? "Digitální ekonomika" : "Digital economy",
   science: lang === "cs" ? "Věda" : "Science"
 })[topic] ?? topic;

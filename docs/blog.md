@@ -12,7 +12,7 @@ The published page clearly links every input used to create the briefing. VCode 
 
 ## Source registry
 
-The registry contains Root.cz, Zdroják, Vzhůru dolů, Blog CZ.NIC, NÚKIB, CSIRT.CZ, Lupa.cz, CESNET CyberFeed, Hugging Face, OpenAI, Ollama, Cloudflare, Kubernetes, Go, Rust and Anthropic Engineering. Anthropic remains disabled until a stable official machine-readable feed is verified. Each source records language, trust tier, content kind, allowed hosts, topics, retention policy and a licensing note. Operators can disable an active source in PostgreSQL without a release.
+The registry contains Root.cz, Zdroják, Vzhůru dolů, Blog CZ.NIC, NÚKIB, CSIRT.CZ, Lupa.cz, CESNET CyberFeed, Hugging Face, OpenAI, Ollama, Cloudflare, Kubernetes, Go, Rust, Apple Newsroom, Apple Developer News, Google AI Blog, Microsoft Research and Anthropic Engineering. Anthropic remains disabled until a stable official machine-readable feed is verified. Each source records language, trust tier, content kind, allowed hosts, topics, retention policy and a licensing note. Operators can disable an active source in PostgreSQL without a release. Candidate selection requires a recognizable technology topic; general culture or promotional items from otherwise relevant publishers do not qualify solely because of their publisher.
 
 Only publisher-provided metadata and summaries are retained. Docling/AKB ingestion is reserved for individually selected official documents whose retention and processing terms have been reviewed. News pages are not bulk-copied into AKB or object storage.
 
