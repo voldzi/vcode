@@ -56,6 +56,12 @@ docker compose -p vcode-prod run --rm blog node services/blog/articles.mjs publi
 docker compose -p vcode-prod run --rm blog node services/blog/articles.mjs reject <id> <reviewer>
 ```
 
+An operator can request one additional private review draft per Prague calendar day without changing the 06:20 schedule. The command uses the same advisory lock, source checks and daily AI budget as the scheduled worker, and refuses to run when automatic publication is enabled:
+
+```bash
+docker compose -p vcode-prod run --rm blog-worker node services/blog/worker.mjs --manual-review
+```
+
 ## Activation checklist
 
 1. Provision the dedicated PostgreSQL database and least-privilege role.

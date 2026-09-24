@@ -120,14 +120,15 @@ async function reconcileBudget(client, reserved, usage, actualCost) {
   );
 }
 
-export async function runOnce() {
+export async function runOnce({ manualReview = false } = {}) {
   const client = await pool.connect();
   let locked = false;
   let runId;
   try {
     locked = (await client.query("SELECT pg_try_advisory_lock($1) AS locked", [726_341_903])).rows[0].locked;
     if (!locked) { log("run_skipped", { reason: "another worker owns the run lock" }); return "retry"; }
-    runId = (await client.query("INSERT INTO blog_runs (status) VALUES ('running') RETURNING id")).rows[0].id;
+    if (manualReview && config.autoPublish) throw new Error("manual review requires BLOG_AUTO_PUBLISH=false");
+    runId = (await client.query("INSERT INTO blog_runs (status, message) VALUES ('running', $1) RETURNING id", [manualReview ? "manual-review" : null])).rows[0].id;
     await client.query("DELETE FROM blog_comments WHERE status IN ('pending','rejected','spam') AND created_at < now() - interval '90 days'");
     await client.query("DELETE FROM blog_feed_items WHERE used_at IS NULL AND collected_at < now() - interval '30 days'");
     const seen = await collectFeeds(client);
@@ -142,10 +143,10 @@ export async function runOnce() {
       log("run_skipped", { reason: "before 06:20 Europe/Prague" });
       return "before_due";
     }
-    const recent = await client.query("SELECT 1 FROM blog_runs WHERE status IN ('draft','published') AND (finished_at AT TIME ZONE 'Europe/Prague')::date = (now() AT TIME ZONE 'Europe/Prague')::date LIMIT 1");
+    const recent = await client.query("SELECT 1 FROM blog_runs WHERE status IN ('draft','published') AND (finished_at AT TIME ZONE 'Europe/Prague')::date = (now() AT TIME ZONE 'Europe/Prague')::date AND ($1::boolean = false OR message = 'manual-review') LIMIT 1", [manualReview]);
     if (recent.rowCount) {
       await client.query("UPDATE blog_runs SET status='skipped', finished_at=now(), feed_items_seen=$2, message=$3 WHERE id=$1", [runId, seen, "draft already created today"]);
-      log("run_skipped", { reason: "draft already created today" });
+      log("run_skipped", { reason: manualReview ? "manual review already created today" : "draft already created today" });
       return "complete";
     }
     if (!(await budgetAllows(client))) {
@@ -256,13 +257,19 @@ async function runSafely() {
   } finally { inFlight = false; }
 }
 
-await runSafely();
-const collectionTimer = setInterval(runSafely, config.runIntervalMinutes * 60_000);
-const morningTimer = setInterval(() => {
-  const schedule = pragueSchedule();
-  if (schedule.due && schedule.day !== scheduledDay && !inFlight && Date.now() >= nextMorningAttemptAt) {
-    void runSafely();
-  }
-}, 15_000);
-process.on("SIGTERM", async () => { clearInterval(collectionTimer); clearInterval(morningTimer); await pool.end(); process.exit(0); });
-process.on("SIGINT", async () => { clearInterval(collectionTimer); clearInterval(morningTimer); await pool.end(); process.exit(0); });
+if (process.argv[2] === "--manual-review") {
+  const result = await runOnce({ manualReview: true });
+  await pool.end();
+  if (result === "retry") process.exitCode = 1;
+} else {
+  await runSafely();
+  const collectionTimer = setInterval(runSafely, config.runIntervalMinutes * 60_000);
+  const morningTimer = setInterval(() => {
+    const schedule = pragueSchedule();
+    if (schedule.due && schedule.day !== scheduledDay && !inFlight && Date.now() >= nextMorningAttemptAt) {
+      void runSafely();
+    }
+  }, 15_000);
+  process.on("SIGTERM", async () => { clearInterval(collectionTimer); clearInterval(morningTimer); await pool.end(); process.exit(0); });
+  process.on("SIGINT", async () => { clearInterval(collectionTimer); clearInterval(morningTimer); await pool.end(); process.exit(0); });
+}
