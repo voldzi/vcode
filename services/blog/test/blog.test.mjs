@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { cleanText, parseFeed, privateAddress } from "../feeds.mjs";
 import { boundCandidates, validateArticle } from "../openai.mjs";
-import { buildEvidencePack, canonicalizeUrl, clusterCandidates, selectEvidenceCluster, titleSimilarity } from "../pipeline.mjs";
+import { buildEvidencePack, canonicalizeUrl, clusterCandidates, relevance, selectEvidenceCluster, titleSimilarity } from "../pipeline.mjs";
 import { escapeHtml, renderIndex, renderReviewPage } from "../render.mjs";
 import { callbackData, parseCallbackData, reviewTokenHash } from "../review.mjs";
 import { telegramNotificationReady, telegramReady, validWebhookSecret } from "../telegram.mjs";
@@ -87,9 +87,26 @@ test("candidate bounding permits one authoritative primary source", () => {
 });
 
 test("source registry starts with verified feeds and keeps unverified adapters disabled", () => {
-  assert.equal(defaultSources.length, 12);
-  assert.equal(activeSources().length, 11);
+  assert.equal(defaultSources.length, 16);
+  assert.equal(activeSources().length, 15);
   assert.equal(defaultSources.find((item) => item.id === "anthropic")?.enabled, false);
+});
+
+test("short AI keyword does not match ordinary words", () => {
+  const result = relevance({ title: "Email delivery changes", summary: "A mailing service update", trustTier: "editorial" });
+  assert.ok(!result.topics.includes("ai"));
+});
+
+test("recent security coverage gives another eligible topic priority", () => {
+  const publishedAt = new Date().toISOString();
+  const base = { publishedAt, sourceKind: "official", language: "en" };
+  const candidates = [
+    { ...base, id: "security", sourceId: "cesnet", sourceName: "CESNET", trustTier: "authority", title: "Critical CVE security attack exposes malware vulnerability", summary: "A serious security attack and vulnerability needs fixes." },
+    { ...base, id: "software", sourceId: "nodejs", sourceName: "Node.js", trustTier: "primary", title: "New software API for developers", summary: "The software release improves the developer API." }
+  ];
+  assert.equal(selectEvidenceCluster(candidates)?.primaryTopic, "security");
+  assert.equal(selectEvidenceCluster(candidates, [{ topic: "security", sourceIds: ["cesnet"] }])?.primaryTopic, "software");
+  assert.equal(selectEvidenceCluster(candidates, [{ topic: "security", sourceIds: ["cesnet"] }, { topic: "security", sourceIds: ["csirt"] }])?.primaryTopic, "software");
 });
 
 test("URL canonicalization removes marketing parameters and normalizes paths", () => {

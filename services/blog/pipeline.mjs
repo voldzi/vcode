@@ -3,12 +3,25 @@ import { createHash } from "node:crypto";
 const trackingParameters = new Set(["fbclid", "gclid", "dclid", "mc_cid", "mc_eid", "ref", "source"]);
 const stopWords = new Set(["a", "an", "and", "are", "as", "at", "be", "by", "for", "from", "in", "is", "it", "of", "on", "or", "that", "the", "to", "with", "a", "aby", "ale", "do", "i", "jak", "je", "jsou", "na", "o", "od", "po", "pro", "se", "s", "u", "v", "ve", "z", "za"]);
 const topicKeywords = new Map([
-  ["ai", ["ai", "agent", "artificial intelligence", "embedding", "inference", "jazykov", "llm", "model", "neural", "uměl"]],
+  ["ai", ["ai", "agent", "artificial intelligence", "embedding", "gpt", "inference", "jazykov", "llm", "model", "neural", "uměl"]],
   ["security", ["attack", "bezpeč", "cve", "malware", "ransomware", "security", "vulnerability", "zranitel"]],
   ["software", ["api", "database", "developer", "framework", "javascript", "open source", "program", "software", "typescript", "web"]],
   ["internet", ["cloud", "datacenter", "dns", "domain", "internet", "network", "síť"]],
   ["infrastructure", ["container", "gpu", "kubernetes", "linux", "postgres", "server", "storage"]]
 ]);
+const keywordMatches = (haystack, keyword) => {
+  const normalized = normalizeText(keyword);
+  return normalized.length <= 3
+    ? ` ${haystack} `.includes(` ${normalized} `)
+    : haystack.includes(normalized);
+};
+
+function topicHits(value) {
+  const haystack = normalizeText(value);
+  return [...topicKeywords].map(([topic, keywords]) => ({
+    topic, hits: keywords.filter((keyword) => keywordMatches(haystack, keyword)).length
+  }));
+}
 
 export function canonicalizeUrl(raw) {
   const url = new URL(raw);
@@ -46,19 +59,19 @@ export function titleSimilarity(left, right) {
 }
 
 export function relevance(item) {
-  const haystack = normalizeText(`${item.title} ${item.summary}`);
+  const titleHits = topicHits(item.title);
+  const combinedHits = topicHits(`${item.title} ${item.summary}`);
   let score = item.trustTier === "authority" ? 0.3 : item.trustTier === "primary" ? 0.2 : 0;
-  const topics = [];
-  for (const [topic, keywords] of topicKeywords) {
-    const hits = keywords.filter((keyword) => haystack.includes(normalizeText(keyword))).length;
-    if (hits) {
-      topics.push(topic);
-      score += Math.min(0.4, hits * 0.12);
-    }
-  }
+  const topics = combinedHits.filter(({ hits }) => hits).map(({ topic }) => topic);
+  score += Math.min(0.4, Math.max(0, ...combinedHits.map(({ hits }) => hits)) * 0.12);
+  const rankedTopics = combinedHits.map(({ topic, hits }, index) => ({ topic, hits, titleHits: titleHits[index].hits }))
+    .sort((a, b) => b.titleHits - a.titleHits || b.hits - a.hits);
+  const primaryTopic = rankedTopics[0]?.hits
+    ? (rankedTopics[0].topic === "infrastructure" ? "software" : rankedTopics[0].topic)
+    : null;
   const ageHours = item.publishedAt ? Math.max(0, (Date.now() - new Date(item.publishedAt).valueOf()) / 3_600_000) : 168;
   score += Math.max(0, 0.25 - ageHours / 672);
-  return { score: Math.min(1, Number(score.toFixed(3))), topics };
+  return { score: Math.min(1, Number(score.toFixed(3))), topics, primaryTopic };
 }
 
 export function clusterCandidates(candidates, threshold = 0.42) {
@@ -75,6 +88,7 @@ export function clusterCandidates(candidates, threshold = 0.42) {
     const hasPrimary = cluster.items.some((item) => item.sourceKind === "official" && ["primary", "authority"].includes(item.trustTier));
     return {
       ...cluster,
+      primaryTopic: cluster.items[0].primaryTopic,
       publisherCount: publishers.size,
       hasPrimary,
       score: Number((Math.max(...cluster.items.map((item) => item.score)) + Math.min(0.3, (publishers.size - 1) * 0.15) + (hasPrimary ? 0.15 : 0)).toFixed(3))
@@ -82,8 +96,15 @@ export function clusterCandidates(candidates, threshold = 0.42) {
   }).sort((a, b) => b.score - a.score);
 }
 
-export function selectEvidenceCluster(candidates) {
-  return clusterCandidates(candidates).find((cluster) => cluster.hasPrimary || cluster.publisherCount >= 2) ?? null;
+export function selectEvidenceCluster(candidates, recentArticles = []) {
+  const eligible = clusterCandidates(candidates).filter((cluster) => cluster.hasPrimary || cluster.publisherCount >= 2);
+  return eligible.map((cluster) => {
+    const repeatedTopic = recentArticles.filter((article) => article.topic === cluster.primaryTopic).length;
+    const repeatedPublisher = recentArticles.some((article) => article.sourceIds?.includes(cluster.items[0].sourceId));
+    const topicPenalty = Math.min(0.45, repeatedTopic * 0.2)
+      + (recentArticles[0]?.topic === cluster.primaryTopic ? 0.08 : 0);
+    return { ...cluster, selectionScore: Number((cluster.score - topicPenalty - (repeatedPublisher ? 0.07 : 0)).toFixed(3)) };
+  }).sort((a, b) => b.selectionScore - a.selectionScore || b.score - a.score)[0] ?? null;
 }
 
 export function buildEvidencePack(cluster) {

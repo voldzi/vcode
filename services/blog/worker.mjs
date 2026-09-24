@@ -161,9 +161,15 @@ export async function runOnce() {
        FROM blog_feed_items i JOIN blog_sources s ON s.id=i.source_id
        WHERE i.used_at IS NULL AND i.summary <> '' AND s.enabled
          AND COALESCE(i.published_at, i.collected_at) > now() - interval '14 days'
-       ORDER BY i.relevance_score DESC NULLS LAST, COALESCE(i.published_at, i.collected_at) DESC LIMIT 120`
+       ORDER BY COALESCE(i.published_at, i.collected_at) DESC LIMIT 300`
     )).rows;
-    const cluster = selectEvidenceCluster(candidates);
+    const recentArticles = (await client.query(
+      "SELECT topic, sources FROM blog_articles WHERE generated_at > now() - interval '7 days' ORDER BY generated_at DESC LIMIT 7"
+    )).rows.map((article) => ({
+      topic: article.topic,
+      sourceIds: [...new Set(article.sources.map((source) => source.sourceId))]
+    }));
+    const cluster = selectEvidenceCluster(candidates, recentArticles);
     const evidence = buildEvidencePack(cluster);
     if (!cluster || !evidence) {
       await client.query("UPDATE blog_runs SET status='skipped', finished_at=now(), feed_items_seen=$2, message=$3 WHERE id=$1", [runId, seen, "no eligible evidence cluster"]);
@@ -210,7 +216,8 @@ export async function runOnce() {
     await reconcileBudget(client, reservedBudget, generated.usage, generated.costUsd);
     await client.query("UPDATE blog_runs SET status=$2, finished_at=now(), feed_items_seen=$3, article_id=$4 WHERE id=$1", [runId, config.autoPublish ? "published" : "draft", seen, articleId]);
     await client.query("COMMIT");
-    log("article_created", { articleId, slug, published: config.autoPublish, model: config.openaiModel, costUsd: generated.costUsd });
+    log("article_created", { articleId, slug, topic: generated.article.topic, selectedTopic: cluster.primaryTopic,
+      published: config.autoPublish, model: config.openaiModel, costUsd: generated.costUsd });
     if (!config.autoPublish) {
       try {
         const notification = await notifyDraft(client, articleId, config);
