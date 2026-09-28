@@ -87,12 +87,17 @@ test("candidate bounding permits one authoritative primary source", () => {
 });
 
 test("source registry starts with verified feeds and keeps unverified adapters disabled", () => {
-  assert.equal(defaultSources.length, 20);
-  assert.equal(activeSources().length, 19);
-  for (const id of ["applenews", "appledev", "googleai", "msresearch"]) {
+  assert.equal(defaultSources.length, 21);
+  assert.equal(activeSources().length, 20);
+  for (const id of ["applenews", "appledev", "googleai", "msresearch", "ibmresearch"]) {
     assert.equal(defaultSources.find((item) => item.id === id)?.enabled, true);
   }
   assert.equal(defaultSources.find((item) => item.id === "anthropic")?.enabled, false);
+});
+
+test("IBM quantum research is eligible as a science topic", () => {
+  const result = relevance({ title: "Fault-tolerant quantum computing", summary: "IBM Research reports an error mitigation result.", trustTier: "primary" });
+  assert.equal(result.primaryTopic, "science");
 });
 
 test("short AI keyword does not match ordinary words", () => {

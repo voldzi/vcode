@@ -9,7 +9,7 @@ const topicKeywords = new Map([
   ["internet", ["cloud", "datacenter", "dns", "domain", "internet", "network", "síť"]],
   ["infrastructure", ["container", "gpu", "kubernetes", "linux", "postgres", "server", "storage"]],
   ["hardware", ["airpods", "apple watch", "chip", "device", "hardware", "iphone", "ipad", "laptop", "mac", "processor", "silicon"]],
-  ["science", ["research", "scientific", "study", "věda", "výzkum"]]
+  ["science", ["quantum", "research", "scientific", "study", "věda", "výzkum"]]
 ]);
 const keywordMatches = (haystack, keyword) => {
   const normalized = normalizeText(keyword);

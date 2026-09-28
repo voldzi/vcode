@@ -118,6 +118,22 @@ export const products: Product[] = [
     availabilityEn: "Preparing for release on the App Store"
   },
   {
+    id: "sibenice",
+    name: "Šibenice",
+    href: "sibenice",
+    tone: "amber",
+    categoryCs: "Česká slovní hra",
+    categoryEn: "Czech word game",
+    headlineCs: "Uhodněte slovo dřív, než vyprší čas.",
+    headlineEn: "Guess the Czech word before time runs out.",
+    summaryCs: "Kreslená slovní hra pro iPhone, iPad a Apple TV. Hrajte sami nebo se střídejte s druhým hráčem na jednom zařízení.",
+    summaryEn: "An illustrated Czech word game for iPhone, iPad and Apple TV. Play solo or take turns with a second player on one device.",
+    capabilitiesCs: ["Čtyři obtížnosti a časomíra", "Hra dvou hráčů na jednom zařízení", "České slovníky pro různé věkové skupiny", "Ovládání Apple TV pomocí ovladače"],
+    capabilitiesEn: ["Four difficulty levels and a timer", "Two players on one device", "Czech word lists for different age groups", "Apple TV remote control support"],
+    availabilityCs: "Připravujeme pro iOS a Apple TV",
+    availabilityEn: "In development for iOS and Apple TV"
+  },
+  {
     id: "mestem-hrou",
     name: "Městem hrou",
     nameEn: "Play the City",
