@@ -270,8 +270,8 @@ export const products: Product[] = [
     summaryEn: "An internal platform for document processing, version management and answers linked to their sources. Access rules and review govern what can be published.",
     capabilitiesCs: ["Příjem a zpracování dokumentů", "Řízené verze a schvalování", "Vyhledávání s citacemi", "Přístup podle oprávnění"],
     capabilitiesEn: ["Document intake and processing", "Governed versions and review", "Search with citations", "Permission-based access"],
-    availabilityCs: "Zatím není veřejně dostupná",
-    availabilityEn: "Not publicly available yet"
+    availabilityCs: "Přístup podle oprávnění",
+    availabilityEn: "Access by permission"
   },
   {
     id: "stratos",

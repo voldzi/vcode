@@ -24,7 +24,7 @@ Support: mailto:podpora@zeleznalady.cz
 - [Executive Center](https://vcode.zeleznalady.cz/aplikace/executive-center/): private management and portfolio overview.
 - [ProjectFlow](https://vcode.zeleznalady.cz/aplikace/projectflow/): private project delivery, phases, tasks and stage gates.
 - [ArchFlow](https://vcode.zeleznalady.cz/aplikace/archflow/): private needs, goals, regulations and council decisions.
-- [AI Knowledge Base (AKB)](https://vcode.zeleznalady.cz/aplikace/akb/): separately released STRATOS-family service for governed document knowledge, source-linked answers and permission-based access; not publicly available yet.
+- [AI Knowledge Base (AKB)](https://vcode.zeleznalady.cz/aplikace/akb/): separately released STRATOS-family service for governed document knowledge, source-linked answers and permission-based access.
 - [Kalorické tabulky](https://vcode.zeleznalady.cz/aplikace/kaloricke-tabulky/): Czech food diary, recipes, offline logging and nutritional context.
 
 ## Authoritative sections
