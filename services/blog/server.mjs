@@ -8,7 +8,7 @@ import { createPool, migrate } from "./db.mjs";
 import { moderateComment } from "./openai.mjs";
 import { renderArticle, renderHeroSvg, renderIndex, renderReviewPage, renderReviewResult } from "./render.mjs";
 import { applyEditorialAction, findReviewByToken } from "./review.mjs";
-import { handleTelegramUpdate, telegramReady, validWebhookSecret } from "./telegram.mjs";
+import { handleTelegramUpdate, notifyComment, telegramReady, validWebhookSecret } from "./telegram.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const css = await readFile(join(here, "blog.css"), "utf8");
@@ -103,18 +103,23 @@ async function submitComment(request, response, slug) {
   const email = String(form.get("email") ?? "").trim().toLowerCase();
   const body = String(form.get("body") ?? "").trim();
   if (name.length < 2 || name.length > 60 || body.length < 10 || body.length > 2000 || (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) return send(response, 400, "text/plain; charset=utf-8", lang === "cs" ? "Neplatný komentář." : "Invalid comment.");
-  const article = (await pool.query("SELECT id FROM blog_articles WHERE slug=$1 AND status='published'", [slug])).rows[0];
+  const article = (await pool.query("SELECT a.id,t.title FROM blog_articles a JOIN blog_article_translations t ON t.article_id=a.id AND t.locale='cs' WHERE a.slug=$1 AND a.status='published'", [slug])).rows[0];
   if (!article) return send(response, 404, "text/plain; charset=utf-8", "Not found");
   const ipHash = hash(clientIp(request));
   const recent = Number((await pool.query("SELECT count(*)::int AS count FROM blog_comments WHERE ip_hash=$1 AND created_at > now() - interval '1 hour'", [ipHash])).rows[0].count);
   if (recent >= 3) return send(response, 429, "text/plain; charset=utf-8", lang === "cs" ? "Limit komentářů byl vyčerpán. Zkuste to později." : "Comment limit reached. Please try later.", { "Retry-After": "3600" });
   const moderation = await moderateComment(body, config);
   const status = moderation.flagged ? "spam" : moderation.available && config.commentAutoApprove ? "approved" : "pending";
-  await pool.query(
+  const inserted = await pool.query(
     `INSERT INTO blog_comments (article_id,display_name,body,email_hash,ip_hash,user_agent,status,moderation,moderated_at)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,CASE WHEN $7='pending' THEN NULL ELSE now() END)`,
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,CASE WHEN $7='pending' THEN NULL ELSE now() END) RETURNING id`,
     [article.id, name, body, email ? hash(email) : null, ipHash, String(request.headers["user-agent"] ?? "").slice(0, 300), status, JSON.stringify(moderation)]
   );
+  try {
+    await notifyComment({ id: inserted.rows[0].id, slug, title: article.title, status }, config);
+  } catch (error) {
+    console.error("Comment Telegram notification failed", { commentId: inserted.rows[0].id, error: error.message });
+  }
   response.writeHead(303, { Location: `${path}?comment=received` }).end();
 }
 

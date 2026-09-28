@@ -5,9 +5,10 @@ import { boundCandidates, validateArticle } from "../openai.mjs";
 import { buildEvidencePack, canonicalizeUrl, clusterCandidates, relevance, selectEvidenceCluster, titleSimilarity } from "../pipeline.mjs";
 import { escapeHtml, renderIndex, renderReviewPage } from "../render.mjs";
 import { callbackData, parseCallbackData, reviewTokenHash } from "../review.mjs";
-import { telegramNotificationReady, telegramReady, validWebhookSecret } from "../telegram.mjs";
+import { notifyComment, telegramNotificationReady, telegramReady, validWebhookSecret } from "../telegram.mjs";
 import { activeSources, defaultSources } from "../sources.mjs";
 import { pragueSchedule } from "../schedule.mjs";
+import { collectPublicUrls } from "../../../scripts/submit-indexnow.mjs";
 
 test("morning draft follows Prague local time through daylight-saving changes", () => {
   assert.deepEqual(pragueSchedule(new Date("2026-03-28T05:19:00Z")), { day: "2026-03-28", due: false });
@@ -194,4 +195,33 @@ test("outbound Telegram notification does not require inbound webhook secret", (
   assert.equal(telegramNotificationReady(config), true);
   assert.equal(telegramReady(config), false);
   assert.equal(telegramReady({ ...config, telegramWebhookSecret: "w".repeat(32) }), true);
+});
+
+test("comment alert sends only article metadata and skips spam", async () => {
+  const config = { telegramEnabled: true, telegramBotToken: "test", telegramChatId: "1", telegramApiBaseUrl: "https://api.telegram.org", siteOrigin: "https://vcode.zeleznalady.cz" };
+  const calls = [];
+  const fetchImpl = async (url, options) => {
+    calls.push({ url, payload: JSON.parse(options.body) });
+    return { ok: true, json: async () => ({ ok: true, result: { message_id: 12 } }) };
+  };
+  assert.deepEqual(await notifyComment({ id: 42, slug: "zprava", title: "Článek <AI>", status: "pending" }, config, fetchImpl), { messageId: 12 });
+  assert.equal(calls.length, 1);
+  assert.match(calls[0].payload.text, /Článek &lt;AI&gt;/);
+  assert.match(calls[0].payload.text, /čeká na schválení/);
+  assert.match(calls[0].payload.text, /\/blog\/zprava\//);
+  assert.deepEqual(await notifyComment({ id: 43, slug: "zprava", title: "Článek", status: "spam" }, config, fetchImpl), { skipped: true });
+  assert.equal(calls.length, 1);
+});
+
+test("IndexNow discovers public static and published blog URLs from sitemaps", async () => {
+  const origin = new URL("https://vcode.zeleznalady.cz");
+  const documents = new Map([
+    [`${origin}sitemap-index.xml`, `<sitemapindex><sitemap><loc>${origin}sitemap-0.xml</loc></sitemap></sitemapindex>`],
+    [`${origin}sitemap-0.xml`, `<urlset><url><loc>${origin}aplikace/sibenice/</loc></url><url><loc>${origin}navody/</loc></url></urlset>`],
+    [`${origin}blog-sitemap.xml`, `<urlset><url><loc>${origin}blog/clanek/</loc></url><url><loc>${origin}en/blog/clanek/</loc></url></urlset>`]
+  ]);
+  const fetchImpl = async (url) => ({ ok: documents.has(url), status: documents.has(url) ? 200 : 404, text: async () => documents.get(url) });
+  assert.deepEqual(await collectPublicUrls(origin, fetchImpl), [
+    `${origin}aplikace/sibenice/`, `${origin}blog/clanek/`, `${origin}en/blog/clanek/`, `${origin}navody/`
+  ]);
 });

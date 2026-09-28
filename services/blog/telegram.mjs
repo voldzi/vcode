@@ -26,6 +26,17 @@ export async function telegramCall(config, method, payload, fetchImpl = fetch) {
   return result.result;
 }
 
+export async function notifyComment({ id, slug, title, status }, config, fetchImpl = fetch) {
+  if (status === "spam" || !config.telegramEnabled || !config.telegramBotToken || !config.telegramChatId) return { skipped: true };
+  const articleUrl = new URL(`/blog/${encodeURIComponent(slug)}/`, config.siteOrigin).href;
+  const state = status === "approved" ? "zveřejněn" : "čeká na schválení";
+  const text = `<b>Nový komentář na VCode</b>\n\n${escapeTelegram(title)}\nStav: ${state} · ID: ${escapeTelegram(id)}\n${escapeTelegram(articleUrl)}`;
+  const message = await telegramCall(config, "sendMessage", {
+    chat_id: config.telegramChatId, text, parse_mode: "HTML", disable_web_page_preview: true
+  }, fetchImpl);
+  return { messageId: message.message_id };
+}
+
 const keyboard = (requestId, reviewUrl, secret) => ({ inline_keyboard: [
   [{ text: "Otevřít celý návrh", url: reviewUrl }],
   [{ text: "Schválit", callback_data: callbackData("p", requestId, secret) }, { text: "Zamítnout", callback_data: callbackData("r", requestId, secret) }]
