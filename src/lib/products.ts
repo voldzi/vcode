@@ -187,6 +187,23 @@ export const products: Product[] = [
     availabilityEn: "Live"
   },
   {
+    id: "akb",
+    name: "AI Knowledge Base (AKB)",
+    nameEn: "AI Knowledge Base (AKB)",
+    href: "akb",
+    tone: "violet",
+    categoryCs: "Řízené znalosti",
+    categoryEn: "Governed knowledge",
+    headlineCs: "Znalosti s dohledatelným původem a řízeným přístupem.",
+    headlineEn: "Knowledge with traceable sources and governed access.",
+    summaryCs: "Interní platforma pro zpracování dokumentů, správu verzí a vyhledávání odpovědí s odkazy na zdroje. Obsah prochází pravidly přístupu a schvalováním před zveřejněním.",
+    summaryEn: "An internal platform for document processing, version management and answers linked to their sources. Access rules and review govern what can be published.",
+    capabilitiesCs: ["Příjem a zpracování dokumentů", "Řízené verze a schvalování", "Vyhledávání s citacemi", "Přístup podle oprávnění"],
+    capabilitiesEn: ["Document intake and processing", "Governed versions and review", "Search with citations", "Permission-based access"],
+    availabilityCs: "Zatím není veřejně dostupná",
+    availabilityEn: "Not publicly available yet"
+  },
+  {
     id: "stratos",
     name: "STRATOS",
     href: "stratos",
