@@ -19,8 +19,12 @@ Support: mailto:podpora@zeleznalady.cz
 - [Městem hrou](https://vcode.zeleznalady.cz/aplikace/mestem-hrou/): city exploration game connecting walks and playful discoveries.
 - [Masáže](https://vcode.zeleznalady.cz/aplikace/masaze/): services, live availability and massage booking.
 - [Studio Balance](https://vcode.zeleznalady.cz/aplikace/studio-balance/): class schedules, booking and client self-service.
-- [AI Knowledge Base](https://vcode.zeleznalady.cz/aplikace/akb/): an internal, not yet public platform for governed document knowledge, source-linked answers and permission-based access.
-- [STRATOS](https://vcode.zeleznalady.cz/aplikace/stratos/): auditable strategy, project, finance, risk and knowledge management.
+- [STRATOS](https://vcode.zeleznalady.cz/aplikace/stratos/): a family of private applications for finance, portfolio oversight, project delivery, architecture and governed knowledge.
+- [Budget & Contract](https://vcode.zeleznalady.cz/aplikace/budget-contract/): private financial planning, procurement, contracts and suppliers.
+- [Executive Center](https://vcode.zeleznalady.cz/aplikace/executive-center/): private management and portfolio overview.
+- [ProjectFlow](https://vcode.zeleznalady.cz/aplikace/projectflow/): private project delivery, phases, tasks and stage gates.
+- [ArchFlow](https://vcode.zeleznalady.cz/aplikace/archflow/): private needs, goals, regulations and council decisions.
+- [AI Knowledge Base (AKB)](https://vcode.zeleznalady.cz/aplikace/akb/): separately released STRATOS-family service for governed document knowledge, source-linked answers and permission-based access; not publicly available yet.
 - [Kalorické tabulky](https://vcode.zeleznalady.cz/aplikace/kaloricke-tabulky/): Czech food diary, recipes, offline logging and nutritional context.
 
 ## Authoritative sections

@@ -6,7 +6,7 @@ import { products } from "../../../lib/products";
 
 export async function getStaticPaths() {
   const guides = await getCollection("guides", ({ data }) => data.language === "cs" && data.status === "published");
-  return products.map(product => ({
+  return products.filter(product => !product.family || product.id === "stratos").map(product => ({
     params: { slug: product.href },
     props: {
       product,
