@@ -6,12 +6,12 @@ export function getStaticPaths() { return appStoreProducts.map(product => ({ par
 const { product } = Astro.props;
 const path = `/app-store/${product.storeSlug}/`;
 const alternatePath = `/en/app-store/${product.storeSlug}/`;
-const pageStructuredData = { "@context":"https://schema.org", "@type":"MobileApplication", name:product.name, description:product.summaryCs, operatingSystem:product.operatingSystem ?? "iOS", applicationCategory:product.categoryCs, url:new URL(path, Astro.site).href, publisher:{"@type":"Organization",name:"VCode"} };
+const pageStructuredData = { "@context":"https://schema.org", "@type":"MobileApplication", name:product.name, description:product.summaryCs, operatingSystem:product.operatingSystem ?? "iOS", applicationCategory:product.categoryCs, url:new URL(path, Astro.site).href, ...(product.appStoreUrl ? { downloadUrl: product.appStoreUrl } : {}), publisher:{"@type":"Organization",name:"VCode"} };
 ---
 <BaseLayout title={`${product.name} — VCode`} description={product.summaryCs} lang="cs" {path} {alternatePath} {pageStructuredData}>
   <div class:list={["app-store-page", `tone-${product.tone}`]}>
     <section class="app-store-hero">
-      <div><p class="kicker">{product.storePlatformsCs ?? "Aplikace pro iPhone"}</p><h1>{product.name}</h1><p class="detail-headline">{product.headlineCs}</p><p class="lead">{product.summaryCs}</p><div class="store-links"><a class="button primary" href={product.supportCs}>Podpora aplikace</a><a class="store-link" href={product.privacyCs}>Ochrana soukromí</a></div></div>
+      <div><p class="kicker">{product.storePlatformsCs ?? "Aplikace pro iPhone"}</p><h1>{product.name}</h1><p class="detail-headline">{product.headlineCs}</p><p class="lead">{product.summaryCs}</p><div class="store-links">{product.appStoreUrl ? <a class="button primary" href={product.appStoreUrl}>Stáhnout v App Storu</a> : <a class="button primary" href={product.supportCs}>Podpora aplikace</a>}<a class="store-link" href={product.privacyCs}>Ochrana soukromí</a></div></div>
       <div class="app-store-emblem"><ProductIcon id={product.id} size={180}/></div>
     </section>
     <div class="app-store-content">

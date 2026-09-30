@@ -18,9 +18,15 @@ VCode provides stable, bilingual public URLs for the fields required in App Stor
 | Support URL | `https://vcode.zeleznalady.cz/podpora/cop-mobile/` | `https://vcode.zeleznalady.cz/en/support/cop-mobile/` |
 | Privacy Policy URL | `https://vcode.zeleznalady.cz/cop-mobile/privacy/` | `https://vcode.zeleznalady.cz/en/cop-mobile/privacy/` |
 
-The website does not claim that either application is already available in the App Store. Update `src/lib/products.ts` only after the corresponding public listing is live.
+Jízda and COP Mobile remain marked as preparing for release. NEST and Šibenice have verified public App Store listings:
+
+| Game | App Store listing |
+| --- | --- |
+| NEST | `https://apps.apple.com/cz/app/nest-the-game/id1336678493` |
+| Šibenice | `https://apps.apple.com/cz/app/%C5%A1ibenice-origin%C3%A1l/id1436866698` |
+
+The public Apple listings confirm iPhone and iPad availability. Do not describe the Apple TV edition of Šibenice as released until its listing is confirmed separately.
 
 ## Release check
 
 Before submitting a version, verify all six URLs return HTTP 200, their language switch points to the matching locale, product claims still match the shipped version, and the privacy text reflects the current permission and data flows.
-

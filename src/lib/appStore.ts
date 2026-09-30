@@ -2,6 +2,7 @@ import { products, type Product } from "./products";
 
 export type AppStoreProduct = Product & {
   storeSlug: string;
+  appStoreUrl?: string;
   storePlatformsCs?: string;
   storePlatformsEn?: string;
   operatingSystem?: string;
@@ -37,6 +38,9 @@ export const appStoreProducts: AppStoreProduct[] = [
   {
     ...byId("nest"),
     storeSlug: "nest",
+    appStoreUrl: "https://apps.apple.com/cz/app/nest-the-game/id1336678493",
+    storePlatformsCs: "Hra pro iPhone a iPad",
+    storePlatformsEn: "Game for iPhone and iPad",
     privacyCs: "/nest/privacy/",
     privacyEn: "/en/nest/privacy/",
     supportCs: "/podpora/nest/",
@@ -45,9 +49,10 @@ export const appStoreProducts: AppStoreProduct[] = [
   {
     ...byId("sibenice"),
     storeSlug: "sibenice",
-    storePlatformsCs: "Hra pro iPhone, iPad a Apple TV",
-    storePlatformsEn: "Game for iPhone, iPad and Apple TV",
-    operatingSystem: "iOS, tvOS",
+    appStoreUrl: "https://apps.apple.com/cz/app/%C5%A1ibenice-origin%C3%A1l/id1436866698",
+    storePlatformsCs: "Hra pro iPhone a iPad",
+    storePlatformsEn: "Game for iPhone and iPad",
+    operatingSystem: "iOS",
     privacyCs: "/sibenice/privacy/",
     privacyEn: "/en/sibenice/privacy/",
     supportCs: "/podpora/sibenice/",

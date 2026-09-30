@@ -14,8 +14,8 @@ Support: mailto:podpora@zeleznalady.cz
 - [Jízda](https://vcode.zeleznalady.cz/aplikace/jizda/): journey logging, navigation, vehicles, passengers, costs and secure communication for iPhone and Apple Watch.
 - [COP Mobile](https://vcode.zeleznalady.cz/aplikace/cop-mobile/): mobile situational awareness, field reporting, alerts and secure communication.
 - [COP](https://vcode.zeleznalady.cz/aplikace/cop/): public situation map for traffic, warnings, infrastructure and route planning.
-- [NEST](https://vcode.zeleznalady.cz/aplikace/nest/): turn-based strategy game for iPhone and iPad with local play, an on-device AI opponent and Game Center multiplayer; preparing for App Store release.
-- [Šibenice](https://vcode.zeleznalady.cz/aplikace/sibenice/): Czech word game for iPhone and Apple TV; in preparation.
+- [NEST](https://vcode.zeleznalady.cz/aplikace/nest/): turn-based strategy game for iPhone and iPad with local play, an on-device AI opponent and Game Center multiplayer; [available on the App Store](https://apps.apple.com/cz/app/nest-the-game/id1336678493).
+- [Šibenice](https://vcode.zeleznalady.cz/aplikace/sibenice/): Czech word game for iPhone and iPad; [available on the App Store](https://apps.apple.com/cz/app/%C5%A1ibenice-origin%C3%A1l/id1436866698).
 - [Městem hrou](https://vcode.zeleznalady.cz/aplikace/mestem-hrou/): city exploration game connecting walks and playful discoveries.
 - [Masáže](https://vcode.zeleznalady.cz/aplikace/masaze/): services, live availability and massage booking.
 - [Studio Balance](https://vcode.zeleznalady.cz/aplikace/studio-balance/): class schedules, booking and client self-service.

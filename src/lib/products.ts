@@ -115,8 +115,8 @@ export const products: Product[] = [
     summaryEn: "A turn-based strategy game for iPhone and iPad, where two players guide bird pieces across a shared hexagonal nest.",
     capabilitiesCs: ["Hra na jednom zařízení", "Soupeř s lokální AI", "Online hra přes Game Center", "Pravidla pro začátečníky i pokročilé"],
     capabilitiesEn: ["Play on one device", "On-device AI opponent", "Game Center multiplayer", "Rules for beginners and experienced players"],
-    availabilityCs: "Připravujeme vydání v App Store",
-    availabilityEn: "Preparing for release on the App Store"
+    availabilityCs: "Dostupné v App Storu pro iPhone a iPad",
+    availabilityEn: "Available on the App Store for iPhone and iPad"
   },
   {
     id: "sibenice",
@@ -127,12 +127,12 @@ export const products: Product[] = [
     categoryEn: "Czech word game",
     headlineCs: "Uhodněte slovo dřív, než vyprší čas.",
     headlineEn: "Guess the Czech word before time runs out.",
-    summaryCs: "Kreslená slovní hra pro iPhone, iPad a Apple TV. Hrajte sami nebo se střídejte s druhým hráčem na jednom zařízení.",
-    summaryEn: "An illustrated Czech word game for iPhone, iPad and Apple TV. Play solo or take turns with a second player on one device.",
+    summaryCs: "Kreslená slovní hra pro iPhone a iPad. Hrajte sami nebo se střídejte s druhým hráčem na jednom zařízení; verzi pro Apple TV připravujeme.",
+    summaryEn: "An illustrated Czech word game for iPhone and iPad. Play solo or take turns with a second player on one device; an Apple TV version is in preparation.",
     capabilitiesCs: ["Čtyři obtížnosti a časomíra", "Hra dvou hráčů na jednom zařízení", "České slovníky pro různé věkové skupiny", "Ovládání Apple TV pomocí ovladače"],
     capabilitiesEn: ["Four difficulty levels and a timer", "Two players on one device", "Czech word lists for different age groups", "Apple TV remote control support"],
-    availabilityCs: "Připravujeme pro iOS a Apple TV",
-    availabilityEn: "In development for iOS and Apple TV"
+    availabilityCs: "Dostupné v App Storu pro iPhone a iPad",
+    availabilityEn: "Available on the App Store for iPhone and iPad"
   },
   {
     id: "mestem-hrou",
