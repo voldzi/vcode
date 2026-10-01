@@ -1,0 +1,9 @@
+---
+const { href, lang = "cs" } = Astro.props as { href: string; lang?: "cs" | "en" };
+---
+<div class="app-store-download">
+  <a class="app-store-badge" href={href}>
+    <img src={`/badges/app-store-${lang}.svg`} alt={lang === "cs" ? "Stáhnout v App Storu" : "Download on the App Store"} height="48" />
+  </a>
+  <small class="apple-credit">Apple and the Apple logo are trademarks of Apple Inc., registered in the U.S. and other countries. App Store is a service mark of Apple Inc.</small>
+</div>

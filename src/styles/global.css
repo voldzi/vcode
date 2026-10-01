@@ -188,6 +188,10 @@ img, svg { display: block; max-width: 100%; }
 .reveal.is-visible { opacity:1; transform:none; }
 
 .store-links { display:flex; flex-wrap:wrap; gap:.75rem; margin-top:1.5rem; }
+.app-store-download { max-width:28rem; }
+.app-store-badge { display:inline-block; padding:12px; border-radius:4px; }
+.app-store-badge img { display:block; height:48px; width:auto; max-width:none; }
+.apple-credit { display:block; margin:0 12px; color:var(--muted); font-size:.68rem; line-height:1.5; }
 .store-link { display:inline-flex; align-items:center; gap:.55rem; padding:.75rem 1rem; border:1px solid var(--hairline); border-radius:999px; color:var(--navy); background:rgba(255,255,255,.72); font:700 .84rem "Manrope Variable",sans-serif; transition:transform .2s ease,background .2s ease; }
 .store-link:hover { transform:translateY(-2px); background:#fff; }
 .app-store-page { background:radial-gradient(circle at 80% 12%,rgba(0,180,255,.12),transparent 25%),linear-gradient(180deg,#fff,#f5f9fd 44rem); }
