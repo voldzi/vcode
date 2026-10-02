@@ -111,12 +111,12 @@ export const products: Product[] = [
     categoryEn: "Strategy game",
     headlineCs: "Promyšlená strategie. Každý tah má význam.",
     headlineEn: "Thoughtful strategy. Every move matters.",
-    summaryCs: "Tahová strategická hra pro iPhone a iPad, ve které dva hráči vedou ptačí figurky na společném šestiúhelníkovém hnízdě.",
-    summaryEn: "A turn-based strategy game for iPhone and iPad, where two players guide bird pieces across a shared hexagonal nest.",
+    summaryCs: "Tahová strategická hra pro iPhone, iPad a Apple TV, ve které dva hráči vedou ptačí figurky na společném šestiúhelníkovém hnízdě.",
+    summaryEn: "A turn-based strategy game for iPhone, iPad and Apple TV, where two players guide bird pieces across a shared hexagonal nest.",
     capabilitiesCs: ["Hra na jednom zařízení", "Soupeř s lokální AI", "Online hra přes Game Center", "Pravidla pro začátečníky i pokročilé"],
     capabilitiesEn: ["Play on one device", "On-device AI opponent", "Game Center multiplayer", "Rules for beginners and experienced players"],
-    availabilityCs: "Dostupné v App Storu pro iPhone a iPad",
-    availabilityEn: "Available on the App Store for iPhone and iPad"
+    availabilityCs: "Dostupné v App Storu pro iPhone, iPad a Apple TV",
+    availabilityEn: "Available on the App Store for iPhone, iPad and Apple TV"
   },
   {
     id: "sibenice",
