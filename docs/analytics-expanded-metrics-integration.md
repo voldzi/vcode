@@ -1,6 +1,6 @@
 # Expanded metric integration, prepared v2
 
-The owner approved the intent to add traffic sources and click counts in VCode on 2026-10-04. The concrete privacy replacement is in analytics-expanded-metrics-review.md. Publication and collection of the expanded fields require that review and per-site acceptance. Existing v1 pageviews continue unchanged.
+The owner approved the intent to add traffic sources and click counts in VCode on 2026-10-04. The concrete CS/EN privacy replacement in analytics-expanded-metrics-review.md (6dc4dd3) was explicitly approved with activation by the owner. Publication and collection now require per-site migration acceptance. Existing v1 pageviews continue unchanged.
 
 The prepared `/v2/tracker.js` and `/v2/events` collector routes coexist with v1. Each site must migrate its same-origin proxy and bridge together, pin the v2 runtime SHA384, preserve exact public route normalization and session exclusions, and identify the runtime as `vcode-public-v2`. Configuration adds `captureSources` and an explicit `allowedEvents` subset of `app-store-click`, `contact-click`, `outbound-click`. Both automatic flags remain false. The application calls `pageview(canonicalPath)` and `event(name,canonicalPath)` only on permitted public routes. Contact and outbound clicks carry no target URL, address or link text.
 

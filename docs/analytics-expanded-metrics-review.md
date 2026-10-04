@@ -1,6 +1,6 @@
 # Rozšíření veřejné analytiky: zdroje a kliknutí
 
-Stav: vlastník ve VCode dne 4. 10. 2026 schválil záměr rozšířit metriky. Níže je konkrétní náhrada popisu rozsahu ke kontrole před zveřejněním. Dosavadní veřejné cesty, vyloučení soukromých částí, DNT/GPC, uchování a ostatní ustanovení zůstávají platné.
+Stav: vlastník ve VCode dne 4. 10. 2026 výslovně schválil níže uvedené konkrétní české a anglické znění i aktivaci odpovědí „Schvaluji toto znění i aktivaci“. Schválený obsah je revize 6dc4dd3. Níže je schválená náhrada popisu rozsahu. Dosavadní veřejné cesty, vyloučení soukromých částí, DNT/GPC, uchování a ostatní ustanovení zůstávají platné.
 
 ## Přesný rozsah nové integrace
 
