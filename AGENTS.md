@@ -21,6 +21,7 @@ Build and operate the bilingual VCode portfolio, support and legal-information w
 - Update both Czech and English experiences intentionally; do not machine-publish an unreviewed translation.
 - Legal and privacy content requires product-owner review before release.
 - Preserve accessible semantics, keyboard use, 200% text zoom and responsive layouts.
+- Preserve the shared analytics contract and approval gates in `docs/analytics-integration-standard.md`. Private registry, edge keys and generated proxy includes stay on the server. Keep public collectors separate from the authenticated dashboard; changes to layouts, CSP or deployments must verify the affected integration. New sites remain disabled until their concrete privacy notice is reviewed and published. Never use genuine visitor records for acceptance tests.
 
 ## Validation
 
