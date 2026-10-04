@@ -1,11 +1,15 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "VCode public blog API",
-    "version": "1.0.0",
-    "description": "Public health and moderated comment submission contract. Blog pages are server-rendered HTML."
+    "title": "VCode public and authenticated API",
+    "version": "1.1.0",
+    "description": "Health, moderated comments, minimal public analytics collection and authenticated portfolio metrics."
   },
-  "servers": [{ "url": "https://vcode.zeleznalady.cz" }],
+  "servers": [
+    {
+      "url": "https://vcode.zeleznalady.cz"
+    }
+  ],
   "paths": {
     "/health/blog": {
       "get": {
@@ -13,16 +17,34 @@
         "responses": {
           "200": {
             "description": "Blog service and database are ready",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Health" } } }
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                }
+              }
+            }
           },
-          "500": { "description": "Dependency is unavailable" }
+          "500": {
+            "description": "Dependency is unavailable"
+          }
         }
       }
     },
     "/api/blog/{slug}/comments": {
       "post": {
         "operationId": "submitBlogComment",
-        "parameters": [{ "name": "slug", "in": "path", "required": true, "schema": { "type": "string", "pattern": "^[a-z0-9-]+$" } }],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-z0-9-]+$"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -30,25 +52,69 @@
               "schema": {
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["name", "body", "lang"],
+                "required": [
+                  "name",
+                  "body",
+                  "lang"
+                ],
                 "properties": {
-                  "name": { "type": "string", "minLength": 2, "maxLength": 60 },
-                  "email": { "type": "string", "format": "email", "maxLength": 160 },
-                  "body": { "type": "string", "minLength": 10, "maxLength": 2000 },
-                  "lang": { "type": "string", "enum": ["cs", "en"] },
-                  "website": { "type": "string", "description": "Spam honeypot; normal clients leave it empty." }
+                  "name": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 60
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "maxLength": 160
+                  },
+                  "body": {
+                    "type": "string",
+                    "minLength": 10,
+                    "maxLength": 2000
+                  },
+                  "lang": {
+                    "type": "string",
+                    "enum": [
+                      "cs",
+                      "en"
+                    ]
+                  },
+                  "website": {
+                    "type": "string",
+                    "description": "Spam honeypot; normal clients leave it empty."
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "303": { "description": "Comment accepted and redirected to the article" },
-          "400": { "description": "Invalid comment" },
-          "403": { "description": "Origin check failed" },
-          "404": { "description": "Published article not found" },
-          "413": { "description": "Request exceeds 16 KiB" },
-          "429": { "description": "Per-origin rate limit reached", "headers": { "Retry-After": { "schema": { "type": "integer" } } } }
+          "303": {
+            "description": "Comment accepted and redirected to the article"
+          },
+          "400": {
+            "description": "Invalid comment"
+          },
+          "403": {
+            "description": "Origin check failed"
+          },
+          "404": {
+            "description": "Published article not found"
+          },
+          "413": {
+            "description": "Request exceeds 16 KiB"
+          },
+          "429": {
+            "description": "Per-origin rate limit reached",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -56,14 +122,239 @@
       "post": {
         "operationId": "receiveTelegramEditorialUpdate",
         "description": "Private Telegram callback receiver. It is unavailable while editorial integration is disabled.",
-        "parameters": [{ "name": "X-Telegram-Bot-Api-Secret-Token", "in": "header", "required": true, "schema": { "type": "string", "minLength": 32 } }],
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["update_id"], "properties": { "update_id": { "type": "integer" } }, "additionalProperties": true } } } },
+        "parameters": [
+          {
+            "name": "X-Telegram-Bot-Api-Secret-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 32
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "update_id"
+                ],
+                "properties": {
+                  "update_id": {
+                    "type": "integer"
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          }
+        },
         "responses": {
-          "200": { "description": "Update accepted or already processed" },
-          "403": { "description": "Webhook secret is invalid" },
-          "404": { "description": "Integration is disabled" },
-          "413": { "description": "Request exceeds 64 KiB" }
+          "200": {
+            "description": "Update accepted or already processed"
+          },
+          "403": {
+            "description": "Webhook secret is invalid"
+          },
+          "404": {
+            "description": "Integration is disabled"
+          },
+          "413": {
+            "description": "Request exceeds 64 KiB"
+          }
         }
+      }
+    },
+    "/analytics/event": {
+      "post": {
+        "operationId": "collectPublicAnalytics",
+        "responses": {
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Origin not allowed"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "502": {
+            "description": "Analytics dependency unavailable"
+          },
+          "204": {
+            "description": "Event accepted or collection disabled"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "website",
+                  "name",
+                  "url"
+                ],
+                "properties": {
+                  "website": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "name": {
+                    "type": "string",
+                    "enum": [
+                      "pageview",
+                      "app-store-click",
+                      "contact-click"
+                    ]
+                  },
+                  "url": {
+                    "type": "string",
+                    "maxLength": 2000
+                  },
+                  "referrer": {
+                    "type": "string",
+                    "maxLength": 2000
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/prehled/api/login": {
+      "post": {
+        "operationId": "loginMetrics",
+        "responses": {
+          "200": {
+            "description": "Request completed"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Origin not allowed"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "502": {
+            "description": "Analytics dependency unavailable"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "username",
+                  "password"
+                ],
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "maxLength": 255
+                  },
+                  "password": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "writeOnly": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/prehled/api/logout": {
+      "post": {
+        "operationId": "logoutMetrics",
+        "responses": {
+          "200": {
+            "description": "Request completed"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Origin not allowed"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "502": {
+            "description": "Analytics dependency unavailable"
+          }
+        },
+        "security": [
+          {
+            "metricsSession": []
+          }
+        ]
+      }
+    },
+    "/prehled/api/summary": {
+      "get": {
+        "operationId": "getMetricsSummary",
+        "responses": {
+          "200": {
+            "description": "Request completed"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Origin not allowed"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "502": {
+            "description": "Analytics dependency unavailable"
+          }
+        },
+        "security": [
+          {
+            "metricsSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "days",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "enum": [
+                7,
+                30,
+                90
+              ],
+              "default": 7
+            }
+          }
+        ]
       }
     }
   },
@@ -72,11 +363,26 @@
       "Health": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["status", "generationEnabled"],
+        "required": [
+          "status",
+          "generationEnabled"
+        ],
         "properties": {
-          "status": { "type": "string", "const": "ok" },
-          "generationEnabled": { "type": "boolean" }
+          "status": {
+            "type": "string",
+            "const": "ok"
+          },
+          "generationEnabled": {
+            "type": "boolean"
+          }
         }
+      }
+    },
+    "securitySchemes": {
+      "metricsSession": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "__Host-vcode-metrics"
       }
     }
   }

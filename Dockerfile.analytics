@@ -1,0 +1,6 @@
+FROM node:24.20.0-alpine
+WORKDIR /app
+COPY services/analytics ./services/analytics
+USER node
+EXPOSE 8091
+CMD ["node", "services/analytics/server.mjs"]

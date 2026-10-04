@@ -1,0 +1,72 @@
+services:
+  database:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: analytics
+      POSTGRES_USER: analytics
+      POSTGRES_PASSWORD: ${ANALYTICS_DB_PASSWORD:?Configure a dedicated password}
+    volumes:
+      - analytics-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U analytics -d analytics"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks: [analytics]
+  umami:
+    image: ghcr.io/umami-software/umami:3.4.0
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://analytics:${ANALYTICS_DB_PASSWORD}@database:5432/analytics
+      APP_SECRET: ${ANALYTICS_APP_SECRET:?Configure an independent secret}
+      TWO_FACTOR_ENCRYPTION_KEY: ${ANALYTICS_2FA_KEY:?Configure an independent secret}
+      PRIVATE_MODE: "1"
+      DISABLE_TELEMETRY: "1"
+      SALT_ROTATION: day
+      CLIENT_IP_HEADER: x-real-ip
+    depends_on:
+      database:
+        condition: service_healthy
+    networks: [analytics]
+  retention:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      PGHOST: database
+      PGUSER: analytics
+      PGDATABASE: analytics
+      PGPASSWORD: ${ANALYTICS_DB_PASSWORD}
+    volumes:
+      - ./retention.sql:/run/config/retention.sql:ro
+    entrypoint: ["sh", "-c", "while true; do psql -v ON_ERROR_STOP=1 -f /run/config/retention.sql && sleep 86400 || sleep 300; done"]
+    depends_on:
+      database:
+        condition: service_healthy
+    networks: [analytics]
+  dashboard:
+    build:
+      context: ../..
+      dockerfile: Dockerfile.analytics
+    restart: unless-stopped
+    read_only: true
+    environment:
+      ANALYTICS_UPSTREAM: http://umami:3000
+      PUBLIC_SITE_URL: https://vcode.zeleznalady.cz
+      ANALYTICS_COLLECTION_ENABLED: ${ANALYTICS_COLLECTION_ENABLED:-false}
+      ANALYTICS_SITES_FILE: /run/config/sites.json
+    volumes:
+      - ${ANALYTICS_SITES_PATH:?Configure site registry}:/run/config/sites.json:ro
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    networks:
+      analytics:
+      vcode:
+        aliases: [vcode-analytics]
+networks:
+  analytics:
+  vcode:
+    external: true
+    name: ${VCODE_NETWORK:?Configure the existing web network}
+volumes:
+  analytics-data:

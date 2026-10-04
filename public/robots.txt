@@ -1,25 +1,32 @@
 User-agent: *
 Allow: /
+Disallow: /prehled/
 
 # Search and user-requested retrieval are welcome. Training crawlers are
 # handled separately so discovery does not imply a training licence.
 User-agent: OAI-SearchBot
 Allow: /
+Disallow: /prehled/
 
 User-agent: ChatGPT-User
 Allow: /
+Disallow: /prehled/
 
 User-agent: Claude-SearchBot
 Allow: /
+Disallow: /prehled/
 
 User-agent: Claude-User
 Allow: /
+Disallow: /prehled/
 
 User-agent: PerplexityBot
 Allow: /
+Disallow: /prehled/
 
 User-agent: Perplexity-User
 Allow: /
+Disallow: /prehled/
 
 User-agent: GPTBot
 Disallow: /

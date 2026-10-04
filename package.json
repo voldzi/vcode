@@ -16,7 +16,7 @@
     "validate:public": "node scripts/validate-public-repository.mjs",
     "validate:openapi": "node scripts/validate-openapi.mjs",
     "validate:content": "node scripts/validate-content.mjs",
-    "test": "pnpm test:blog",
+    "test": "pnpm test:blog && node --test services/analytics/test/*.test.mjs",
     "test:blog": "node --test services/blog/test/*.test.mjs",
     "blog:moderate": "node services/blog/moderate.mjs",
     "blog:articles": "node services/blog/articles.mjs",
