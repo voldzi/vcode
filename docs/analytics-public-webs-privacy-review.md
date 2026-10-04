@@ -1,6 +1,6 @@
 # Společné schválení měření veřejných webů
 
-Stav 4. 10. 2026: připraveno k posouzení vlastníkem. Měření pěti nových webů je dosud vypnuté. Tato revize sjednocuje doplňky informací o soukromí v jednotlivých projektech; sama nepředstavuje schválení. VCode má vlastní dříve schválený text.
+Stav 4. 10. 2026: vlastník výslovně schválil konkrétní české a anglické doplňky i aktivaci všech pěti veřejných webů odpovědí „Souhlasím“ v hlavním chatu VCode, po předložení tohoto souboru. Schválený obsah odpovídá revizi ef5cbf7. Měření se zapíná až po zveřejnění příslušného doplňku a převzetí konkrétního webu. VCode má vlastní dříve schválený text.
 
 ## Rozsah
 
