@@ -29,3 +29,7 @@ Dashboard image: `sha256:6e55978b98967e79d54bd82f71feaac6fca033ce0d953bd82ab9239
 ### Metric scope clarification — 2026-10-04
 
 All six public websites have active page-view collection. Details show source and event panels only when the selected site's approved integration supports them. Otherwise a single explicit notice explains that traffic is collected while sources and clicks are outside scope. Application-interest panels appear only when matching portfolio paths exist. A site without click collection has no misleading empty App Store summary card. This changes presentation only, with no expanded tracking or new privacy terms.
+
+### Detail units verified against Umami 3.4.0
+
+The ranked path and referrer rows from this deployed version count distinct daily session identifiers (visitor estimates), rather than raw pageviews. Custom event rows count events. The UI labels these units explicitly; application rows sum estimates across matching paths and are not deduplicated people. Timeline, totals and website ranking continue to use pageview statistics. Definitions verified in official source [page metrics](https://github.com/umami-software/umami/blob/v3.4.0/src/queries/sql/pageviews/getPageviewMetrics.ts) and [event metrics](https://github.com/umami-software/umami/blob/v3.4.0/src/queries/sql/events/getEventMetrics.ts). Isolated public v2 acceptance on all five proxy pairs confirmed source and click storage, edge header override and privacy rejection, without adding real visitor records.

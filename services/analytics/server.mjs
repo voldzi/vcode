@@ -64,7 +64,7 @@ createServer(async(req,res)=>{try{
    const legacy=!['vcode-public-v1','vcode-public-v2'].includes(site.integrationVersion);
    const expanded=site.integrationVersion==='vcode-public-v2'&&Boolean(site.metricsApprovedAt);
    const hasSources=legacy||(expanded&&site.captureSources===true),hasEvents=legacy||(expanded&&site.allowedEvents?.length>0);
-   const metadata={name:site.name,domain:site.domain,collectionEnabled:site.collectionEnabled??(site.domain===new URL(origin).hostname&&enabled),approvedAt:site.approvedAt??null,collectionStartedAt:site.collectionStartedAt??null,registeredAt:website.createdAt??null,integrationVersion:site.integrationVersion??'vcode-legacy',capabilities:{referrers:hasSources,events:legacy?['app-store-click','contact-click']:expanded?(site.allowedEvents??[]):[]},connection:connections.find(c=>c.domain===site.domain)??null};
+   const metadata={name:site.name,domain:site.domain,collectionEnabled:site.collectionEnabled??(site.domain===new URL(origin).hostname&&enabled),approvedAt:site.approvedAt??null,collectionStartedAt:site.collectionStartedAt??null,metricsCollectionStartedAt:site.metricsCollectionStartedAt??null,registeredAt:website.createdAt??null,integrationVersion:site.integrationVersion??'vcode-legacy',capabilities:{referrers:hasSources,events:legacy?['app-store-click','contact-click']:expanded?(site.allowedEvents??[]):[]},connection:connections.find(c=>c.domain===site.domain)??null};
    const q=`startAt=${startAt}&endAt=${endAt}&timezone=Europe%2FPrague`;
    try {
     const [stats,pages,referrers,events,series]=await Promise.all([
