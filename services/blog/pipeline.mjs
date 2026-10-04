@@ -66,7 +66,7 @@ export function publisherFamily(id) {
 
 export function storyPriority(item) {
   const title = normalizeText(item.title);
-  const launch = /\b(introducing|introduces|launches|unveils|announces|released|release|predstavuje|uvadi)\b/.test(title);
+  const launch = /\b(introducing|introduces|launches|unveils|announces|announcing|released|release|predstavuje|uvadi)\b/.test(title);
   const caseStudy = /\b(scales|reimagining|partnership|partners|anniversary|founders letter|one year|customer|saves|boosts)\b/.test(title);
   return { kind: caseStudy ? "case-study" : launch ? "launch" : "update", bonus: caseStudy ? -0.18 : launch ? 0.25 : 0 };
 }
@@ -120,7 +120,7 @@ export function rankEvidenceClusters(candidates, recentArticles = []) {
     const families = [...new Set(cluster.items.map(i => publisherFamily(i.sourceId)))];
     const repetitions = recentArticles.filter(a => a.sourceIds?.some(id => families.includes(publisherFamily(id)))).length;
     const repeatedTopic = recentArticles.filter(a => a.topic === cluster.primaryTopic).length;
-    const topicPenalty = Math.min(0.3, repeatedTopic * 0.1) + (recentArticles[0]?.topic === cluster.primaryTopic ? 0.08 : 0);
+    const topicPenalty = (Math.min(0.3, repeatedTopic * 0.1) + (recentArticles[0]?.topic === cluster.primaryTopic ? 0.08 : 0)) * (cluster.items[0].storyKind === "launch" ? 0.5 : 1);
     const publisherPenalty = repetitions * 0.18;
     const urgent = cluster.primaryTopic === "security" && /actively exploited|aktivne zneuziv|aktivně zneužív/i.test(cluster.items.map(i => i.title + " " + i.summary).join(" "));
     const blocked = repetitions >= 2 && !urgent;
