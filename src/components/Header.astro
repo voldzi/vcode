@@ -2,8 +2,8 @@
 import SignalMark from "./SignalMark.astro";
 const { lang = "cs", path = "/", alternatePath } = Astro.props;
 const cs = lang === "cs";
-const toEnglish = (value: string) => `/en${value === "/" ? "/" : value.replace(/^\/aplikace/, "/apps").replace(/^\/navody/, "/guides").replace(/^\/podpora/, "/support")}`;
-const toCzech = (value: string) => (value.replace(/^\/en/, "") || "/").replace(/^\/apps/, "/aplikace").replace(/^\/guides/, "/navody").replace(/^\/support/, "/podpora");
+const toEnglish = (value: string) => `/en${value === "/" ? "/" : value.replace(/^\/aplikace/, "/apps").replace(/^\/hry/, "/games").replace(/^\/navody/, "/guides").replace(/^\/podpora/, "/support")}`;
+const toCzech = (value: string) => (value.replace(/^\/en/, "") || "/").replace(/^\/apps/, "/aplikace").replace(/^\/games/, "/hry").replace(/^\/guides/, "/navody").replace(/^\/support/, "/podpora");
 const switchHref = alternatePath ?? (cs ? toEnglish(path) : toCzech(path));
 ---
 <header class="site-header">
@@ -13,6 +13,7 @@ const switchHref = alternatePath ?? (cs ? toEnglish(path) : toCzech(path));
   </a>
   <nav id="site-navigation" aria-label={cs ? "Hlavní navigace" : "Main navigation"}>
     <a href={cs ? "/#aplikace" : "/en/#apps"}>{cs ? "Aplikace" : "Apps"}</a>
+    <a href={cs ? "/hry/" : "/en/games/"}>{cs ? "Hry" : "Games"}</a>
     <a href={cs ? "/blog/" : "/en/blog/"}>{cs ? "Blog" : "Blog"}</a>
     <a href={cs ? "/navody/" : "/en/guides/"}>{cs ? "Návody" : "Guides"}</a>
     <a href={cs ? "/podpora/" : "/en/support/"}>{cs ? "Podpora" : "Support"}</a>

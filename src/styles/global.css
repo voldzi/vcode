@@ -259,3 +259,11 @@ img, svg { display: block; max-width: 100%; }
 @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } *,*::before,*::after { transition:none!important; animation:none!important; } }
 
 @media (hover:none) { .product-card:hover,.support-options a:hover,.button:hover,.language:hover { transform:none; } }
+
+.games-section { background:#f5f9f6; }
+.games-hub-link { margin:2rem 0 0; }
+.foldlight-spotlight { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:3rem; align-items:center; padding:clamp(3rem,7vw,7rem) clamp(1.25rem,8vw,8rem); background:#f7f2e6; }
+.foldlight-spotlight h2 { max-width:48rem; margin:.8rem 0 1.5rem; font:750 clamp(2rem,4vw,4rem)/1.12 "Manrope Variable",sans-serif; letter-spacing:-.04em; color:#24403d; }
+.foldlight-spotlight p { max-width:46rem; }
+.foldlight-spotlight img { width:clamp(120px,20vw,256px); height:auto; border-radius:22%; }
+@media(max-width:700px) { .foldlight-spotlight { grid-template-columns:1fr; gap:2rem; } .foldlight-spotlight img { grid-row:1; width:120px; } }

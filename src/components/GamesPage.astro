@@ -1,0 +1,11 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import GamesSection from "./GamesSection.astro";
+const { lang = "cs" } = Astro.props as { lang?: "cs" | "en" };
+const cs = lang === "cs";
+---
+<BaseLayout title={cs ? "Hry — VCode" : "Games — VCode"} description={cs ? "NEST, Šibenice, Městem hrou, Foldlight, Rinklet a MILLORA. Hry od VCode pro telefon, tablet, Apple TV i výpravy venku." : "NEST, Šibenice, Play the City, Foldlight, Rinklet and MILLORA. VCode games for phones, tablets, Apple TV and outdoor adventures."} lang={lang} path={cs ? "/hry/" : "/en/games/"} alternatePath={cs ? "/en/games/" : "/hry/"}>
+  <header class="help-hero"><p class="kicker">VCode · {cs ? "Hry" : "Games"}</p><h1>{cs ? "Pojďte si hrát." : "Come and play."}</h1><p>{cs ? "Chvíle pro dobrý tah, malé překvapení nebo výpravu za příběhem. Každá hra má svůj vlastní svět." : "Time for a clever move, a small surprise or a story-led adventure. Each game has a world of its own."}</p><a class="text-link" href="#foldlight">{cs ? "Foldlight: světlo ovládané ohybem ↓" : "Foldlight: light controlled by a fold ↓"}</a></header>
+  <GamesSection {lang} hub />
+  <section class="foldlight-spotlight" id="foldlight" aria-labelledby="foldlight-title"><div><p class="kicker">Foldlight · {cs ? "Vývojový prototyp" : "Development prototype"}</p><h2 id="foldlight-title">{cs ? "Rozevřete telefon. Nechte světlo rozkvést." : "Open your phone. Let the light bloom."}</h2><p>{cs ? "Jednoduchá světelná hříčka představuje možnosti ovládání ohybem na iPhonu Duo. Tři krátké ukázky postupně objevují ohyb, odraz a větvení světla. Na běžném iPhonu a iPadu slouží dotykové ovládání." : "A simple light puzzle explores fold controls on iPhone Duo. Three short demonstrations introduce folding, reflection and branching light. Ordinary iPhones and iPads use touch controls."}</p><a class="button primary" href={cs ? "/aplikace/foldlight/" : "/en/apps/foldlight/"}>{cs ? "Poznat Foldlight" : "Explore Foldlight"}</a></div><img src="/apps/foldlight.webp" width="256" height="256" alt={cs ? "Ikona Foldlight: světelný hlavolam" : "Foldlight light puzzle app icon"} loading="lazy" /></section>
+</BaseLayout>

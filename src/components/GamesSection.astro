@@ -1,0 +1,14 @@
+---
+import ProductCard from "./ProductCard.astro";
+import { games } from "../lib/products";
+const { lang = "cs", hub = false } = Astro.props as { lang?: "cs" | "en"; hub?: boolean };
+const cs = lang === "cs";
+---
+<section class="products-section games-section" id={cs ? "hry" : "games"}>
+  <div class="section-heading">
+    <div><span class="section-index">PLAY</span><h2>{cs ? "Malé hry. Velká radost." : "Small games. Big delight."}</h2></div>
+    <p>{cs ? "Strategie, slovní hříčky, stolní hokej i příběhy v ulicích. Naše hry na jednom místě — s jasnou informací, co už si můžete zahrát a co právě připravujeme." : "Strategy, word games, table hockey and stories in the streets. Our games in one place, with a clear view of what you can play today and what is in development."}</p>
+  </div>
+  <div class="product-grid">{games.map(product => <ProductCard product={product} lang={lang} />)}</div>
+  {!hub && <p class="games-hub-link"><a class="button secondary" href={cs ? "/hry/" : "/en/games/"}>{cs ? "Všechny hry na jednom místě" : "Explore all our games"}</a></p>}
+</section>

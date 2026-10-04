@@ -29,6 +29,10 @@ Support: mailto:podpora@zeleznalady.cz
 
 ## Authoritative sections
 
+- [Games](https://vcode.zeleznalady.cz/hry/): NEST, Šibenice, Play the City, Foldlight, Rinklet and MILLORA. Availability and development status are stated on each page.
+- [Games in English](https://vcode.zeleznalady.cz/en/games/)
+- [Event](https://vcode.zeleznalady.cz/aplikace/event/): event and learning management platform in development; demos by arrangement.
+
 - [Technology blog](https://vcode.zeleznalady.cz/blog/): original bilingual technology briefings with direct links to source publications.
 - [English technology blog](https://vcode.zeleznalady.cz/en/blog/)
 - [Public XML sitemap](https://vcode.zeleznalady.cz/sitemap-index.xml)

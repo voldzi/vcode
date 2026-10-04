@@ -11,6 +11,13 @@ menu?.addEventListener('click', () => {
   menu.setAttribute('aria-expanded', String(open));
   header?.classList.toggle('menu-open', open);
 });
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && menu?.getAttribute('aria-expanded') === 'true') {
+    closeMenu();
+    menu.focus();
+  }
+});
+
 navigation?.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
 
 const reveal = document.querySelectorAll('.hero > *, .principles > *, .section-heading > *, .product-card, .trust-band > *, .support-cta > *, .product-detail > *, .support-page > *, .guide > *');

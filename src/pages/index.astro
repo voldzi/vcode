@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ProductCard from "../components/ProductCard.astro";
+import GamesSection from "../components/GamesSection.astro";
 import SignalMark from "../components/SignalMark.astro";
 import { products } from "../lib/products";
 ---
@@ -28,13 +29,15 @@ import { products } from "../lib/products";
       <p>Od bezpečné cesty přes péči o zdraví až po rozhodování celé organizace. Každý produkt má vlastní charakter, společné má ale jedno: musí fungovat, když jej člověk potřebuje.</p>
     </div>
     <div class="product-grid">
-      {products.filter(product => !product.family).map((product, index) => <ProductCard product={product} lang="cs" featured={index < 2} />)}
+      {products.filter(product => !product.family && product.kind !== "game").map((product, index) => <ProductCard product={product} lang="cs" featured={index < 2} />)}
     </div>
     <div class="family-heading"><span class="section-index">STRATOS</span><div><h3>Jedna rodina. Samostatné aplikace.</h3><p>Finance, vedení portfolia, realizace projektů, architektura a řízené znalosti mají každé svůj vlastní prostor.</p></div></div>
     <div class="product-grid">
       {products.filter(product => product.family).sort((a, b) => Number(b.id === "stratos") - Number(a.id === "stratos")).map(product => <ProductCard product={product} lang="cs" />)}
     </div>
   </section>
+
+  <GamesSection lang="cs" />
 
   <section class="trust-band">
     <span class="section-index">02</span>

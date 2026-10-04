@@ -2,7 +2,7 @@
 const { id, size = 64 } = Astro.props as { id: string; size?: number };
 const stratosApps = ["budget-contract", "executive-center", "projectflow", "archflow"];
 const icon = stratosApps.includes(id) ? "stratos" : id;
-const extension = ["akb", "apsyd", "stratos", "kaloricke-tabulky"].includes(icon) ? "svg" : ["nest", "pas", "mestem-hrou", "sibenice"].includes(icon) ? "png" : "webp";
+const extension = ["akb", "apsyd", "stratos", "kaloricke-tabulky", "event"].includes(icon) ? "svg" : ["nest", "pas", "mestem-hrou", "sibenice"].includes(icon) ? "png" : "webp";
 ---
 <span class:list={["product-icon", `product-icon-${id}`]} style={`--icon-size:${size}px`} aria-hidden="true">
   <img src={`/apps/${icon}.${extension}`} alt="" width={size} height={size} loading="lazy" decoding="async" />

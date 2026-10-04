@@ -17,9 +17,52 @@ export type Product = {
   availabilityCs: string;
   availabilityEn: string;
   family?: "stratos";
+  kind?: "game";
+  inDevelopment?: boolean;
 };
 
 export const products: Product[] = [
+  {
+    id: "event", name: "Event", href: "event", tone: "azure", inDevelopment: true,
+    categoryCs: "Akce a vzdělávání", categoryEn: "Events and learning",
+    headlineCs: "Od programu k přehledu o celé akci.", headlineEn: "From the programme to a clear view of every event.",
+    summaryCs: "Platforma pro organizaci vzdělávacích a firemních akcí. Spojuje program, přihlášky, QR prezenci, úkoly a přehledy pro organizátory.",
+    summaryEn: "A platform for learning and business events, bringing together programmes, registrations, QR check-in, tasks and organiser overviews.",
+    capabilitiesCs: ["Program a registrace účastníků", "QR prezence a přehled účasti", "Úkoly, materiály a hodnocení", "České a anglické rozhraní"],
+    capabilitiesEn: ["Programmes and participant registration", "QR check-in and attendance overviews", "Tasks, materials and reviews", "Czech and English interface"],
+    availabilityCs: "Ve vývoji — ukázka po domluvě", availabilityEn: "In development — demo by arrangement"
+  },
+  {
+    id: "foldlight", name: "Foldlight", href: "foldlight", tone: "forest", kind: "game", inDevelopment: true,
+    categoryCs: "Světelná hříčka", categoryEn: "Light puzzle",
+    headlineCs: "Rozevřete telefon. Nechte světlo rozkvést.", headlineEn: "Open your phone. Let the light bloom.",
+    summaryCs: "Jednoduchá hra se světlem, zrcadly a květinami. Krátká ukázka představuje ovládání ohybem na iPhonu Duo; na běžném iPhonu a iPadu slouží dotykové ovládání.",
+    summaryEn: "A simple game of light, mirrors and flowers. A short showcase explores fold controls on iPhone Duo, with touch controls on ordinary iPhones and iPads.",
+    capabilitiesCs: ["Tři ukázky: ohyb, odraz a větvení světla", "Světlo probouzí květiny", "Dotykové ovládání na iPhonu a iPadu", "Dvanáct hlavolamů k prozkoumání"],
+    capabilitiesEn: ["Three demonstrations: folding, reflection and branching light", "Light wakes the flowers", "Touch controls on iPhone and iPad", "Twelve puzzles to explore"],
+    availabilityCs: "Vývojový prototyp", availabilityEn: "Development prototype"
+  },
+  {
+    id: "rinklet", name: "Rinklet", href: "rinklet", tone: "cyan", kind: "game", inDevelopment: true,
+    categoryCs: "Stolní hokej", categoryEn: "Table hockey",
+    headlineCs: "Malý stůl. Rychlá odveta.", headlineEn: "A small table. A quick rematch.",
+    summaryCs: "Stolní hokej pro iPhone a iPad. Zahrajte si proti počítači, trénujte nebo vyzvěte druhého hráče na jednom zařízení. Pro iPhone Duo připravujeme rozdělení stolu a ovladače.",
+    summaryEn: "Table hockey for iPhone and iPad. Play the computer, practise or challenge a second player on one device. A separate rink and controller layout is being developed for iPhone Duo.",
+    capabilitiesCs: ["Soupeř se třemi obtížnostmi", "Dva hráči na jednom zařízení", "Trénink a místní hra offline", "Stůl a ovladač na oddělených plochách"],
+    capabilitiesEn: ["Computer opponent with three difficulty levels", "Two players on one device", "Practice and offline local play", "Separate rink and controller surfaces"],
+    availabilityCs: "Ve vývoji", availabilityEn: "In development"
+  },
+  {
+    id: "millora", name: "MILLORA — Mlýn", nameEn: "MILLORA — Nine Men's Morris", href: "millora", tone: "amber", kind: "game", inDevelopment: true,
+    categoryCs: "Desková strategie", categoryEn: "Board strategy",
+    headlineCs: "Devět kamenů. Spousta možností.", headlineEn: "Nine pieces. Many possibilities.",
+    summaryCs: "Moderní zpracování klasického Mlýna pro iPhone a iPad. Pokládejte a posouvejte kameny, uzavírejte mlýny a promýšlejte další tah.",
+    summaryEn: "A modern take on Nine Men's Morris for iPhone and iPad. Place and move pieces, form mills and think ahead.",
+    capabilitiesCs: ["Klasická pravidla Mlýna", "Čtyři úrovně místního soupeře", "Dva hráči na jednom zařízení", "Interaktivní lekce a trénink"],
+    capabilitiesEn: ["Classic Nine Men's Morris rules", "Four levels of on-device opponent", "Two players on one device", "Interactive lessons and practice"],
+    availabilityCs: "Ve vývoji", availabilityEn: "In development"
+  },
+
   {
     id: "apsyd",
     name: "APSYD",
@@ -104,6 +147,7 @@ export const products: Product[] = [
   },
   {
     id: "nest",
+    kind: "game",
     name: "NEST",
     href: "nest",
     tone: "nest",
@@ -120,6 +164,7 @@ export const products: Product[] = [
   },
   {
     id: "sibenice",
+    kind: "game",
     name: "Šibenice",
     href: "sibenice",
     tone: "amber",
@@ -136,6 +181,7 @@ export const products: Product[] = [
   },
   {
     id: "mestem-hrou",
+    kind: "game",
     name: "Městem hrou",
     nameEn: "Play the City",
     href: "mestem-hrou",
@@ -309,3 +355,6 @@ export const products: Product[] = [
     availabilityEn: "Available as a PWA"
   }
 ];
+
+/** Shared order for the homepage and bilingual games hub. */
+export const games = ["nest", "sibenice", "mestem-hrou", "foldlight", "rinklet", "millora"].map(id => products.find(product => product.id === id)!);
