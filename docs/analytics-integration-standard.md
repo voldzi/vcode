@@ -38,11 +38,11 @@ Seznam vychází ze src/lib/products.ts; není úplným soupisem všech serverov
 | Web | Stav | Rozsah před připojením |
 | --- | --- | --- |
 | vcode.zeleznalady.cz | Připojeno | Veřejné portfolio, blog a návody |
-| mestemhrou.cz | Proxy ověřena; integrace připravena, měření vypnuté | Veřejné stránky; bez polohy hráče a osobního postupu |
-| masaze.zeleznalady.cz | Proxy ověřena; integrace připravena, měření vypnuté | Nabídka a veřejné stránky; bez rezervací a klientské samoobsluhy |
-| studio-balance.cz | Proxy ověřena; integrace připravena, měření vypnuté | Veřejná nabídka a rozvrh; bez účtů a osobních rezervací |
+| mestemhrou.cz | Proxy ověřena; integrace nasazena, měření vypnuté | Veřejné stránky; bez polohy hráče a osobního postupu |
+| masaze.zeleznalady.cz | Proxy ověřena; integrace nasazena, měření vypnuté | Nabídka a veřejné stránky; bez rezervací a klientské samoobsluhy |
+| studio-balance.cz | Proxy ověřena; integrace nasazena, měření vypnuté | Veřejná nabídka a rozvrh; bez účtů a osobních rezervací |
 | cop.zeleznalady.cz | Proxy ověřena; integrace nasazena, měření vypnuté | Pouze syntetická ukázka /demo/flood-central-bohemia; bez poloh, hlášení a komunikace |
-| kaloricketabulky.zeleznalady.cz | Proxy ověřena; integrace připravena, měření vypnuté | Pouze veřejná prezentace; bez jídelního deníku a zdravotních údajů |
+| kaloricketabulky.zeleznalady.cz | Proxy ověřena; integrace nasazena, měření vypnuté | Pouze veřejná prezentace; bez jídelního deníku a zdravotních údajů |
 | STRATOS a AKB | Vyloučeno | Soukromé nasazení |
 
 NEST a Šibenice mají již měřené produktové stránky na VCode. Nativní používání a instalace z App Storu jsou jiné metriky a vyžadují samostatnou integraci.
