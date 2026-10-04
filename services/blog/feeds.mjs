@@ -78,7 +78,7 @@ export function privateAddress(address) {
     || /^fe[89ab]/.test(value) || value.startsWith("ff");
 }
 
-async function assertSafeFeedUrl(raw, source) {
+export async function assertSafeFeedUrl(raw, source) {
   const url = new URL(raw);
   if (url.protocol !== "https:" || !(source.allowedHosts ?? []).includes(url.hostname.toLowerCase())) throw new Error("feed URL left its allowlisted HTTPS hosts");
   const addresses = await lookup(url.hostname, { all: true, verbatim: true });
@@ -86,7 +86,7 @@ async function assertSafeFeedUrl(raw, source) {
   return url;
 }
 
-async function readBoundedBody(response, maxBytes) {
+export async function readBoundedBody(response, maxBytes) {
   const declared = Number.parseInt(response.headers.get("content-length") ?? "0", 10);
   if (Number.isFinite(declared) && declared > maxBytes) throw new Error(`feed exceeds ${maxBytes} byte safety limit`);
   if (!response.body) return "";

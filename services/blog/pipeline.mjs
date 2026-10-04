@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 const trackingParameters = new Set(["fbclid", "gclid", "dclid", "mc_cid", "mc_eid", "ref", "source"]);
 const stopWords = new Set(["a", "an", "and", "are", "as", "at", "be", "by", "for", "from", "in", "is", "it", "of", "on", "or", "that", "the", "to", "with", "a", "aby", "ale", "do", "i", "jak", "je", "jsou", "na", "o", "od", "po", "pro", "se", "s", "u", "v", "ve", "z", "za"]);
 const topicKeywords = new Map([
-  ["ai", ["ai", "agent", "artificial intelligence", "embedding", "gpt", "inference", "jazykov", "llm", "model", "neural", "uměl"]],
+  ["ai", ["ai", "agent", "assistant", "chatgpt", "codex", "dots", "artificial intelligence", "embedding", "gpt", "inference", "jazykov", "llm", "model", "neural", "uměl"]],
   ["security", ["attack", "bezpeč", "cve", "malware", "phishing", "ransomware", "security", "vulnerability", "zranitel"]],
   ["software", ["api", "app store", "browser", "database", "developer", "framework", "ios", "ipados", "javascript", "kubernetes", "macos", "open source", "program", "python", "runtime", "sdk", "software", "storekit", "swift", "typescript", "visionos", "watchos", "web", "workers", "xcode"]],
   ["internet", ["cloud", "datacenter", "dns", "domain", "internet", "network", "síť"]],
@@ -60,6 +60,17 @@ export function titleSimilarity(left, right) {
   return intersection / (a.size + b.size - intersection);
 }
 
+export function publisherFamily(id) {
+  return ({ applenews: "apple", appledev: "apple", googleai: "google", msresearch: "microsoft", ibmresearch: "ibm" })[id] ?? id;
+}
+
+export function storyPriority(item) {
+  const title = normalizeText(item.title);
+  const launch = /\b(introducing|introduces|launches|unveils|announces|released|release|predstavuje|uvadi)\b/.test(title);
+  const caseStudy = /\b(scales|reimagining|partnership|partners|anniversary|founders letter|one year|customer|saves|boosts)\b/.test(title);
+  return { kind: caseStudy ? "case-study" : launch ? "launch" : "update", bonus: caseStudy ? -0.18 : launch ? 0.25 : 0 };
+}
+
 export function relevance(item) {
   const titleHits = topicHits(item.title);
   const combinedHits = topicHits(`${item.title} ${item.summary}`);
@@ -68,12 +79,18 @@ export function relevance(item) {
   score += Math.min(0.4, Math.max(0, ...combinedHits.map(({ hits }) => hits)) * 0.12);
   const rankedTopics = combinedHits.map(({ topic, hits }, index) => ({ topic, hits, titleHits: titleHits[index].hits }))
     .sort((a, b) => b.titleHits - a.titleHits || b.hits - a.hits);
-  const primaryTopic = rankedTopics[0]?.hits
+  let primaryTopic = rankedTopics[0]?.hits
     ? (rankedTopics[0].topic === "infrastructure" ? "software" : rankedTopics[0].topic)
     : null;
+  if (!primaryTopic && item.sourceKind === "official" && item.sourceTopics?.length === 1) {
+    primaryTopic = item.sourceTopics[0];
+    topics.push(primaryTopic);
+  }
+  const priority = storyPriority(item);
+  score += priority.bonus;
   const ageHours = item.publishedAt ? Math.max(0, (Date.now() - new Date(item.publishedAt).valueOf()) / 3_600_000) : 168;
   score += Math.max(0, 0.25 - ageHours / 672);
-  return { score: Math.min(1, Number(score.toFixed(3))), topics, primaryTopic };
+  return { score: Math.min(1, Number(score.toFixed(3))), topics, primaryTopic, storyKind: priority.kind };
 }
 
 export function clusterCandidates(candidates, threshold = 0.42) {
@@ -98,22 +115,33 @@ export function clusterCandidates(candidates, threshold = 0.42) {
   }).sort((a, b) => b.score - a.score);
 }
 
+export function rankEvidenceClusters(candidates, recentArticles = []) {
+  return clusterCandidates(candidates).filter(c => c.hasPrimary || c.publisherCount >= 2).map(cluster => {
+    const families = [...new Set(cluster.items.map(i => publisherFamily(i.sourceId)))];
+    const repetitions = recentArticles.filter(a => a.sourceIds?.some(id => families.includes(publisherFamily(id)))).length;
+    const repeatedTopic = recentArticles.filter(a => a.topic === cluster.primaryTopic).length;
+    const topicPenalty = Math.min(0.3, repeatedTopic * 0.1) + (recentArticles[0]?.topic === cluster.primaryTopic ? 0.08 : 0);
+    const publisherPenalty = repetitions * 0.18;
+    const urgent = cluster.primaryTopic === "security" && /actively exploited|aktivne zneuziv|aktivně zneužív/i.test(cluster.items.map(i => i.title + " " + i.summary).join(" "));
+    const blocked = repetitions >= 2 && !urgent;
+    return { ...cluster, blocked, selectionScore: Number((cluster.score - topicPenalty - publisherPenalty).toFixed(3)),
+      selectionReason: { storyKind: cluster.items[0].storyKind, publisherFamilies: families, repetitions, topicPenalty, publisherPenalty, blocked, exception: urgent && repetitions >= 2 ? "active-exploitation" : null } };
+  }).sort((a,b) => Number(a.blocked)-Number(b.blocked) || b.selectionScore-a.selectionScore || b.score-a.score);
+}
+
 export function selectEvidenceCluster(candidates, recentArticles = []) {
-  const eligible = clusterCandidates(candidates).filter((cluster) => cluster.hasPrimary || cluster.publisherCount >= 2);
-  return eligible.map((cluster) => {
-    const repeatedTopic = recentArticles.filter((article) => article.topic === cluster.primaryTopic).length;
-    const repeatedPublisher = recentArticles.some((article) => article.sourceIds?.includes(cluster.items[0].sourceId));
-    const topicPenalty = Math.min(0.45, repeatedTopic * 0.2)
-      + (recentArticles[0]?.topic === cluster.primaryTopic ? 0.08 : 0);
-    return { ...cluster, selectionScore: Number((cluster.score - topicPenalty - (repeatedPublisher ? 0.07 : 0)).toFixed(3)) };
-  }).sort((a, b) => b.selectionScore - a.selectionScore || b.score - a.score)[0] ?? null;
+  const ranked = rankEvidenceClusters(candidates, recentArticles);
+  const selected = ranked.find(c => !c.blocked);
+  return selected ? { ...selected, alternatives: ranked.filter(c => c.id !== selected.id).slice(0,8).map(c => ({ title:c.items[0].title, sourceId:c.items[0].sourceId, topic:c.primaryTopic, score:c.selectionScore, ...c.selectionReason })) } : null;
 }
 
 export function buildEvidencePack(cluster) {
   if (!cluster) return null;
   const items = cluster.items.slice(0, 10);
   return {
-    version: 1,
+    version: 2,
+    selection: cluster.selectionReason,
+    alternatives: cluster.alternatives ?? [],
     cluster_id: cluster.id,
     score: cluster.score,
     policy: cluster.hasPrimary ? "primary-source" : "multi-publication",

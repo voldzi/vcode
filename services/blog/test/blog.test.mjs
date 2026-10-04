@@ -225,3 +225,31 @@ test("IndexNow discovers public static and published blog URLs from sitemaps", a
     `${origin}aplikace/sibenice/`, `${origin}blog/clanek/`, `${origin}en/blog/clanek/`, `${origin}navody/`
   ]);
 });
+
+test("unknown product names in a specialized official AI feed remain eligible", () => {
+  const result = relevance({ title: "Introducing a completely new product", summary: "A proactive assistant for everyday tasks", sourceKind: "official", trustTier: "primary", sourceTopics: ["ai"], publishedAt: new Date().toISOString() });
+  assert.equal(result.primaryTopic, "ai");
+  const fallback = relevance({ title: "Introducing Zeta", summary: "A new experience", sourceKind: "official", trustTier: "primary", sourceTopics: ["ai"] });
+  assert.equal(fallback.primaryTopic, "ai");
+});
+
+test("publisher cap groups Apple feeds and records rejected alternatives", () => {
+  const base = { sourceKind: "official", trustTier: "primary", publishedAt: new Date().toISOString() };
+  const candidates = [{ ...base, id:"apple", sourceId:"appledev", title:"Introducing new software API", summary:"Developer software API" }, { ...base, id:"dots", sourceId:"openai", title:"Introducing dots", summary:"Proactive assistants", sourceTopics:["ai"] }];
+  const selected = selectEvidenceCluster(candidates, [{ topic:"hardware", sourceIds:["applenews"] },{ topic:"software",sourceIds:["appledev"] }]);
+  assert.equal(selected.items[0].sourceId,"openai");
+  assert.equal(selected.alternatives[0].blocked,true);
+  assert.equal(buildEvidencePack(selected).selection.storyKind,"launch");
+});
+
+test("official product launch outranks a keyword-rich customer case study", () => {
+  const base={sourceKind:"official",trustTier:"primary",publishedAt:new Date().toISOString(),sourceId:"openai",sourceTopics:["ai"]};
+  const selected=selectEvidenceCluster([{...base,id:"dots",title:"Introducing dots",summary:"Proactive assistants"},{...base,id:"case",title:"Customer scales AI model API software",summary:"GPT inference model agent AI API software"}]);
+  assert.equal(selected.items[0].id,"dots");
+});
+
+ test("research metadata and documentation links exclude off-host destinations", async () => {
+  const {pageMetadata, documentationLink}=await import("../research.mjs");
+  assert.equal(pageMetadata('<meta content="A factual description" name="description">'),"A factual description");
+  assert.equal(documentationLink('<a href="https://evil.example/docs">Documentation</a><a href="https://help.openai.com/article">Help</a>',"https://openai.com/",["help.openai.com"]),"https://help.openai.com/article");
+ });

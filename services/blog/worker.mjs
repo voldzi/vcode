@@ -6,6 +6,7 @@ import { defaultSources } from "./sources.mjs";
 import { buildEvidencePack, canonicalizeUrl, normalizeText, relevance, selectEvidenceCluster, titleFingerprint } from "./pipeline.mjs";
 import { boundCandidates, generateArticle } from "./openai.mjs";
 import { notifyDraft } from "./telegram.mjs";
+import { researchCluster } from "./research.mjs";
 import { pragueSchedule } from "./schedule.mjs";
 
 const config = await loadConfig();
@@ -45,7 +46,7 @@ async function collectFeeds(client) {
         timeoutMs: config.feedTimeoutMs, maxRedirects: config.feedMaxRedirects
       });
       for (const item of feed.items) {
-        const enriched = { ...item, trustTier: source.trustTier, sourceKind: source.sourceKind, language: source.language };
+        const enriched = { ...item, trustTier: source.trustTier, sourceKind: source.sourceKind, language: source.language, sourceTopics: source.topics };
         const itemRelevance = relevance(enriched);
         await client.query(
           `INSERT INTO blog_feed_items
@@ -158,14 +159,14 @@ export async function runOnce({ manualReview = false } = {}) {
     const candidates = (await client.query(
       `SELECT i.id, i.source_id AS "sourceId", s.name AS "sourceName", i.title, i.url, i.summary,
               i.published_at AS "publishedAt", s.trust_tier AS "trustTier", s.source_kind AS "sourceKind",
-              s.language, i.relevance_score::float8 AS "storedScore"
+              s.language, s.topics AS "sourceTopics", i.relevance_score::float8 AS "storedScore"
        FROM blog_feed_items i JOIN blog_sources s ON s.id=i.source_id
        WHERE i.used_at IS NULL AND i.summary <> '' AND s.enabled
          AND COALESCE(i.published_at, i.collected_at) > now() - interval '14 days'
        ORDER BY COALESCE(i.published_at, i.collected_at) DESC LIMIT 300`
     )).rows;
     const recentArticles = (await client.query(
-      "SELECT topic, sources FROM blog_articles WHERE generated_at > now() - interval '7 days' ORDER BY generated_at DESC LIMIT 7"
+      "SELECT topic, sources FROM blog_articles WHERE generated_at > now() - interval '7 days' ORDER BY generated_at DESC"
     )).rows.map((article) => ({
       topic: article.topic,
       sourceIds: [...new Set(article.sources.map((source) => source.sourceId))]
@@ -185,6 +186,10 @@ export async function runOnce({ manualReview = false } = {}) {
       [cluster.id, cluster.items[0].title, JSON.stringify(cluster.items.map((item) => item.id)), JSON.stringify(evidence), cluster.score]
     );
 
+    const researched = await researchCluster(cluster, defaultSources, config);
+    cluster.items = researched.items;
+    evidence.sources = buildEvidencePack(cluster).sources;
+    evidence.research = researched.audit;
     // Reject deterministic input-policy failures before reserving the daily AI budget.
     boundCandidates(cluster.items, config.maxInputChars);
     const reservedBudget = await reserveBudget(client);
