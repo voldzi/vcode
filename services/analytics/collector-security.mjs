@@ -12,3 +12,21 @@ export function acceptPublicEvent(input,headers,sites){
  if(!isIP(ip))throw new Error('Invalid edge address');
  return {payload:{website:site.id,hostname:site.domain,url:`https://${site.domain}${input.path}`,referrer:''},ip};
 }
+
+const sourceDomains={google:'google.com',seznam:'seznam.cz',bing:'bing.com',duckduckgo:'duckduckgo.com',facebook:'facebook.com',instagram:'instagram.com',linkedin:'linkedin.com',openai:'chatgpt.com',claude:'claude.ai',perplexity:'perplexity.ai'};
+const supportedEvents=new Set(['app-store-click','contact-click','outbound-click']);
+export function acceptExpandedPublicEvent(input,headers,sites){
+ if(!input||Object.keys(input).some(k=>!['website','name','path','source'].includes(k)))throw new Error('Unexpected properties');
+ const site=sites.find(s=>s.id===input.website);
+ if(site?.integrationVersion!=='vcode-public-v2'||!site.metricsApprovedAt)throw new Error('Expanded metrics unapproved');
+ const accepted=acceptPublicEvent({website:input.website,name:'pageview',path:input.path},headers,sites);
+ if(input.name!=='pageview'){
+  if(!supportedEvents.has(input.name)||!site.allowedEvents?.includes(input.name)||Object.hasOwn(input,'source'))throw new Error('Unapproved event');
+  accepted.payload.name=input.name;
+ }
+ if(Object.hasOwn(input,'source')){
+  if(site.captureSources!==true||!Object.hasOwn(sourceDomains,input.source))throw new Error('Unapproved source');
+  accepted.payload.referrer='https://'+sourceDomains[input.source]+'/';
+ }
+ return accepted;
+}

@@ -25,3 +25,7 @@ Use synthetic data for chart calculations, filters, unavailable/disabled states,
 Production verification confirmed anonymous 401, cross-origin login 403, authorized login with a protected session cookie, six authorized website summaries with daily series and no incomplete upstream responses, logout revocation, both locale health/product/guide/blog checks and all PWA assets. The production login and install instructions rendered without browser errors. Installation onto a physical phone was not part of this verification.
 
 Dashboard image: `sha256:6e55978b98967e79d54bd82f71feaac6fca033ce0d953bd82ab92390939cb5e5`.
+
+### Metric scope clarification — 2026-10-04
+
+All six public websites have active page-view collection. Details show source and event panels only when the selected site's approved integration supports them. Otherwise a single explicit notice explains that traffic is collected while sources and clicks are outside scope. Application-interest panels appear only when matching portfolio paths exist. A site without click collection has no misleading empty App Store summary card. This changes presentation only, with no expanded tracking or new privacy terms.

@@ -28,5 +28,5 @@ test('dashboard data requires login, token stays server-side, logout revokes acc
    const attempt=await fetch(base+'/prehled/api/login',{method:'POST',headers:{Origin:'https://example.com','Content-Type':'application/json','X-Real-IP':'untrusted-'+n+', 192.0.2.99'},body:JSON.stringify({username:'test',password:'test-pass'})});
    assert.equal(attempt.status,n<10?200:429);
   }
- }finally{child.kill();await new Promise(r=>child.once('exit',r));await new Promise(r=>upstream.close(r));await rm(directory,{recursive:true,force:true});}
+ }finally{if(child.exitCode===null&&child.signalCode===null){const stopped=new Promise(r=>child.once('exit',r));child.kill();await stopped;}upstream.closeAllConnections();await new Promise(r=>upstream.close(r));await rm(directory,{recursive:true,force:true});}
 });

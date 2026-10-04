@@ -1,0 +1,11 @@
+# Expanded metric integration, prepared v2
+
+The owner approved the intent to add traffic sources and click counts in VCode on 2026-10-04. The concrete privacy replacement is in analytics-expanded-metrics-review.md. Publication and collection of the expanded fields require that review and per-site acceptance. Existing v1 pageviews continue unchanged.
+
+The prepared `/v2/tracker.js` and `/v2/events` collector routes coexist with v1. Each site must migrate its same-origin proxy and bridge together, pin the v2 runtime SHA384, preserve exact public route normalization and session exclusions, and identify the runtime as `vcode-public-v2`. Configuration adds `captureSources` and an explicit `allowedEvents` subset of `app-store-click`, `contact-click`, `outbound-click`. Both automatic flags remain false. The application calls `pageview(canonicalPath)` and `event(name,canonicalPath)` only on permitted public routes. Contact and outbound clicks carry no target URL, address or link text.
+
+Source classification maps the initial document referrer to a fixed public-service enum: google, seznam, bing, duckduckgo, facebook, instagram, linkedin, openai, claude, perplexity. Original addresses and parameters never leave the browser. Unknown/private sources are unspecified. The server derives a canonical public service referrer for Umami from the enum. Neither generic arbitrary referrers nor automatic document-wide click capture are supported.
+
+Private registry entries additionally require `metricsApprovedAt` before expanded events are accepted, plus captureSources and allowedEvents matching the approved site configuration. Dashboard source and event capabilities are derived from these fields. A migrated site's ordinary release must preserve the reviewed notice, runtime version/SRI, route restrictions and privacy guards. Monitor checks support both runtime versions. No registry entry has been changed to v2 during preparation.
+
+Acceptance requires isolated test website storage, source normalization and explicit click counts, rejection of raw URLs, sensitive properties, unknown sources/events/private paths, and zero collection for DNT/GPC/offline/authenticated routes. Test data must not increase real visitor statistics. Preserve private registry file bind-mount identity when applying changes.

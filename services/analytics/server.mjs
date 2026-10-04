@@ -27,12 +27,12 @@ setInterval(()=>{const now=Date.now();for(const [k,v]of sessions)if(v.until<now)
 createServer(async(req,res)=>{try{
  const url=new URL(req.url,origin),path=url.pathname;
  if(req.method==='GET'&&path==='/health'){send(res,200,{ok:true,collectionEnabled:enabled});return;}
- if(req.method==='GET'&&path==='/analytics/tracker.js'){const site=(await sites()).find(s=>s.domain===new URL(origin).hostname&&!s.testOnly&&s.integrationVersion!=='vcode-public-v1'&&(s.collectionEnabled===undefined||s.collectionEnabled===true));send(res,200,enabled&&site?tracker.replace('__WEBSITE_ID__',site.id):'/* Collection awaits owner approval. */','text/javascript');return;}
+ if(req.method==='GET'&&path==='/analytics/tracker.js'){const site=(await sites()).find(s=>s.domain===new URL(origin).hostname&&!s.testOnly&&!['vcode-public-v1','vcode-public-v2'].includes(s.integrationVersion)&&(s.collectionEnabled===undefined||s.collectionEnabled===true));send(res,200,enabled&&site?tracker.replace('__WEBSITE_ID__',site.id):'/* Collection awaits owner approval. */','text/javascript');return;}
  if(req.method==='POST'&&path==='/analytics/event'){
   if(!enabled||req.headers.dnt==='1'||req.headers['sec-gpc']==='1'){req.resume();send(res,204,'');return;}
   if(!sameOrigin(req,origin)){send(res,403,{});return;}
   if(limited(req,120,60000)){send(res,429,{});return;}
-  let payload;try{({payload}=sanitizeEvent(await body(req),(await sites()).filter(s=>s.domain===new URL(origin).hostname&&!s.testOnly&&s.integrationVersion!=='vcode-public-v1'&&(s.collectionEnabled===undefined||s.collectionEnabled===true))));}catch{send(res,400,{});return;}
+  let payload;try{({payload}=sanitizeEvent(await body(req),(await sites()).filter(s=>s.domain===new URL(origin).hostname&&!s.testOnly&&!['vcode-public-v1','vcode-public-v2'].includes(s.integrationVersion)&&(s.collectionEnabled===undefined||s.collectionEnabled===true))));}catch{send(res,400,{});return;}
   await api('send',null,{method:'POST',body:JSON.stringify({type:'event',payload}),headers:{'User-Agent':String(req.headers['user-agent']??'').slice(0,500),'X-Real-IP':String(req.headers['x-real-ip']??req.socket.remoteAddress).split(',').at(-1).trim()}});send(res,204,'');return;
  }
  if(!path.startsWith('/prehled/')){send(res,404,{});return;}
@@ -61,15 +61,17 @@ createServer(async(req,res)=>{try{
   const registered=(await sites()).filter(site=>site.testOnly!==true);let connections=[];try{connections=JSON.parse(await readFile(statusPath,'utf8'));}catch{}
   const data=await Promise.all(registered.map(async site=>{
    const website=rows.find(w=>w.id===site.id);if(!website)return null;
-   const legacy=site.integrationVersion!=='vcode-public-v1';
-   const metadata={name:site.name,domain:site.domain,collectionEnabled:site.collectionEnabled??(site.domain===new URL(origin).hostname&&enabled),approvedAt:site.approvedAt??null,collectionStartedAt:site.collectionStartedAt??null,registeredAt:website.createdAt??null,integrationVersion:site.integrationVersion??'vcode-legacy',capabilities:{referrers:legacy,events:legacy?['app-store-click','contact-click']:[]},connection:connections.find(c=>c.domain===site.domain)??null};
+   const legacy=!['vcode-public-v1','vcode-public-v2'].includes(site.integrationVersion);
+   const expanded=site.integrationVersion==='vcode-public-v2'&&Boolean(site.metricsApprovedAt);
+   const hasSources=legacy||(expanded&&site.captureSources===true),hasEvents=legacy||(expanded&&site.allowedEvents?.length>0);
+   const metadata={name:site.name,domain:site.domain,collectionEnabled:site.collectionEnabled??(site.domain===new URL(origin).hostname&&enabled),approvedAt:site.approvedAt??null,collectionStartedAt:site.collectionStartedAt??null,registeredAt:website.createdAt??null,integrationVersion:site.integrationVersion??'vcode-legacy',capabilities:{referrers:hasSources,events:legacy?['app-store-click','contact-click']:expanded?(site.allowedEvents??[]):[]},connection:connections.find(c=>c.domain===site.domain)??null};
    const q=`startAt=${startAt}&endAt=${endAt}&timezone=Europe%2FPrague`;
    try {
     const [stats,pages,referrers,events,series]=await Promise.all([
      api(`websites/${site.id}/stats?${q}&compare=prev`,s.token),
      api(`websites/${site.id}/metrics?${q}&type=path&limit=200`,s.token),
-     legacy?api(`websites/${site.id}/metrics?${q}&type=referrer&limit=10`,s.token):[],
-     legacy?api(`websites/${site.id}/metrics?${q}&type=event&limit=10`,s.token):[],
+     hasSources?api(`websites/${site.id}/metrics?${q}&type=referrer&limit=10`,s.token):[],
+     hasEvents?api(`websites/${site.id}/metrics?${q}&type=event&limit=10`,s.token):[],
      api(`websites/${site.id}/pageviews?${q}&unit=day`,s.token)
     ]);
     return {...metadata,available:true,stats,pages,referrers,events,series:dailySeries(series,window,metadata.collectionStartedAt??metadata.registeredAt)};

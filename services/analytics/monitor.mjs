@@ -5,7 +5,7 @@ const stateFile=process.env.ANALYTICS_STATUS_FILE??'/state/connections.json';
 const expected=createHash('sha384').update(await readFile(new URL('./public-v1.js',import.meta.url))).digest('base64');
 async function run(){
  const sites=JSON.parse(await readFile(registry,'utf8'));
- const statuses=await Promise.all(sites.filter(s=>s.integrationVersion==='vcode-public-v1').map(async s=>{
+ const statuses=await Promise.all(sites.filter(s=>['vcode-public-v1','vcode-public-v2'].includes(s.integrationVersion)).map(async s=>{
   const status={domain:s.domain,checkedAt:new Date().toISOString(),connected:false};
   try{
    if(!/^[a-z0-9.-]+$/.test(s.domain)||!s.trackerPath?.startsWith('/')||!s.collectorPath?.startsWith('/'))throw new Error('Invalid registry');
