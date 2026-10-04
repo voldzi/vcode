@@ -4,6 +4,7 @@ import { randomBytes } from 'node:crypto';
 import { sanitizeEvent, sameOrigin } from './security.mjs';
 const upstream=process.env.ANALYTICS_UPSTREAM ?? 'http://umami:3000';
 const origin=process.env.PUBLIC_SITE_URL ?? 'https://vcode.zeleznalady.cz';
+const statusPath=process.env.ANALYTICS_STATUS_FILE??'/state/connections.json';
 const registryPath=process.env.ANALYTICS_SITES_FILE ?? '/run/config/sites.json';
 const sessions=new Map(),attempts=new Map();
 const enabled=process.env.ANALYTICS_COLLECTION_ENABLED==='true';
@@ -18,17 +19,17 @@ async function body(req){let size=0,chunks=[];for await(const chunk of req){size
 async function api(path,token,options={}){const r=await fetch(upstream+'/api/'+path,{...options,headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{}),...options.headers},signal:AbortSignal.timeout(12000)});if(!r.ok)throw Object.assign(new Error('upstream failed'),{status:r.status===401?401:502});return r.json();}
 function session(req){const id=/__Host-vcode-metrics=([a-f0-9]{64})/.exec(req.headers.cookie??'')?.[1];const s=sessions.get(id);if(!s||s.until<Date.now()){if(id)sessions.delete(id);return null;}return {...s,id};}
 const cookie=(id,age)=>`__Host-vcode-metrics=${id}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${age}`;
-function limited(req,limit,windowMs){const key=String(req.headers['x-real-ip']??req.socket.remoteAddress)+':'+(req.url?.includes('login')?'login':'event');const now=Date.now();const bucket=attempts.get(key)??{count:0,until:now+windowMs};if(bucket.until<now){bucket.count=0;bucket.until=now+windowMs;}bucket.count++;attempts.set(key,bucket);return bucket.count>limit;}
+function limited(req,limit,windowMs){const key=String(req.headers['x-real-ip']??req.socket.remoteAddress).split(',').at(-1).trim()+':'+(req.url?.includes('login')?'login':'event');const now=Date.now();const bucket=attempts.get(key)??{count:0,until:now+windowMs};if(bucket.until<now){bucket.count=0;bucket.until=now+windowMs;}bucket.count++;attempts.set(key,bucket);return bucket.count>limit;}
 setInterval(()=>{const now=Date.now();for(const [k,v]of sessions)if(v.until<now)sessions.delete(k);for(const[k,v]of attempts)if(v.until<now)attempts.delete(k);},60000).unref();
 createServer(async(req,res)=>{try{
  const url=new URL(req.url,origin),path=url.pathname;
  if(req.method==='GET'&&path==='/health'){send(res,200,{ok:true,collectionEnabled:enabled});return;}
- if(req.method==='GET'&&path==='/analytics/tracker.js'){const site=(await sites()).find(s=>s.domain===new URL(origin).hostname);send(res,200,enabled&&site?tracker.replace('__WEBSITE_ID__',site.id):'/* Collection awaits owner approval. */','text/javascript');return;}
+ if(req.method==='GET'&&path==='/analytics/tracker.js'){const site=(await sites()).find(s=>s.domain===new URL(origin).hostname&&!s.testOnly&&s.integrationVersion!=='vcode-public-v1'&&(s.collectionEnabled===undefined||s.collectionEnabled===true));send(res,200,enabled&&site?tracker.replace('__WEBSITE_ID__',site.id):'/* Collection awaits owner approval. */','text/javascript');return;}
  if(req.method==='POST'&&path==='/analytics/event'){
-  if(!enabled){send(res,204,'');return;}
+  if(!enabled||req.headers.dnt==='1'||req.headers['sec-gpc']==='1'){req.resume();send(res,204,'');return;}
   if(!sameOrigin(req,origin)){send(res,403,{});return;}
   if(limited(req,120,60000)){send(res,429,{});return;}
-  let payload;try{({payload}=sanitizeEvent(await body(req),await sites()));}catch{send(res,400,{});return;}
+  let payload;try{({payload}=sanitizeEvent(await body(req),(await sites()).filter(s=>s.domain===new URL(origin).hostname&&!s.testOnly&&s.integrationVersion!=='vcode-public-v1'&&(s.collectionEnabled===undefined||s.collectionEnabled===true))));}catch{send(res,400,{});return;}
   await api('send',null,{method:'POST',body:JSON.stringify({type:'event',payload}),headers:{'User-Agent':String(req.headers['user-agent']??'').slice(0,500),'X-Real-IP':String(req.headers['x-real-ip']??req.socket.remoteAddress).split(',').at(-1).trim()}});send(res,204,'');return;
  }
  if(!path.startsWith('/prehled/')){send(res,404,{});return;}
@@ -53,12 +54,12 @@ createServer(async(req,res)=>{try{
  if(path==='/prehled/api/summary'&&req.method==='GET'){
   const days=Number(url.searchParams.get('days')??7);if(![7,30,90].includes(days)){send(res,400,{});return;}
   const permitted=await api('websites?pageSize=100',s.token);const rows=Array.isArray(permitted)?permitted:permitted.data??[];
-  const registered=await sites();const endAt=Date.now(),startAt=endAt-days*86400000;
+  const registered=(await sites()).filter(site=>site.testOnly!==true);let connections=[];try{connections=JSON.parse(await readFile(statusPath,'utf8'));}catch{}const endAt=Date.now(),startAt=endAt-days*86400000;
   const data=await Promise.all(registered.map(async site=>{
    if(!rows.some(w=>w.id===site.id))return null;
    const q=`startAt=${startAt}&endAt=${endAt}`;
    const [stats,pages,referrers,events]=await Promise.all([api(`websites/${site.id}/stats?${q}`,s.token),api(`websites/${site.id}/metrics?${q}&type=path&limit=200`,s.token),api(`websites/${site.id}/metrics?${q}&type=referrer&limit=10`,s.token),api(`websites/${site.id}/metrics?${q}&type=event&limit=10`,s.token)]);
-   return {name:site.name,domain:site.domain,stats,pages,referrers,events};
+   return {name:site.name,domain:site.domain,collectionEnabled:site.collectionEnabled??(site.domain===new URL(origin).hostname&&enabled),approvedAt:site.approvedAt??null,integrationVersion:site.integrationVersion??'vcode-legacy',connection:connections.find(c=>c.domain===site.domain)??null,stats,pages,referrers,events};
   }));send(res,200,{days,collectionEnabled:enabled,sites:data.filter(Boolean)});return;
  }
  send(res,404,{});

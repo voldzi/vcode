@@ -12,7 +12,7 @@ VCode is distributed as two container images built from `Dockerfile` and `Docker
 - Telegram bot, webhook and review-signing secrets use separate read-only files. The integration remains unavailable unless all secrets and the allowlisted reviewer IDs are present and `BLOG_TELEGRAM_ENABLED=true`.
 - Database, AI and private knowledge endpoints are never published to the browser.
 
-The repository contains no production hostname, address, credential, secret path or inventory. Operators provide `VCODE_BIND_ADDRESS`, `VCODE_PORT`, `VCODE_SECRETS_DIR` and the secret-file values in their private deployment configuration. The example Compose file defaults to loopback for local use.
+The repository contains no production internal hostnames, network addresses or secret values. Public portfolio domains and parameterized deployment templates are documented. Operators provide `VCODE_BIND_ADDRESS`, `VCODE_PORT`, `VCODE_SECRETS_DIR` and the secret-file values in their private deployment configuration. The example Compose file defaults to loopback for local use.
 
 ## Release controls
 
@@ -27,3 +27,7 @@ Keep `BLOG_AUTO_PUBLISH=false`. After securely installing the dedicated bot toke
 ## Rollback
 
 Disable blog generation, restore the previous immutable images and repeat the same health and public smoke tests. Database migrations are additive; rollback does not remove tables or content.
+
+## Shared analytics
+
+See docs/analytics.md and docs/analytics-integration-standard.md. Separate Umami, PostgreSQL, public collector and private dashboard use deploy/analytics/compose.yml. The trusted edge receives only generated exact-location includes; build-edge-config.py takes a private registry path, private output directory and operator-supplied internal upstream. Never commit the resulting includes or registry. Schema/privacy initialization must complete before accepting events. Deployment checks use isolated test websites, excluded from portfolio summaries.

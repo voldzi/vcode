@@ -1,12 +1,12 @@
 # Jednotné připojení veřejných webů k analytice VCode
 
-Stav: provozní standard a seznam připojení. Společný přehled běží; z níže uvedených webů je připojen pouze VCode. Tento dokument sám další měření nezapíná.
+Stav 4. 10. 2026: společný přehled obsahuje šest webů. VCode měří; pět dalších webů má ověřené připojení, ale sběr zůstává vypnutý do schválení konkrétních doplňků soukromí. Tento dokument sám měření nezapíná.
 
 ## Trvalé uspořádání
 
-VCode spravuje jeden server Umami, neveřejnou databázi, přihlašování, dobu uchování a společný přehled. Každý veřejný web má vlastní identifikátor, schválené veřejné cesty a malou integraci na své doméně. Sdílený tracker a přijímací adaptér mají mít jednu verzovanou implementaci s automatickými kontrolami; aplikace dodávají konfiguraci, nikoliv kopie analytické logiky. Aktualizace se nasazují po ověření kompatibility, ne slepě při změně sdíleného souboru.
+VCode spravuje jeden server Umami, neveřejnou databázi, přihlašování, dobu uchování a společný přehled. Každý veřejný web má vlastní identifikátor, schválené veřejné cesty a malou integraci na své doméně. Sdílený tracker a přijímací adaptér mají jednu verzovanou implementaci s automatickými kontrolami; aplikace dodávají konfiguraci, nikoliv kopie analytické logiky. Aktualizace se nasazují po ověření kompatibility, ne slepě při změně sdíleného souboru.
 
-Současný přijímač je omezen na doménu a veřejné cesty VCode. Před dalším připojením je potřeba oddělit veřejný přijímač od soukromého přehledu a zavést konfiguraci veřejných cest pro každý web. Pouhé vložení aktuálního skriptu do jiné aplikace není dokončená integrace.
+Oddělený přijímač vcode-public-v1 používá schválený origin a přesné veřejné cesty každého webu. Soukromý přehled zůstává v jiném procesu. Runtime je verzovaný a integrační bridge jej ověřuje pomocí SRI. Při změně jeho bajtů aktualizujte každou aplikaci i její runtimeIntegrity v neveřejném registru; jednostranná výměna souboru může zastavit měření. Původní VCode tracker je samostatná starší integrace.
 
 ## Pokyn pro repozitář každé veřejné webové aplikace
 
@@ -27,9 +27,9 @@ Do místního AGENTS.md se při připojení vloží následující pravidlo:
 
 ## Průběžná kontrola
 
-Trvalé řešení musí kontrolovat dostupnost trackeru a přijímače, správnou doménu/verzi a serverovou dostupnost dat. Rozlišuje stav „ověřeno bez návštěv“, „nespárováno“, „měření vypnuto“ a „porucha“; nulová návštěvnost sama neznamená chybu. Testy příjmu se vedou na odděleném zkušebním webu. Upozornění na poruchu a obnovu lze po zapojení provozní kontroly posílat do již schváleného Telegram kanálu. Tento monitor zatím není implementován.
+Trvalé řešení musí kontrolovat dostupnost trackeru a přijímače, správnou doménu/verzi a serverovou dostupnost dat. Rozlišuje stav „ověřeno bez návštěv“, „nespárováno“, „měření vypnuto“ a „porucha“; nulová návštěvnost sama neznamená chybu. Testy příjmu se vedou na odděleném zkušebním webu. Upozornění na poruchu a obnovu lze po zapojení provozní kontroly posílat do již schváleného Telegram kanálu. Monitor propojení je implementován a výsledky jsou v přihlášeném přehledu. Telegram upozornění zatím není aktivované.
 
-Pravidelné zálohy a ověřená obnova patří do provozního plánu vedle denního mazání záznamů po 180 dnech. Jednorázová záloha nenahrazuje plán záloh.
+Denní zálohy s týdenní rotací jsou implementované; obnova do oddělené databáze prošla. Aktivní záznamy se mažou s rezervou po 170 dnech, aby denní rotace i zálohy dodržely schválené maximum 180 dní.
 
 ## Seznam z katalogu VCode
 
@@ -38,11 +38,11 @@ Seznam vychází ze src/lib/products.ts; není úplným soupisem všech serverov
 | Web | Stav | Rozsah před připojením |
 | --- | --- | --- |
 | vcode.zeleznalady.cz | Připojeno | Veřejné portfolio, blog a návody |
-| mestemhrou.cz | Příprava připojení zadána 2026-10-04 | Veřejné stránky; bez polohy hráče a osobního postupu |
-| masaze.zeleznalady.cz | Nepřipojeno | Nabídka a veřejné stránky; bez rezervací a klientské samoobsluhy |
-| studio-balance.cz | Nepřipojeno | Veřejná nabídka a rozvrh; bez účtů a osobních rezervací |
-| cop.zeleznalady.cz | Nepřipojeno | Samostatně vymezit veřejné stránky; bez poloh, hlášení a komunikace |
-| kaloricketabulky.zeleznalady.cz | Nepřipojeno | Pouze veřejná prezentace; bez jídelního deníku a zdravotních údajů |
+| mestemhrou.cz | Proxy ověřena; integrace připravena, měření vypnuté | Veřejné stránky; bez polohy hráče a osobního postupu |
+| masaze.zeleznalady.cz | Proxy ověřena; integrace připravena, měření vypnuté | Nabídka a veřejné stránky; bez rezervací a klientské samoobsluhy |
+| studio-balance.cz | Proxy ověřena; integrace připravena, měření vypnuté | Veřejná nabídka a rozvrh; bez účtů a osobních rezervací |
+| cop.zeleznalady.cz | Proxy ověřena; integrace nasazena, měření vypnuté | Pouze syntetická ukázka /demo/flood-central-bohemia; bez poloh, hlášení a komunikace |
+| kaloricketabulky.zeleznalady.cz | Proxy ověřena; integrace připravena, měření vypnuté | Pouze veřejná prezentace; bez jídelního deníku a zdravotních údajů |
 | STRATOS a AKB | Vyloučeno | Soukromé nasazení |
 
 NEST a Šibenice mají již měřené produktové stránky na VCode. Nativní používání a instalace z App Storu jsou jiné metriky a vyžadují samostatnou integraci.

@@ -148,8 +148,8 @@ export const products: Product[] = [
     summaryEn: "Free outdoor story games across Czechia. Solve questions at each stop and uncover the story as you go.",
     capabilitiesCs: ["Výpravy po městech a obcích", "Otázky na jednotlivých zastaveních", "Příběhy a tajenky", "Hra zdarma bez povinného účtu"],
     capabilitiesEn: ["Story trails across Czechia", "Questions at each stop", "Clues and story reveals", "Free play without an account"],
-    externalUrl: "https://games.zeleznalady.cz/mestem-hrou/",
-    externalUrlEn: "https://games.zeleznalady.cz/mestem-hrou/?lang=en",
+    externalUrl: "https://mestemhrou.cz/",
+    externalUrlEn: "https://mestemhrou.cz/mestem-hrou/?lang=en",
     availabilityCs: "Veřejná beta na webu",
     availabilityEn: "Public beta on the web"
   },

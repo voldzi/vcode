@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "VCode public and authenticated API",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "description": "Health, moderated comments, minimal public analytics collection and authenticated portfolio metrics."
   },
   "servers": [
@@ -356,6 +356,102 @@
           }
         ]
       }
+    },
+    "/analytics/v1/tracker.js": {
+      "servers": [
+        {
+          "url": "https://masaze.zeleznalady.cz"
+        },
+        {
+          "url": "https://studio-balance.cz"
+        },
+        {
+          "url": "https://cop.zeleznalady.cz"
+        },
+        {
+          "url": "https://kaloricketabulky.zeleznalady.cz"
+        },
+        {
+          "url": "https://mestemhrou.cz/mestem-hrou"
+        }
+      ],
+      "get": {
+        "operationId": "getPublicAnalyticsRuntimeV1",
+        "description": "Versioned same-origin runtime for registered public applications; no automatic collection. VCode itself retains its legacy tracker route.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Pinned vcode-public-v1 JavaScript",
+            "content": {
+              "text/javascript": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported method"
+          }
+        }
+      }
+    },
+    "/analytics/v1/events": {
+      "servers": [
+        {
+          "url": "https://masaze.zeleznalady.cz"
+        },
+        {
+          "url": "https://studio-balance.cz"
+        },
+        {
+          "url": "https://cop.zeleznalady.cz"
+        },
+        {
+          "url": "https://kaloricketabulky.zeleznalady.cz"
+        },
+        {
+          "url": "https://mestemhrou.cz/mestem-hrou"
+        }
+      ],
+      "post": {
+        "operationId": "sendPublicAnalyticsPageviewV1",
+        "description": "Registered site/origin and exact path only; no optional properties. Trusted edge overrides client metadata and supplies internal authorization. DNT/GPC suppress storage. No cookies or public analytics/admin access.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublicPageviewV1"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Accepted or suppressed by privacy preference"
+          },
+          "400": {
+            "description": "Unapproved site, incorrect origin or payload"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "413": {
+            "description": "Payload exceeds 2 KiB"
+          },
+          "415": {
+            "description": "JSON content type required"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "502": {
+            "description": "Analytics backend unavailable"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -374,6 +470,32 @@
           },
           "generationEnabled": {
             "type": "boolean"
+          }
+        }
+      },
+      "PublicPageviewV1": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "website",
+          "name",
+          "path"
+        ],
+        "properties": {
+          "website": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "enum": [
+              "pageview"
+            ]
+          },
+          "path": {
+            "type": "string",
+            "pattern": "^/[a-zA-Z0-9_:/-]*$",
+            "description": "Exact registered general public path, without identifiers, query or fragment."
           }
         }
       }

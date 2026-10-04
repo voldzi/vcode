@@ -17,7 +17,7 @@ Collection is disabled by default and requires the product owner's reviewed priv
 
 Only the trusted edge may provide the incoming client address. The web proxy sends its existing edge-supplied forwarding header to the dashboard, which takes the final address. Deployment must verify that the edge appends or overwrites this header and does not accept an arbitrary client identity. Collection routes do not create access logs in the VCode web container.
 
-Umami and PostgreSQL are independent from the blog. Telemetry and external network calls by Umami are disabled. The retention service deletes analytical events and sessions older than 180 days every day. Session replay is disabled on registered websites and the public collector cannot submit replay payloads.
+Umami and PostgreSQL are independent from the blog. Telemetry and external network calls by Umami are disabled. The retention service deletes analytical events and sessions older than 170 days every day, leaving room for daily deletion and the seven-day backup rotation within the approved 180-day maximum. Session replay is disabled on registered websites and the public collector cannot submit replay payloads.
 
 ## Deployment and recovery
 
@@ -34,3 +34,23 @@ Run normal VCode checks, analytics HTTP/security tests, both production image bu
 5. Keep App Store installs and native app usage as separate future integrations. Outbound clicks are not installations.
 
 Google Search Console and Bing Webmaster verification still require owner account/DNS access. IndexNow submission is not proof of indexing or ranking.
+
+## Shared public v1 integration
+
+`public-v1.js` provides `window.vcodePublicAnalytics` with the `vcode-public-v1` contract. It sends only explicit pageviews of pre-sanitized paths; no automatic navigation/click collection, cookies, referrers, titles, offline queues or identity. Browser requests use `credentials: omit` and `referrerPolicy: no-referrer`. Applications must also set `referrerPolicy=no-referrer` on the script element and pin its SHA-384 SRI.
+
+The separate collector exposes only `/v1/tracker.js`, `/v1/events` and internal health. Each application's edge maps exact same-origin paths to it. Every event requires a per-site private edge key, exact HTTPS origin and an explicitly approved/enabled site with an exact allowed-path list. The edge overrides client IP and strips all incoming request headers except the reviewed allowlist. No private dashboard/admin proxy is present.
+
+The monitor checks each registered v1 site's runtime digest and rejects malformed event payloads every five minutes, without creating fake production pageviews. Authenticated summaries show per-site collection and connection state; an expired check is not presented as success.
+
+Daily database backups rotate after seven days (cleanup once daily). Active data is purged after 170 days to keep backup copies inside the approved 180-day ceiling. Verify a restore into a temporary database and never replace production for an acceptance test. Private configuration backups remain separate and contain no visitor records.
+
+The analytics database enforces a privacy trigger that discards IP-derived country, region and city fields on every session write. Browser page payloads never send geographic information. Native request metadata remains transient for visit hashing; no readable IP address or geographic session attributes are stored. Reapply privacy.sql after schema migrations, before enabling collection.
+
+## Acceptance record: 2026-10-04
+
+The owner-authorized rollout has registered five additional public applications. All five trusted-edge paths passed isolated end-to-end ingestion, spoofed-header override, query removal, private-path/property rejection and DNT/GPC suppression. Test websites were deleted; genuine portfolio statistics were not altered. The private summary returns six permitted websites, suppresses test-only entries and exposes no registry keys. The legacy VCode event route rejects foreign website IDs so it cannot bypass their approval switches.
+
+VCode check, 33 tests and build passed. Web, blog and worker images were built; the portfolio web was deployed with the new mestemhrou.cz links. Both health endpoints, both locales, representative product/guide routes, both blog locales and authenticated login/logout checks passed. Dashboard and collector security fixes are deployed. The monitor now uses its explicit identification on both requests: Studio Balance's edge rejected the default Node client, although browser-like isolated acceptance already passed. All five connection checks now succeed.
+
+Městem hrou, Masáže, Studio Balance and COP have deployed integrations with collection disabled. Kalorie has also deployed the disabled bridge; its public-page CSP nonce repair is being completed separately. Native applications and private STRATOS remain outside the rollout. Publication and activation of the five additions await the concrete owner review in analytics-public-webs-privacy-review.md; generic rollout authorization is already recorded in the task. Keep the registry's collectionEnabled false until each reviewed notice is visible and its frontend acceptance succeeds.
