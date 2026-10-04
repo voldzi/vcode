@@ -33,3 +33,8 @@ All six public websites have active page-view collection. Details show source an
 ### Detail units verified against Umami 3.4.0
 
 The ranked path and referrer rows from this deployed version count distinct daily session identifiers (visitor estimates), rather than raw pageviews. Custom event rows count events. The UI labels these units explicitly; application rows sum estimates across matching paths and are not deduplicated people. Timeline, totals and website ranking continue to use pageview statistics. Definitions verified in official source [page metrics](https://github.com/umami-software/umami/blob/v3.4.0/src/queries/sql/pageviews/getPageviewMetrics.ts) and [event metrics](https://github.com/umami-software/umami/blob/v3.4.0/src/queries/sql/events/getEventMetrics.ts). Isolated public v2 acceptance on all five proxy pairs confirmed source and click storage, edge header override and privacy rejection, without adding real visitor records.
+
+
+## Final expanded metrics acceptance — 2026-10-04
+
+Source `420a74a` / image e23fd9a0830ed52a13b005c40457fb6ffe7b8bca41a2f7ad142d3730f1ce2fca is deployed; browser script `20261004-5` and PWA cache v5. The detail displays the expanded metric start date, uses accurate per-row units and shows only supported sections. A synthetic browser preview verified sources, explicit click rows and the absence of irrelevant application-interest rows. Final authenticated production smoke confirmed six active/available sites, exact source/event capabilities, successful connections newer than their v2 activations, login/logout and public/PWA health. The common owner-approved expanded scope is operational on all five additional public websites; COP intentionally has no click metric.

@@ -1,6 +1,6 @@
 # Jednotné připojení veřejných webů k analytice VCode
 
-Stav 4. 10. 2026: společný přehled obsahuje šest webů. Všech šest veřejných webů má měření zapnuté. Konkrétní CS/EN doplňky byly schváleny, zveřejněny a centrální aktivace dokončena. Soukromé části zůstávají vyloučené.
+Stav 4. 10. 2026: společný přehled obsahuje šest webů. Všech šest veřejných webů má měření zapnuté. Konkrétní CS/EN doplňky včetně rozšíření o obecné zdroje příchodů a skutečná veřejná kliknutí byly schváleny, zveřejněny a centrální aktivace dokončena. Pět připojených webů používá v2; VCode zachovává původní schválenou integraci. Soukromé části zůstávají vyloučené.
 
 ## Trvalé uspořádání
 

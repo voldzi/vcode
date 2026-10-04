@@ -1,4 +1,4 @@
-# Expanded metric integration, prepared v2
+# Expanded metric integration, v2
 
 The owner approved the intent to add traffic sources and click counts in VCode on 2026-10-04. The concrete CS/EN privacy replacement in analytics-expanded-metrics-review.md (6dc4dd3) was explicitly approved with activation by the owner. Publication and collection now require per-site migration acceptance. Existing v1 pageviews continue unchanged.
 
@@ -6,10 +6,38 @@ The prepared `/v2/tracker.js` and `/v2/events` collector routes coexist with v1.
 
 Source classification maps the initial document referrer to a fixed public-service enum: google, seznam, bing, duckduckgo, facebook, instagram, linkedin, openai, claude, perplexity. Original addresses and parameters never leave the browser. Unknown/private sources are unspecified. The server derives a canonical public service referrer for Umami from the enum. Neither generic arbitrary referrers nor automatic document-wide click capture are supported.
 
-Private registry entries additionally require `metricsApprovedAt` before expanded events are accepted, plus captureSources and allowedEvents matching the approved site configuration. Dashboard source and event capabilities are derived from these fields. A migrated site's ordinary release must preserve the reviewed notice, runtime version/SRI, route restrictions and privacy guards. Monitor checks support both runtime versions. No registry entry has been changed to v2 during preparation.
+Private registry entries additionally require `metricsApprovedAt` before expanded events are accepted, plus captureSources and allowedEvents matching the approved site configuration. Dashboard source and event capabilities are derived from these fields. A migrated site's ordinary release must preserve the reviewed notice, runtime version/SRI, route restrictions and privacy guards. Monitor checks support both runtime versions. The preparation stage preserved v1 registry entries. Production migration status is recorded below.
 
 Acceptance requires isolated test website storage, source normalization and explicit click counts, rejection of raw URLs, sensitive properties, unknown sources/events/private paths, and zero collection for DNT/GPC/offline/authenticated routes. Test data must not increase real visitor statistics. Preserve private registry file bind-mount identity when applying changes.
 
 ## Prepared service verification — 2026-10-04
 
 Checks, 37 tests and the 122-page static build passed. Web, blog, worker and analytics dashboard/collector/monitor images were built. Prepared services were deployed with existing v1 site collection preserved; the dashboard is healthy and public/authenticated smoke checks passed. An isolated temporary Umami website verified one source-bearing pageview and one contact click through the new internal collector route. Raw referral URLs, private paths and unknown events were rejected; DNT/GPC did not add records. The temporary website was removed and the original registry restored. No actual visitor counts were modified by this test. Per-application preparation was dispatched for all five public-v1 websites; expanded collection remains pending the concrete notice review and migration acceptance.
+
+
+## Production frontend deployment — 2026-10-04
+
+The concrete CS/EN text and activation were approved in owner record a56b160 for content 6dc4dd3. The public v2 proxy pair was installed for all five domains while preserving v1, private keys, trusted client-IP override, stripped incoming headers/query, 2 KiB body limit and disabled edge request logging. Nginx configuration validation passed before reload. All five public proxies passed isolated source/click ingestion, foreign-origin/private-path/unknown-property rejection and DNT/GPC suppression; temporary Umami websites were removed and real visitor counts were not inflated.
+
+| Public website | Deployed frontend | Supported explicit clicks |
+| --- | --- | --- |
+| Masáže | 729d22bf5259b833f3160bb2887be3b5bf172106 | contact-click, outbound-click |
+| Studio Balance | 68fa497 | outbound-click |
+| Kalorické tabulky | 887d346 | contact-click |
+| COP | a607666 / image 6c86f8a2d88513b871dde5c28f944af7faf164b66e3d27ae9a3b8e12e3d66d00 | none; only entry sources |
+| Městem hrou | own-domain frontend v88 / image 90b81d89839889a6ae7079487792183ba383942496d502e049da7eea3ee36a87 | outbound-click |
+
+Each application preserves its exact original public path categories, session/DNT/GPC/offline exclusions and pins shared runtime sha384-4mn0sN5UeFuzSjaXlbulwbJz7N38PPOovouC9Xp3OHD0r94YKgx8B2RAk/nK6mg0. Release guards and repository instructions preserve this integration. COP has no eligible public click link; no artificial click metric was added. VCode keeps its reviewed legacy sources/App Store/contact integration.
+
+Dashboard source 420a74a is deployed as image sha256:e23fd9a0830ed52a13b005c40457fb6ffe7b8bca41a2f7ad142d3730f1ce2fca. Both public image builds and the dashboard build passed. Check, all 37 tests and the 122-page static build passed; the initial sandbox-only test run could not bind localhost and passed after granting the required local-port permission. Metric units and the collection start date are displayed explicitly. PWA cache v5 never stores private statistics or authenticated navigation.
+
+
+## Completed central activation and acceptance — 2026-10-04
+
+All six registered websites have pageview collection enabled. All five additional websites now use vcode-public-v2 with captureSources=true and exactly the event subsets above. VCode keeps its existing reviewed legacy integration. Registry updates preserved file inode, original approvals/pageview start dates, identifiers, private edge keys and exact public path allowlists; private backups precede each change.
+
+Masáže, Studio Balance, Kalorie and COP passed full exact approved CS/EN paragraph verification in production HTML before activation. Městem hrou's SPA paragraphs were independently matched against the rendered production CS/EN text captured with collector blocking (CS SHA256 5bd46f527a79cc496962501321bed4b1b456d68aad0a7a04e64f1cda8ed414d2; EN 937a75024cda6639580028614f6984e661dd04b31cb0d0adadf74fc5c39e9fc8). Its privacy view is excluded from collection. Tracker bytes matched the shared SRI before every activation. Městem hrou expanded collection started at 2026-10-04T18:48:08.179766+00:00.
+
+The final authenticated production summary verified all six sites available with daily series, collection enabled, traffic-source capability active and the exact approved event lists. Every v2 site has an expanded collection start timestamp and a successful connection check newer than activation. Monitor restart refreshed all five connections. Anonymous access returned401, foreign-origin login403, authorized secure-cookie login and logout revocation passed. Health, both locales, representative product/help/blog/privacy routes and all five PWA assets returned200. No original referral URLs, target addresses, identities or private values were exposed in test output; acceptance did not fabricate real visitor records. Earlier pending states above describe preparation and are superseded by this entry. Uncollected historical sources/clicks cannot be reconstructed.
+
+Application validations: Masáže132tests; Studio91tests; Kalorie553unit/44browser scenarios; COP36bridge/release tests plus451verified artifact files; Městem hrou861tests and container/browser checks. The deployment retained each application's private exclusions and ordinary release guards. Native apps and private STRATOS/AKB remain excluded.
