@@ -38,7 +38,7 @@ Seznam vychází ze src/lib/products.ts; není úplným soupisem všech serverov
 | Web | Stav | Rozsah před připojením |
 | --- | --- | --- |
 | vcode.zeleznalady.cz | Připojeno | Veřejné portfolio, blog a návody |
-| games.zeleznalady.cz/mestem-hrou/ | Nepřipojeno | Veřejné stránky; bez polohy hráče a osobního postupu |
+| mestemhrou.cz | Příprava připojení zadána 2026-10-04 | Veřejné stránky; bez polohy hráče a osobního postupu |
 | masaze.zeleznalady.cz | Nepřipojeno | Nabídka a veřejné stránky; bez rezervací a klientské samoobsluhy |
 | studio-balance.cz | Nepřipojeno | Veřejná nabídka a rozvrh; bez účtů a osobních rezervací |
 | cop.zeleznalady.cz | Nepřipojeno | Samostatně vymezit veřejné stránky; bez poloh, hlášení a komunikace |
