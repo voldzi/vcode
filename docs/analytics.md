@@ -1,6 +1,6 @@
 # Private portfolio metrics
 
-The static public portfolio remains independent of the analytics service. `/prehled/` provides a Czech login and a read-only cross-site view. `/prehled/api/*` is served by the isolated dashboard service, not the blog service. The dashboard uses the official Umami 3.4.0 API and its native password authentication; no Umami token reaches the browser. Analytics database access remains inside the private container network.
+The static public portfolio remains independent of the analytics service. `/prehled/` provides a bilingual login and a read-only cross-site dashboard with charts, filters and an installable PWA. `/prehled/api/*` is served by the isolated dashboard service, not the blog service. The dashboard uses the official Umami 3.4.0 API and its native password authentication; no Umami token reaches the browser. Analytics database access remains inside the private container network.
 
 ## Protection
 
@@ -56,3 +56,5 @@ VCode check, 33 tests and build passed. Web, blog and worker images were built; 
 All five applications have deployed integrations with collection disabled. Kalorie's public-page CSP nonce repair is deployed as 4e60f6b; 549 tests, 44 browser scenarios and production browser acceptance passed. Its server lacked safe build headroom, so verified prebuilt images were transferred and deployed without changing Keycloak or shared services. Masáže is preserved on canonical main; Studio Balance and COP have adopted the bridge and guards into their normal development paths while preserving unrelated work. Městem hrou's source and release guards are synchronized. VCode's clean canonical local main includes this integration; unreviewed privacy additions have not been published to public pages.
 
 Native applications and private STRATOS remain outside the rollout. Publication and activation of the five additions await the concrete owner review in analytics-public-webs-privacy-review.md; generic rollout authorization is already recorded in the task. Keep the registry's collectionEnabled false until each reviewed notice is visible and its frontend acceptance succeeds. The pending notice explicitly describes retained browser, operating-system and device categories; raw headers and inferred geography are not retained in analytics records.
+
+Dashboard metric definitions, PWA privacy boundaries and acceptance requirements are documented in [analytics-dashboard.md](analytics-dashboard.md).

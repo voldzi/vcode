@@ -317,7 +317,116 @@
         "operationId": "getMetricsSummary",
         "responses": {
           "200": {
-            "description": "Request completed"
+            "description": "Read-only aggregates for authorized registered public websites. Unavailable sites have null stats; daily nulls mean missing coverage. Prior-period comparison uses equal duration. No provider credentials are returned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "sites",
+                    "startAt",
+                    "endAt",
+                    "generatedAt",
+                    "sessionExpiresAt",
+                    "timezone",
+                    "incomplete"
+                  ],
+                  "properties": {
+                    "startAt": {
+                      "type": "integer"
+                    },
+                    "endAt": {
+                      "type": "integer"
+                    },
+                    "generatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "sessionExpiresAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "timezone": {
+                      "type": "string",
+                      "enum": [
+                        "Europe/Prague"
+                      ]
+                    },
+                    "incomplete": {
+                      "type": "boolean"
+                    },
+                    "sites": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "name",
+                          "domain",
+                          "available",
+                          "stats",
+                          "series",
+                          "capabilities"
+                        ],
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "domain": {
+                            "type": "string"
+                          },
+                          "collectionEnabled": {
+                            "type": "boolean"
+                          },
+                          "available": {
+                            "type": "boolean"
+                          },
+                          "stats": {
+                            "type": [
+                              "object",
+                              "null"
+                            ],
+                            "additionalProperties": true
+                          },
+                          "series": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "date": {
+                                  "type": "string",
+                                  "format": "date"
+                                },
+                                "pageviews": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ],
+                                  "minimum": 0
+                                }
+                              }
+                            }
+                          },
+                          "capabilities": {
+                            "type": "object",
+                            "properties": {
+                              "referrers": {
+                                "type": "boolean"
+                              },
+                              "events": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
             "description": "Invalid request"

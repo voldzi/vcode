@@ -118,6 +118,12 @@ services:
     cap_drop: [ALL]
     networks: [analytics]
   dashboard:
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8091/health',{signal:AbortSignal.timeout(5000)}).then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
     build:
       context: ../..
       dockerfile: Dockerfile.analytics
