@@ -30,10 +30,10 @@ img, svg { display: block; max-width: 100%; }
 .skip-link { position: fixed; z-index: 100; left: 1rem; top: -5rem; padding: .8rem 1rem; border-radius: .7rem; background: var(--white); color: var(--navy); box-shadow: var(--shadow); }
 .skip-link:focus { top: 1rem; }
 
-.site-header { position: sticky; top:0; z-index: 20; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 2rem; min-height: 82px; padding: .85rem clamp(1.25rem,5vw,5rem); border-bottom: 1px solid var(--hairline); background: rgba(248,250,252,.78); -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%); }
+.site-header { position: sticky; top:0; z-index: 20; display: grid; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; gap: clamp(.75rem,2vw,2rem); min-height: 82px; padding: .85rem clamp(1.25rem,5vw,5rem); border-bottom: 1px solid var(--hairline); background: rgba(248,250,252,.78); -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%); }
 .brand { justify-self: start; display: inline-flex; align-items: center; gap: .65rem; font-family: "Manrope Variable", sans-serif; font-size: 1.6rem; font-weight: 760; letter-spacing: -.05em; color: var(--navy); }
 .brand .signal-mark { flex: none; }
-.site-header nav { display: flex; align-items: center; gap: 2rem; font-family: "Manrope Variable", sans-serif; font-weight: 650; color: #314763; }
+.site-header nav { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: .2rem clamp(.6rem,2vw,2rem); font-family: "Manrope Variable", sans-serif; font-weight: 650; color: #314763; }
 .site-header nav a, .language { position: relative; padding: .65rem .1rem; }
 .site-header nav a::after { content: ""; position: absolute; left: 0; right: 100%; bottom: .25rem; height: 2px; background: var(--blue); transition: right .2s ease; }
 .site-header nav a:hover::after, .site-header nav a:focus-visible::after { right: 0; }
@@ -267,3 +267,5 @@ img, svg { display: block; max-width: 100%; }
 .foldlight-spotlight p { max-width:46rem; }
 .foldlight-spotlight img { width:clamp(120px,20vw,256px); height:auto; border-radius:22%; }
 @media(max-width:700px) { .foldlight-spotlight { grid-template-columns:1fr; gap:2rem; } .foldlight-spotlight img { grid-row:1; width:120px; } }
+.games-section .product-grid { grid-template-columns:repeat(auto-fit,minmax(min(100%,20rem),1fr)); }
+.games-section .product-card { grid-column:auto; min-width:0; overflow-wrap:anywhere; }
