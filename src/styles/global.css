@@ -269,3 +269,10 @@ img, svg { display: block; max-width: 100%; }
 @media(max-width:700px) { .foldlight-spotlight { grid-template-columns:1fr; gap:2rem; } .foldlight-spotlight img { grid-row:1; width:120px; } }
 .games-section .product-grid { grid-template-columns:repeat(auto-fit,minmax(min(100%,20rem),1fr)); }
 .games-section .product-card { grid-column:auto; min-width:0; overflow-wrap:anywhere; }
+
+@media(max-width:900px) {
+  .site-header { padding-inline:clamp(16px,1rem,20px); gap:.5rem; }
+  .brand { gap:.4rem; font-size:clamp(1.1rem,5vw,1.6rem); }
+  .header-actions { gap:.3rem; }
+  .header-actions .language,.header-actions .menu-toggle { width:44px; height:44px; flex:none; }
+}
