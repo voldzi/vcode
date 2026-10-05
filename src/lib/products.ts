@@ -60,8 +60,8 @@ export const products: Product[] = [
     headlineCs: "Devět kamenů. Spousta možností.", headlineEn: "Nine pieces. Many possibilities.",
     summaryCs: "Moderní zpracování klasického Mlýna pro iPhone a iPad. Pokládejte a posouvejte kameny, uzavírejte mlýny a promýšlejte další tah.",
     summaryEn: "A modern take on Nine Men's Morris for iPhone and iPad. Place and move pieces, form mills and think ahead.",
-    capabilitiesCs: ["Klasická pravidla Mlýna", "Čtyři úrovně místního soupeře", "Dva hráči na jednom zařízení", "Interaktivní lekce a trénink"],
-    capabilitiesEn: ["Classic Nine Men's Morris rules", "Four levels of on-device opponent", "Two players on one device", "Interactive lessons and practice"],
+    capabilitiesCs: ["Klasická pravidla Mlýna", "Čtyři úrovně místního soupeře", "Dva hráči na jednom zařízení", "Interaktivní lekce a trénink", "Volitelné tahové hraní přes Game Center", "11 jazyků a volba materiálového tématu", "Vypnutí odlesků, zvuku a haptiky"],
+    capabilitiesEn: ["Classic Nine Men's Morris rules", "Four levels of on-device opponent", "Two players on one device", "Interactive lessons and practice", "Optional turn-based play through Game Center", "11 languages and selectable material themes", "Optional reflections, sound and haptics"],
     availabilityCs: "Ve vývoji", availabilityEn: "In development"
   },
 

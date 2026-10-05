@@ -1,4 +1,5 @@
 ---
+import MilloraPrivacy from "../../components/MilloraPrivacy.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 ---
 <BaseLayout title="Privacy — VCode" description="How VCode handles data on the website and in technology blog comments." lang="en" path="/en/privacy/" alternatePath="/soukromi/">
@@ -12,6 +13,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
       <h2>Your requests</h2><p>To request correction or removal, contact <a href="mailto:podpora@zeleznalady.cz"><strong>podpora@zeleznalady.cz</strong></a>. Include the article address, display name and approximate submission time; never send passwords or other sensitive information.</p>
 
       <h2>Traffic on public websites</h2><p>We use Umami analytics hosted on our own server to improve our public websites. We measure public pages visited, visits, basic browser and device information, the referring domain, and clicks to the App Store or an email contact. Campaign parameters are limited to source, channel and campaign labels. Other URL parameters and fragments are not sent to analytics.</p><p>Analytics does not use tracking cookies or a visitor's signed-in identity. The IP address is temporarily processed to estimate visitors; it is not stored in readable form in the analytics database. The identifier used for this estimate changes daily. Statistics may include an approximate country and device type. We do not record screens or sessions, form contents, comments or private application activity. We respect Do Not Track and Global Privacy Control signals.</p><p>Statistics are accessible only to authorized people after sign-in. Detailed analytics records are retained for no more than 180 days. Operational and security server logs are separate from these analytics records.</p>
+      <MilloraPrivacy lang="en" />
     </div>
   </article>
 </BaseLayout>

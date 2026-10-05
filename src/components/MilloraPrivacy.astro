@@ -1,0 +1,43 @@
+---
+import { milloraLegal } from "../lib/milloraLegal";
+const { lang = "cs" } = Astro.props as {lang?: "cs" | "en"};
+const cs = lang === "cs";
+const effectiveDate = milloraLegal.effectiveDate ? new Intl.DateTimeFormat(cs ? "cs-CZ" : "en-GB", {dateStyle:"long", timeZone:"Europe/Prague"}).format(new Date(milloraLegal.effectiveDate + "T12:00:00Z")) : "";
+---
+<section id="millora" class="millora-policy">
+  <h2>{cs ? "MILLORA — soukromí ve hře" : "MILLORA — privacy in the game"}</h2>
+  {!milloraLegal.approved && <p class="review-notice">{cs ? "Návrh pro vlastníka — před zveřejněním doplnit provozovatele a schválit znění." : "Owner review draft — complete the operator details and approve the text before publication."}</p>}
+  <p>{cs ? "Provozovatel:" : "Operator:"} <strong>{milloraLegal.operator || (cs ? "K doplnění vlastníkem" : "To be supplied by the owner")}</strong>{milloraLegal.operator !== milloraLegal.brand && <> · {milloraLegal.brand}</>}<br/>{cs ? "Kontakt:" : "Contact:"} <a href="mailto:podpora@zeleznalady.cz">podpora@zeleznalady.cz</a></p>
+  <p>{cs ? "Účinnost od:" : "Effective from:"} {effectiveDate || (cs ? "Po schválení vlastníkem" : "After owner approval")}</p>
+  {cs ? <>
+<p>MILLORA je hra Mlýn pro iPhone a iPad. Místní hra a počítačový soupeř fungují bez účtu a bez připojení. Hra neobsahuje reklamy, vlastní analytiku ani sledování a neodesílá místní partie vývojáři. Neobsahuje cloudovou AI ani přístup ke kontaktům, poloze, kameře nebo mikrofonu.</p>
+<h3>Data na zařízení</h3>
+<p>Hra ukládá rozehranou místní partii, průběh tahů, nejvýše 200 dokončených místních výsledků, absolvované lekce a nastavení. Pro obnovu používá záložní soubor. Při nečitelném uložení zachovává původní soubory místo automatického smazání. Tato data zůstávají v úložišti aplikace; případné systémové zálohování spravuje iOS podle nastavení uživatele. Aplikace je neodesílá na vlastní server.</p>
+<h3>Volitelné online hraní</h3>
+<p>Přihlášení, přezdívku, vyhledání nebo pozvání soupeře, tahy a výsledky zajišťuje Apple Game Center. Soupeř vidí přezdívku a herní průběh poskytovaný Game Center. MILLORA nezná heslo Apple ID. V zařízení uchovává identifikátor hráče Game Center pouze k oddělení neodeslaných tahů jednotlivých účtů. Neodeslaný návrh se odstraní po potvrzeném odeslání nebo výslovném zahození konfliktu. Vývojář neprovozuje server pro tyto partie. Zpracování a uchování na straně Apple se řídí <a href="https://www.apple.com/legal/privacy/data/cs/game-center/">Game Center a soukromí</a> a nastavením účtu Apple; tuto externí službu nelze popisovat jako čistě offline.</p>
+<h3>Náklon a vzhled</h3>
+<p>Pohybové čidlo dodává pouze aktuální náklon pro odlesky. Vzorky se nezapisují do souborů ani neposílají do sítě. Odlesky lze vypnout v nastavení a zastaví se také při omezení pohybu a v pozadí. Barevné téma vybírá uživatel; aplikace nezjišťuje fyzickou barvu telefonu. Zvuk a haptiku lze vypnout samostatně.</p>
+<h3>Uchování a odstranění</h3>
+<p>Místní data zůstávají v aplikaci, dokud jsou potřebná pro pokračování, historii a nastavení; seznam výsledků má limit 200. Odstranění aplikace z telefonu odstraní její místní data, nikoli automaticky dřívější systémové zálohy ani data Game Center u Apple. Pouhé odložení aplikace data zachovává. Účet, zálohy a Game Center spravuje uživatel v nástrojích a nastavení Apple. Hra vlastní uživatelské účty nezakládá. Místní hraní je dostupné i bez přihlášení Game Center.</p>
+<h3>Podpora</h3>
+<p>Dotazy k soukromí posílejte na <a href="mailto:podpora@zeleznalady.cz">podpora@zeleznalady.cz</a>. Pokud nás kontaktujete, zpracujeme údaje, které nám sami pošlete, pro vyřízení žádosti; neposílejte hesla ani citlivé údaje. Vyřízené zprávy podpory mažeme nejpozději 90 dní po uzavření dotazu. Vývojář nemůže z vlastního serveru obnovit vaše místní partie, protože takový server hra nemá.</p>
+<h3>Web a hra jsou různé služby</h3>
+<p>Otevřením webu podpory nebo zásad se použijí zásady webu VCode, na které odkazujeme níže. Webová analytika a moderace webových komentářů nejsou součástí běžící hry MILLORA.</p>
+  </> : <>
+<p>MILLORA is a Nine Men's Morris game for iPhone and iPad. Local play and the computer opponent work without an account or internet connection. The game has no advertising, developer analytics or tracking, and does not send local games to the developer. It has no cloud AI and does not access contacts, location, the camera or the microphone.</p>
+<h3>On-device data</h3>
+<p>The game stores your current local match, its moves, up to 200 completed local results, completed lessons and preferences. A backup file helps recover a saved game. Unreadable files are preserved rather than automatically deleted. These files remain in the app's storage; iOS may include them in system backups according to your settings. The app does not upload them to a developer server.</p>
+<h3>Optional online play</h3>
+<p>Apple Game Center provides sign-in, the displayed nickname, matchmaking or invitations, moves and results. Your opponent sees the nickname and game information supplied by Game Center. MILLORA does not know your Apple Account password. On your device, the Game Center player identifier separates unsent moves belonging to different accounts. An unsent draft is removed after confirmed delivery or your explicit decision to discard a conflict. The developer operates no game server. Apple's processing and retention are governed by <a href="https://www.apple.com/legal/privacy/data/en/game-center/">Game Center &amp; Privacy</a> and Apple Account settings; online play is not an entirely offline service.</p>
+<h3>Tilt and appearance</h3>
+<p>The motion sensor supplies the current tilt for reflections. Samples are not written to files or sent over the network. Reflections can be disabled in Settings, and motion updates stop with Reduce Motion or when the app is in the background. You choose the material theme; the game does not identify your phone's physical colour. Sound and haptics can be disabled separately.</p>
+<h3>Retention and deletion</h3>
+<p>Local data stays in the app for continuing games, history and preferences; results are limited to 200. Deleting the app removes its local data, but does not automatically delete previous system backups or Game Center data held by Apple. Offloading the app retains its data. You manage your account, backups and Game Center through Apple's tools and settings. MILLORA creates no developer accounts. Local play remains available without signing in to Game Center.</p>
+<h3>Support</h3>
+<p>Contact <a href="mailto:podpora@zeleznalady.cz">podpora@zeleznalady.cz</a> for privacy questions. We use information you choose to send us to respond to your request; do not send passwords or sensitive information. We delete resolved support messages no later than 90 days after closing the request. The developer cannot recover your local games from a server, because the game has no such server.</p>
+<h3>Website and game</h3>
+<p>Opening the support or privacy website is subject to the VCode website policy linked below. Website analytics and comment moderation are not part of the running MILLORA game.</p>
+  </>}
+  <p><a href={cs ? "/soukromi/" : "/en/privacy/"}>{cs ? "Zásady webu VCode" : "VCode website privacy"}</a> · <a href={cs ? "/podpora/millora/" : "/en/support/millora/"}>{cs ? "Podpora MILLORY" : "MILLORA support"}</a></p>
+</section>
+<style>.millora-policy{scroll-margin-top:7rem}.review-notice{padding:1rem;border:2px solid #a35b10;border-radius:12px}h3{margin-top:2rem}</style>

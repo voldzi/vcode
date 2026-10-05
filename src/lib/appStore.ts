@@ -20,6 +20,13 @@ const byId = (id: string) => {
 
 export const appStoreProducts: AppStoreProduct[] = [
   {
+    ...byId("millora"), storeSlug: "millora",
+    storePlatformsCs: "Hra pro iPhone a iPad", storePlatformsEn: "Game for iPhone and iPad",
+    operatingSystem: "iOS",
+    privacyCs: "/millora/privacy/", privacyEn: "/en/millora/privacy/",
+    supportCs: "/podpora/millora/", supportEn: "/en/support/millora/"
+  },
+  {
     ...byId("jizda"),
     storeSlug: "jizda",
     privacyCs: "/jizda/privacy/",

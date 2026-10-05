@@ -1,0 +1,24 @@
+---
+const {lang = "cs"} = Astro.props as {lang?: "cs" | "en"};
+const cs=lang === "cs";
+const questions=cs ? [
+ ["Proč musím po mlýnu odebrat kámen?", "Nově uzavřený mlýn vyžaduje přesně jedno odebrání. Vyberte soupeřův kámen mimo mlýn; pouze když jsou všechny v mlýnech, lze vybrat libovolný. Teprve potom hraje soupeř."],
+ ["Kdy mohu létat?", "Po skončení pokládání, když vám zůstanou přesně tři kameny. Tehdy se můžete přesunout na libovolné volné místo."],
+ ["Mohu stejný mlýn uzavřít znovu?", "Ano. Rozpojte jej a v pozdějším tahu znovu uzavřete. Nové uzavření umožní odebrání; nezměněný stojící mlýn další odebrání nepřidává."],
+ ["Proč online hra čeká?", "Zkontrolujte, zda jste na tahu vy nebo soupeř, připojení a přihlášení Game Center. Čekání na soupeřův tah je běžná součást tahové hry."],
+ ["Co dělat po chybě odeslání?", "Použijte Obnovit / zkusit znovu a ověřte stav partie. Případný konflikt řešte podle nabídky hry. Neodinstalovávejte aplikaci kvůli obnově: mohli byste odstranit místní partie."],
+ ["Jak upravím vzhled a odezvu?", "V nastavení ručně zvolte materiálové téma. Odlesky, zvuk a haptiku můžete vypnout samostatně. Téma se neurčuje podle fyzické barvy telefonu."]
+] : [
+ ["Why must I remove a piece after forming a mill?", "A newly formed mill requires exactly one capture. Choose an opponent’s piece outside a mill; if all their pieces are in mills, you may choose any. Your opponent moves only after the capture."],
+ ["When can I fly?", "After placing is complete, when you have exactly three pieces left. You can then move to any empty point."],
+ ["Can I form the same mill again?", "Yes. Break it and form it again on a later turn. Forming it again permits a capture; an unchanged mill does not grant another capture."],
+ ["Why is online play waiting?", "Check whose turn it is, your internet connection and Game Center sign-in. Waiting for your opponent is a normal part of turn-based play."],
+ ["What if sending a move fails?", "Use Refresh / try again and check the match status. Resolve any conflict using the options shown by the game. Do not uninstall the app to recover a game: doing so may delete local matches."],
+ ["How do I change appearance and feedback?", "Choose the material theme manually in Settings. Reflections, sound and haptics can be disabled separately. The theme does not detect your phone’s physical colour."]
+];
+---
+<p class="lead">{cs ? "Napište nám název MILLORA, verzi aplikace, model zařízení, verzi iOS, herní režim a stručný popis problému. Pro obnovu hry nejprve aplikaci neodinstalovávejte: místní partie byste mohli ztratit." : "Tell us the app name MILLORA, app version, device model, iOS version, game mode and a brief description of the problem. Do not uninstall the app as a first recovery step: local matches may be lost."}</p>
+<div class="support-options"><a href="mailto:podpora@zeleznalady.cz?subject=MILLORA%20support"><strong>{cs ? "Napsat podpoře" : "Contact support"}</strong><span>podpora@zeleznalady.cz →</span></a><a href={cs ? "/aplikace/millora/" : "/en/apps/millora/"}><strong>{cs ? "Možnosti hry" : "Game features"}</strong><span>MILLORA →</span></a></div>
+<section><h2>{cs ? "Časté otázky" : "Common questions"}</h2>{questions.map(([q,a])=><details><summary>{q}</summary><p>{a}</p></details>)}</section>
+<p class="privacy-note">{cs ? "Nikdy neposílejte heslo Apple ID, přístupové tokeny ani osobní údaje jiných hráčů. Vývojář nemůže obnovit místní partii z vlastního serveru; takový server hra nepoužívá." : "Never send your Apple Account password, access tokens or another player’s personal details. The developer cannot restore a local match from a server; the game has no developer server."}</p>
+<style>section{margin:2rem 0}details{padding:1rem 0;border-bottom:1px solid var(--line)}summary{font-weight:650;cursor:pointer;min-height:44px}details p{max-width:65ch;line-height:1.7}</style>
