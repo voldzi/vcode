@@ -339,7 +339,7 @@ export const products: Product[] = [
   },
   {
     id: "kaloricke-tabulky",
-    name: "Kalorické tabulky",
+    name: "Moje porce",
     href: "kaloricke-tabulky",
     tone: "lime",
     categoryCs: "Výživa",
@@ -350,7 +350,7 @@ export const products: Product[] = [
     summaryEn: "A Czech food diary with a trusted catalogue, offline logging and a considerate approach to goals.",
     capabilitiesCs: ["Rychlý offline zápis", "Ověřený katalog potravin", "Recepty a porce", "Neutrální trendy a soukromí"],
     capabilitiesEn: ["Fast offline logging", "Verified food catalogue", "Recipes and servings", "Neutral trends and privacy"],
-    externalUrl: "https://kaloricketabulky.zeleznalady.cz/",
+    externalUrl: "https://mojeporce.cz/",
     availabilityCs: "Dostupné jako PWA",
     availabilityEn: "Available as a PWA"
   }
