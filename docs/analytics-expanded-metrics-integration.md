@@ -51,4 +51,14 @@ The owner approved adding only the TikTok service category. The original v2 runt
 
 Server enum support is deployed; TikTok becomes only the canonical public `https://tiktok.com/` source. Runtime tests reject lookalike domains, omit profile/video/query/fragment information and suppress DNT/GPC/offline collection. Collector production checks confirmed both immutable SRI values, DNT/GPC 204 suppression and raw-source 400 rejection for all five integrations without storing accepted test visits. VCode's existing legacy source collection already supports TikTok origins; the dashboard revision displays these as TikTok. Per-site frontend rollout is coordinated in the existing application chats and production registry is updated only after deployed asset and bridge verification.
 
-Central validation: `pnpm check`, all 42 tests and `pnpm build` passed. Both required public image types and analytics images built. Public collector image `sha256:aa34a5861c15217830c96ee571f965e33f49ee4ef58250881629b551350096d9` and dashboard image `sha256:8cf89811e3a2e50d68196ad513e70817fbe1be8c5a52ea3eba719de946527324` are deployed. Public health, both locales/products/guides/blogs and dashboard/PWA assets returned 200; deployed dashboard and service worker matched source byte-for-byte. PWA shell cache is v7; remembered-session storage remains preserved.
+Central validation: `pnpm check`, all 42 tests and `pnpm build` passed. Both required public image types and analytics images built. Public collector image `sha256:aa34a5861c15217830c96ee571f965e33f49ee4ef58250881629b551350096d9` and dashboard image `sha256:d1f64d4bc5a333681ce9509d3d8ff3a5691d6fd15d72d9c4ddfccf2214329367` are deployed. Public health, both locales/products/guides/blogs and dashboard/PWA assets returned 200; deployed dashboard and service worker matched source byte-for-byte. PWA shell cache is v8; remembered-session storage remains preserved.
+
+Verified frontend migrations and central runtime registration:
+
+| Website | Runtime path | Production web image |
+| --- | --- | --- |
+| Městem hrou | `/mestem-hrou/assets/vcode-analytics-tiktok-v1.js` | `sha256:97f9153b3ec2197cbbf98ef0ddee9a6f0c6a206951670977895a2739b9d44c21` |
+| Masáže | `/vcode-analytics-tiktok.js` | `sha256:9c333ee3ffd53b8ad298f3f9027a9331490b61b7474f2a1168ab9e1f0dc2474b` |
+| Studio Balance | `/vcode-analytics-tiktok.js` | `sha256:619f0209df4a52505e873c255461158a5cf971b51518eeec956c93bed49e953e` |
+
+Public runtime bytes match the approved SRI and the deployed client bridges reference its pin. Registry changes update only trackerPath/runtimeIntegrity, preserve bind-mount identity and are backed up privately. Moje porce and COP migrations are queued behind their active owner tasks; keep their original immutable v2 runtime until acceptance.

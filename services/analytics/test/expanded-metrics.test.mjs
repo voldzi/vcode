@@ -41,6 +41,6 @@ test('dashboard names TikTok public referrers without mislabelling unrelated dom
  const script=await readFile(new URL('../dashboard.js',import.meta.url),'utf8');
  const helper=script.slice(script.indexOf('function trafficSourceLabel('),script.indexOf('function list('));
  const context={URL};vm.runInNewContext(helper,context);
- for(const value of ['https://tiktok.com/','https://www.tiktok.com/','https://vm.tiktok.com/'])assert.equal(context.trafficSourceLabel(value),'TikTok');
- for(const value of ['https://tiktok.com.example/','https://google.com/','/tiktok.com/',''])assert.equal(context.trafficSourceLabel(value),value);
+ for(const value of ['tiktok.com','www.tiktok.com','VM.TIKTOK.COM','https://tiktok.com/','https://www.tiktok.com/','https://vm.tiktok.com/'])assert.equal(context.trafficSourceLabel(value),'TikTok');
+ for(const value of ['tiktok.com.example','https://tiktok.com.example/','https://google.com/','/tiktok.com/',''])assert.equal(context.trafficSourceLabel(value),value);
 });
