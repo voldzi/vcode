@@ -3,7 +3,7 @@ import {readFile} from 'node:fs/promises';
 import {acceptPublicEvent,acceptExpandedPublicEvent} from './collector-security.mjs';
 const registry=process.env.ANALYTICS_SITES_FILE??'/run/config/sites.json';
 const upstream=process.env.ANALYTICS_UPSTREAM??'http://umami:3000';
-const runtimes=new Map([['/v1/tracker.js',await readFile(new URL('./public-v1.js',import.meta.url))],['/v2/tracker.js',await readFile(new URL('./public-v2.js',import.meta.url))]]);
+const runtimes=new Map([['/v1/tracker.js',await readFile(new URL('./public-v1.js',import.meta.url))],['/v2/tracker.js',await readFile(new URL('./public-v2.js',import.meta.url))],['/v2/tracker-tiktok.js',await readFile(new URL('./public-v2-tiktok.js',import.meta.url))]]);
 const buckets=new Map();
 setInterval(()=>{for(const[k,v]of buckets)if(v.until<Date.now())buckets.delete(k);},60000).unref();
 createServer(async(req,res)=>{

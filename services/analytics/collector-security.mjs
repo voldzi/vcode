@@ -13,7 +13,7 @@ export function acceptPublicEvent(input,headers,sites){
  return {payload:{website:site.id,hostname:site.domain,url:`https://${site.domain}${input.path}`,referrer:''},ip};
 }
 
-const sourceDomains={google:'google.com',seznam:'seznam.cz',bing:'bing.com',duckduckgo:'duckduckgo.com',facebook:'facebook.com',instagram:'instagram.com',linkedin:'linkedin.com',openai:'chatgpt.com',claude:'claude.ai',perplexity:'perplexity.ai'};
+const sourceDomains={google:'google.com',seznam:'seznam.cz',bing:'bing.com',duckduckgo:'duckduckgo.com',facebook:'facebook.com',instagram:'instagram.com',tiktok:'tiktok.com',linkedin:'linkedin.com',openai:'chatgpt.com',claude:'claude.ai',perplexity:'perplexity.ai'};
 const supportedEvents=new Set(['app-store-click','contact-click','outbound-click']);
 export function acceptExpandedPublicEvent(input,headers,sites){
  if(!input||Object.keys(input).some(k=>!['website','name','path','source'].includes(k)))throw new Error('Unexpected properties');

@@ -46,3 +46,9 @@ Seznam vychází ze src/lib/products.ts; není úplným soupisem všech serverov
 | STRATOS a AKB | Vyloučeno | Soukromé nasazení |
 
 NEST a Šibenice mají již měřené produktové stránky na VCode. Nativní používání a instalace z App Storu jsou jiné metriky a vyžadují samostatnou integraci.
+
+## Neměnné revize runtime
+
+Revize pro TikTok používá `services/analytics/public-v2-tiktok.js`, SHA384 `sha384-JpAOJexapVVtAZAFpz3dwp4AHY8PLbao7cLk7Mg7VFIDy2g0/bOUl0zb/HO1qbX5`. Původní `public-v2.js` a jeho adresu/otisk zachovávejte beze změn. Novou revizi lze dodat jako přesnou kopii statického assetu aplikace, ověřenou SRI; bridge mění pouze cestu runtime a otisk. Kolektor událostí, kontrakt v2, cestové a událostní allowlisty i soukromé výluky zůstávají stejné. Tím lze převádět weby postupně bez výpadku starých klientů a bez změny chráněného edge.
+
+Zdrojovým místem vendorizovaného assetu zůstává VCode. Běžný release aplikace musí ověřit kopii proti tomuto otisku a zachovat ji v repozitáři; neprovádět automatickou neověřenou aktualizaci. Neveřejný registr přepne trackerPath/runtimeIntegrity až po ověření veřejného assetu a skutečně nasazeného bridge. Monitor pak ověřuje tuto konkrétní revizi.

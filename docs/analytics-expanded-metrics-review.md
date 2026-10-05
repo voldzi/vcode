@@ -5,7 +5,7 @@ Stav: vlastník ve VCode dne 4. 10. 2026 výslovně schválil níže uvedené ko
 ## Přesný rozsah nové integrace
 
 - Návštěvnost dosavadních schválených veřejných stránek.
-- Obecný zdroj příchodu z veřejných služeb Google, Seznam, Bing, DuckDuckGo, Facebook, Instagram, LinkedIn, OpenAI, Claude a Perplexity. Zdroj se normalizuje na název služby. Žádná původní URL, cesta, parametry, fragment ani soukromá doména se neodesílá. Ostatní zdroje zůstanou neurčené.
+- Obecný zdroj příchodu z veřejných služeb Google, Seznam, Bing, DuckDuckGo, Facebook, Instagram, TikTok, LinkedIn, OpenAI, Claude a Perplexity. Zdroj se normalizuje na název služby. Žádná původní URL, cesta, parametry, fragment ani soukromá doména se neodesílá. Ostatní zdroje zůstanou neurčené.
 - Jen pojmenované kliknutí na odkaz do App Storu, na kontakt a odkaz ven z webu, pokud má konkrétní web takový veřejný prvek. Neposílá se cílová URL, adresa kontaktu ani obsah odkazu. Tato metrika není počet instalací, rezervací ani odeslaných zpráv.
 - Žádné obecné automatické sledování všech kliknutí. Každý web přiřadí měření ke konkrétním schváleným veřejným odkazům.
 
@@ -20,3 +20,7 @@ Measurement uses the shared VCode/Umami service within our infrastructure withou
 ## Publikace
 
 Tento odstavec nahrazuje dosavadní odstavec výslovně vylučující kliknutí a odkazující stránku. Česká a anglická úvodní věta konkrétní aplikace a zbývající schválené odstavce z revize ef5cbf7 se zachovají. Změna se zveřejní a začne měřit až po owner review a technickém převzetí konkrétního webu. Verze v1 zůstane během převodu podporovaná; samotné nasazení nové podpory neaktivuje další sběr.
+
+## TikTok — 5. 10. 2026
+
+Vlastník výslovně schválil doplnění TikToku odpovědí „ano doplň“ po popisu sběru pouze označení služby, bez profilu nebo videa. Přidává se pouze kategorie tiktok; schválené veřejné znění CZ/EN „z vybraných veřejných služeb / from selected public services“ se nemění. Rozsah cest, událostí, soukromých výluk, DNT/GPC a uchování se nerozšiřuje. Nový runtime má samostatnou cestu tracker-tiktok.js; původní SRI zůstává platné pro dosud nepřevedené weby.
