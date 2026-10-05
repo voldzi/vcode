@@ -3,7 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import ProductCard from "../../components/ProductCard.astro";
 import GamesSection from "../../components/GamesSection.astro";
 import SignalMark from "../../components/SignalMark.astro";
-import { products } from "../../lib/products";
+import { products, everydayProducts } from "../../lib/products";
 ---
 <BaseLayout title="VCode — technology you can rely on" description="We design useful and dependable digital products for everyday life, safety, health and organisational management." lang="en" path="/en/">
   <section class="hero">
@@ -15,8 +15,10 @@ import { products } from "../../lib/products";
   </section>
   <section class="principles" aria-label="Our principles"><div><strong>Useful</strong><span>Built around a real task.</span></div><div><strong>Clear</strong><span>No unnecessary obstacles.</span></div><div><strong>Dependable</strong><span>We take data and privacy seriously.</span></div></section>
   <section class="products-section" id="apps">
-    <div class="section-heading"><div><span class="section-index">01</span><h2>One maker.<br/>Many important moments.</h2></div><p>From safer journeys and personal health to organisation-wide decisions. Each product has its own character and one shared requirement: it must work when people need it.</p></div>
-    <div class="product-grid">{products.filter(product => !product.family && product.kind !== "game").map((product, index) => <ProductCard product={product} lang="en" featured={index < 2} />)}</div>
+    <div class="section-heading"><div><span class="section-index">01</span><h2>For everyday<br/>life.</h2></div><p>Useful apps and public services for food, movement and personal wellbeing. Choose what helps you today.</p></div>
+    <div class="product-grid">{everydayProducts.map(product => <ProductCard product={product} lang="en" />)}</div>
+    <div class="family-heading"><span class="section-index">PORTFOLIO</span><div><h3>For work and professional use.</h3><p>Safety, health and organisational work. Public apps, upcoming products and private deployments each have their place.</p></div></div>
+    <div class="product-grid">{products.filter(product => !product.family && product.kind !== "game" && !everydayProducts.includes(product)).map((product, index) => <ProductCard product={product} lang="en" featured={index < 2} />)}</div>
     <div class="family-heading"><span class="section-index">STRATOS</span><div><h3>One family. Distinct applications.</h3><p>Finance, portfolio oversight, project delivery, architecture and governed knowledge each have their own place.</p></div></div>
     <div class="product-grid">{products.filter(product => product.family).sort((a, b) => Number(b.id === "stratos") - Number(a.id === "stratos")).map(product => <ProductCard product={product} lang="en" />)}</div>
   </section>

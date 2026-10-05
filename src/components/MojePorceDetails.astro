@@ -1,0 +1,93 @@
+---
+const { lang = "cs" } = Astro.props as { lang?: "cs" | "en" };
+const cs = lang === "cs";
+const copy = cs ? {
+  workflow: "Jedna cesta od receptu k deníku",
+  intro: "Nemusíte používat všechno. Začněte jedním jídlem a další části zapojte, až vám začnou šetřit práci.",
+  steps: [
+    ["Vyberte, co uvaříte", "Uložte vlastní recept do Mojí kuchyně a zkontrolujte suroviny v domácích zásobách."],
+    ["Doplňte nákup", "Přidejte chybějící suroviny do nákupního seznamu. Uložené věrnostní karty můžete mít po ruce."],
+    ["Zapište skutečnou porci", "Po uvaření upravte množství a potvrďte zápis do deníku. Přehledy pomohou sledovat vývoj v čase."]
+  ],
+  plans: "Co je zdarma a co přidává Premium",
+  free: "Ruční deník, základní přehledy, vlastní recepty, domácí zásoby, nákupní seznamy a uložené věrnostní karty jsou dostupné zdarma.",
+  premium: "Premium beta přidává například upravitelné AI návrhy z fotografie jídla či etikety, vytěžení účtenek a pokročilé plánování. Samoobslužný nákup předplatného zatím není spuštěný. Aktuální možnosti přístupu a informace o AI kreditech najdete přímo v aplikaci.",
+  plansLink: "Premium a AI kredity",
+  faq: "Než začnete",
+  answers: [
+    ["Musím používat všechny části?", "Ne. Samostatný jídelní deník můžete používat od začátku. Recepty, zásoby a seznamy přidejte podle potřeby."],
+    ["Co funguje bez připojení?", "Bez připojení můžete zapisovat do místního deníku. AI potřebuje připojení k internetu."],
+    ["Jak si aplikaci přidám do telefonu?", "Moje porce je webová aplikace PWA pro telefon i počítač. V prohlížeči použijte možnost instalace nebo přidání na plochu. Na iPhonu ji najdete v Safari v nabídce Sdílet → Přidat na plochu."],
+    ["Zapíše fotografie jídlo automaticky?", "AI připraví návrh, který před uložením zkontrolujete, upravíte a potvrdíte. Odhad porce z fotografie nenahrazuje vážení."],
+    ["Jsou všechny potraviny a ceny ověřené?", "Údaje mají různý původ a mohou být neúplné. Při výběru potraviny i kontrole AI návrhu věnujte pozornost zdroji a množství."],
+    ["Je aplikace také anglicky?", "Rozhraní aplikace je nyní primárně české. Anglické stránky VCode vysvětlují produkt; jazyk rozhraní aplikace tím nemění."]
+  ],
+  help: "Aktuální návody a pomoc",
+  helpText: "Podrobný návod se aktualizuje přímo s aplikací. Vyberte si úkol, který chcete vyřešit.",
+  links: [
+    ["https://mojeporce.cz/pruvodce", "První zápis a další postupy"],
+    ["https://mojeporce.cz/pruvodce/recepty-nakupy-a-zasoby", "Recepty, zásoby a nákupy"],
+    ["https://mojeporce.cz/pruvodce/fotografie-jidla-a-uctenky", "Fotografie, etikety a účtenky"],
+    ["https://mojeporce.cz/podpora", "Kontaktovat podporu"],
+    ["https://mojeporce.cz/ochrana-soukromi", "Informace o soukromí"]
+  ]
+} : {
+  workflow: "One journey from a recipe to your diary",
+  intro: "You do not need every feature. Start with one meal and add other parts when they save you work.",
+  steps: [
+    ["Choose what to cook", "Save your own recipe in My Kitchen and check the ingredients in your pantry."],
+    ["Update your shopping list", "Add missing ingredients to your shopping list. Keep your stored loyalty cards handy."],
+    ["Log the portion you ate", "After cooking, adjust the quantity and confirm the diary entry. Insights help you follow changes over time."]
+  ],
+  plans: "Free features and Premium",
+  free: "Manual logging, basic insights, personal recipes, pantry, shopping lists and stored loyalty cards are available free of charge.",
+  premium: "Premium beta adds features such as editable AI suggestions from food or label photos, receipt extraction and advanced planning. Self-service subscription purchasing has not launched. See the app for current access options and information about AI credits.",
+  plansLink: "Premium and AI credits (Czech)",
+  faq: "Before you start",
+  answers: [
+    ["Do I need to use every part?", "No. You can start with the food diary on its own. Add recipes, pantry and lists when you need them."],
+    ["What works offline?", "You can log entries in the local diary without a connection. AI requires an internet connection."],
+    ["How do I add the app to my phone?", "Moje porce is a progressive web app for phones and computers. Use your browser’s install or add-to-home-screen option. On iPhone, open it in Safari and choose Share → Add to Home Screen."],
+    ["Does a photo automatically log a meal?", "AI prepares a suggestion for you to review, edit and confirm before saving. A portion estimate from a photo does not replace weighing."],
+    ["Is every food entry and price verified?", "Information comes from different sources and may be incomplete. Check the source and quantity when selecting food or reviewing an AI suggestion."],
+    ["Is the app available in English?", "The app interface currently uses primarily Czech. This English VCode page explains the product; linked app pages and guides are primarily in Czech."]
+  ],
+  help: "Current guides and support",
+  helpText: "The detailed guide is maintained alongside the app. Choose the task you want help with. The linked resources are in Czech.",
+  links: [
+    ["https://mojeporce.cz/pruvodce", "First entry and other tasks"],
+    ["https://mojeporce.cz/pruvodce/recepty-nakupy-a-zasoby", "Recipes, pantry and shopping"],
+    ["https://mojeporce.cz/pruvodce/fotografie-jidla-a-uctenky", "Photos, labels and receipts"],
+    ["https://mojeporce.cz/podpora", "Contact support"],
+    ["https://mojeporce.cz/ochrana-soukromi", "Privacy information"]
+  ]
+};
+---
+<section class="detail-support">
+  <h2>{copy.workflow}</h2><p>{copy.intro}</p>
+  <ol class="workflow-steps">{copy.steps.map(([title, text]) => <li><h3>{title}</h3><p>{text}</p></li>)}</ol>
+</section>
+<section class="detail-support">
+  <h2>{copy.plans}</h2><p>{copy.free}</p><p>{copy.premium}</p>
+  <a class="text-link" href="https://mojeporce.cz/premium">{copy.plansLink} <span aria-hidden="true">↗</span></a>
+</section>
+<section class="detail-support">
+  <h2>{copy.faq}</h2>
+  {copy.answers.map(([question, answer]) => <details class="product-answer"><summary>{question}</summary><p>{answer}</p></details>)}
+</section>
+<section class="detail-support">
+  <h2>{copy.help}</h2><p>{copy.helpText}</p>
+  <ul class="guide-links">{copy.links.map(([url, title]) => <li><a href={url}>{title} <span aria-hidden="true">↗</span></a></li>)}</ul>
+</section>
+<style>
+  .workflow-steps { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:2rem; padding-left:1.5rem; margin:2rem 0 0; }
+  .workflow-steps li { padding-left:.25rem; }
+  .workflow-steps h3 { font-size:1.1rem; line-height:1.45; }
+  .workflow-steps p { color:var(--muted); }
+  .product-answer { padding:1rem 0; border-top:1px solid var(--line); }
+  .product-answer summary { cursor:pointer; font-weight:650; }
+  .product-answer p { max-width:65ch; margin:1rem 0 0; color:var(--muted); }
+  .guide-links { display:grid; gap:1rem; padding-left:1.25rem; }
+  .guide-links a { text-decoration:underline; text-underline-offset:.2em; }
+  @media (max-width:760px) { .workflow-steps { grid-template-columns:1fr; gap:.75rem; } }
+</style>

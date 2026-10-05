@@ -14,6 +14,8 @@ export type Product = {
   capabilitiesEn: string[];
   externalUrl?: string;
   externalUrlEn?: string;
+  startUrl?: string;
+  learnMoreUrl?: string;
   availabilityCs: string;
   availabilityEn: string;
   family?: "stratos";
@@ -344,17 +346,22 @@ export const products: Product[] = [
     tone: "lime",
     categoryCs: "Výživa",
     categoryEn: "Nutrition",
-    headlineCs: "Jídlo bez nátlaku. Data s kontextem.",
-    headlineEn: "Food without pressure. Data with context.",
-    summaryCs: "Český jídelní deník s důvěryhodným katalogem, offline zápisem a citlivým přístupem k cílům.",
-    summaryEn: "A Czech food diary with a trusted catalogue, offline logging and a considerate approach to goals.",
-    capabilitiesCs: ["Rychlý offline zápis", "Ověřený katalog potravin", "Recepty a porce", "Neutrální trendy a soukromí"],
-    capabilitiesEn: ["Fast offline logging", "Verified food catalogue", "Recipes and servings", "Neutral trends and privacy"],
+    headlineCs: "Od nákupu přes vaření až po zápis jídla.",
+    headlineEn: "From shopping and cooking to logging your meals.",
+    summaryCs: "Propojte vlastní recepty, domácí zásoby a nákupní seznam s jídelním deníkem. Začněte jedním zápisem a další části používejte podle potřeby.",
+    summaryEn: "Connect your own recipes, pantry and shopping list with a food diary. Start by logging one meal and add other parts as you need them. The app currently uses primarily Czech.",
+    capabilitiesCs: ["Deník jídla a vody", "Vlastní recepty a skutečné porce", "Domácí zásoby a nákupní seznam", "Uložené věrnostní karty a přehledy"],
+    capabilitiesEn: ["Food and water diary", "Personal recipes and actual portions", "Pantry and shopping list", "Stored loyalty cards and insights"],
     externalUrl: "https://mojeporce.cz/",
-    availabilityCs: "Dostupné jako PWA",
-    availabilityEn: "Available as a PWA"
+    startUrl: "https://mojeporce.cz/domu",
+    learnMoreUrl: "https://mojeporce.cz/o-aplikaci",
+    availabilityCs: "Veřejná beta · základ zdarma · PWA",
+    availabilityEn: "Public beta · free core features · PWA"
   }
 ];
 
 /** Shared order for the homepage and bilingual games hub. */
 export const games = ["nest", "sibenice", "mestem-hrou", "foldlight", "rinklet", "millora"].map(id => products.find(product => product.id === id)!);
+
+/** Public services presented first on the bilingual homepage. */
+export const everydayProducts = ["kaloricke-tabulky", "masaze", "studio-balance"].map(id => products.find(product => product.id === id)!);

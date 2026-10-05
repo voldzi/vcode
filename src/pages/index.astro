@@ -3,7 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import ProductCard from "../components/ProductCard.astro";
 import GamesSection from "../components/GamesSection.astro";
 import SignalMark from "../components/SignalMark.astro";
-import { products } from "../lib/products";
+import { products, everydayProducts } from "../lib/products";
 ---
 <BaseLayout title="VCode — technologie, na které je spoleh" description="Navrhujeme užitečné a důvěryhodné digitální produkty pro každodenní život, bezpečnost, zdraví a řízení organizací." lang="cs" path="/">
   <section class="hero">
@@ -25,11 +25,13 @@ import { products } from "../lib/products";
 
   <section class="products-section" id="aplikace">
     <div class="section-heading">
-      <div><span class="section-index">01</span><h2>Jedna značka.<br/>Různé důležité chvíle.</h2></div>
-      <p>Od bezpečné cesty přes péči o zdraví až po rozhodování celé organizace. Každý produkt má vlastní charakter, společné má ale jedno: musí fungovat, když jej člověk potřebuje.</p>
+      <div><span class="section-index">01</span><h2>Pro každodenní<br/>život.</h2></div>
+      <p>Užitečné aplikace a veřejné služby pro jídlo, pohyb a péči o sebe. Vyberte si to, co vám pomůže právě dnes.</p>
     </div>
+    <div class="product-grid">{everydayProducts.map(product => <ProductCard product={product} lang="cs" />)}</div>
+    <div class="family-heading"><span class="section-index">PORTFOLIO</span><div><h3>Pro práci a odborné použití.</h3><p>Bezpečnost, zdraví a organizace práce. Veřejné aplikace, připravované produkty i řešení pro soukromé nasazení mají své místo.</p></div></div>
     <div class="product-grid">
-      {products.filter(product => !product.family && product.kind !== "game").map((product, index) => <ProductCard product={product} lang="cs" featured={index < 2} />)}
+      {products.filter(product => !product.family && product.kind !== "game" && !everydayProducts.includes(product)).map((product, index) => <ProductCard product={product} lang="cs" featured={index < 2} />)}
     </div>
     <div class="family-heading"><span class="section-index">STRATOS</span><div><h3>Jedna rodina. Samostatné aplikace.</h3><p>Finance, vedení portfolia, realizace projektů, architektura a řízené znalosti mají každé svůj vlastní prostor.</p></div></div>
     <div class="product-grid">
