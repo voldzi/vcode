@@ -1,5 +1,5 @@
 /* Cache only this application's public static assets. Never cache analytics, credentials or authenticated navigation. */
-const CACHE='vcode-metrics-shell-v5';
+const CACHE='vcode-metrics-shell-v6';
 const ASSETS=['/prehled/offline.html','/prehled/dashboard.css','/prehled/dashboard.js','/prehled/icon-192.png','/prehled/icon-512.png'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS.map(url=>new Request(url,{credentials:'omit',cache:'reload'}))))));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith('vcode-metrics-shell-')&&key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));

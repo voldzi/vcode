@@ -1,6 +1,7 @@
 FROM node:24.20.0-alpine
 WORKDIR /app
 COPY services/analytics ./services/analytics
+RUN mkdir -p /sessions && chown node:node /sessions && chmod 700 /sessions
 USER node
 EXPOSE 8091
 CMD ["node", "services/analytics/server.mjs"]

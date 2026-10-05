@@ -132,10 +132,12 @@ services:
     environment:
       ANALYTICS_UPSTREAM: http://umami:3000
       PUBLIC_SITE_URL: https://vcode.zeleznalady.cz
+      ANALYTICS_SESSION_DIR: /sessions
       ANALYTICS_STATUS_FILE: /state/connections.json
       ANALYTICS_COLLECTION_ENABLED: ${ANALYTICS_COLLECTION_ENABLED:-false}
       ANALYTICS_SITES_FILE: /run/config/sites.json
     volumes:
+      - dashboard-sessions:/sessions
       - ${ANALYTICS_SITES_PATH:?Configure site registry}:/run/config/sites.json:ro
       - ${ANALYTICS_STATE_PATH:?Configure private monitoring directory}:/state:ro
     security_opt: [no-new-privileges:true]
@@ -150,4 +152,5 @@ networks:
     external: true
     name: ${VCODE_NETWORK:?Configure the existing web network}
 volumes:
+  dashboard-sessions:
   analytics-data:

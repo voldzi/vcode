@@ -10,7 +10,7 @@ Visitor estimates are summed across websites and are not deduplicated people. Cl
 
 ## PWA and privacy
 
-The manifest has a dedicated application scope, standalone display and brand icons. Installation uses the browser prompt where supported and instructions for Safari otherwise. The service worker caches only five public shell resources: the generic offline page, stylesheet, script and two icons. API requests, POSTs and live HTML navigation are never cached. No credentials, analytics responses or visitor records are written to browser storage. Offline, logout, expiry and page exit clear rendered private data. Offline navigation displays a generic connection notice. Future shell changes must bump the service worker cache version; updates require the visible update action.
+The manifest has a dedicated application scope, standalone display and brand icons. Installation uses the browser prompt where supported and instructions for Safari otherwise. The service worker caches only five public shell resources: the generic offline page, stylesheet, script and two icons. API requests, POSTs and live HTML navigation are never cached. No passwords, upstream tokens, analytics responses or visitor records are written to offline browser storage. Authentication uses a protected HttpOnly cookie. Offline, logout, expiry and page exit clear rendered private data. Offline navigation displays a generic connection notice. Future shell changes must bump the service worker cache version; updates require the visible update action.
 
 The authenticated API remains network-only and no-store; upstream tokens remain server-side. Existing privacy content and collection approvals are unchanged. Private applications remain outside measurement scope. The dashboard container has an independent health check.
 
@@ -38,3 +38,21 @@ The ranked path and referrer rows from this deployed version count distinct dail
 ## Final expanded metrics acceptance — 2026-10-04
 
 Source `420a74a` / image e23fd9a0830ed52a13b005c40457fb6ffe7b8bca41a2f7ad142d3730f1ce2fca is deployed; browser script `20261004-5` and PWA cache v5. The detail displays the expanded metric start date, uses accurate per-row units and shows only supported sections. A synthetic browser preview verified sources, explicit click rows and the absence of irrelevant application-interest rows. Final authenticated production smoke confirmed six active/available sites, exact source/event capabilities, successful connections newer than their v2 activations, login/logout and public/PWA health. The common owner-approved expanded scope is operational on all five additional public websites; COP intentionally has no click metric.
+
+## Remembered devices — 2026-10-05
+
+The owner authorized a longer optional sign-in for personal phones/computers. The unchecked default retains the one-hour absolute lifetime. Selecting “Remember this device for 30 days” issues a Secure, HttpOnly, SameSite=Strict opaque cookie with a fixed 30-day expiry; activity does not extend it. Sign-out revokes the session immediately and durably. Reauthentication replaces the previous browser session.
+
+Only remembered sessions survive dashboard restarts. Server-side upstream tokens are encrypted with AES-256-GCM in a dedicated private Docker volume; session lookup identifiers are SHA-256 hashes. The key and encrypted file have mode 0600 in a 0700 directory. Passwords are never persisted, tokens never reach the browser, and API responses remain network-only/no-store. Corrupt storage prevents startup instead of bypassing authentication. Normal upstream authorization and password-change invalidation still apply. Expired entries are pruned. Losing the private volume requires signing in again.
+
+PWA shell v6 updates the bilingual login instructions. Installing the PWA can require an initial sign-in in its separate browser context. Physical-phone installation remains a user acceptance step.
+
+### Mobile presentation and release acceptance
+
+The updated header, blue/violet/teal metric cards, area chart, animated rankings and per-site sparklines use the existing data and preserve missing series gaps. Entry/reveal animations are brief and disabled with prefers-reduced-motion; there is no background animation or extra collection. Charts retain keyboard readouts and the values table.
+
+Project validation passed: check (zero errors/warnings), 40 tests (27 blog + 13 analytics) and 122-page build. Browser checks used explicitly synthetic data: 390px, both themes/locales, keyboard chart navigation and actual 32px root text (200%) without horizontal overflow; reduced motion disabled animations. The preview overrides were restored.
+
+All web/blog/worker/dashboard images built; only the dashboard service was recreated. Production image `sha256:39484f2ba2f69c040be35f1646127bf6872e884fc0500a219459e70802d3fc0d` passed five isolated HTTP/session/PWA tests inside a network-isolated container. These included remembered login across server restart, durable logout, expiry, encryption integrity and the 30-day browser timer overflow regression. Production was healthy, private volume directory/key permissions were 0700/0600, dashboard assets matched reviewed source, anonymous summary was 401 and cross-origin login 403. Public health/locales/product/guide/blog/tracker/PWA routes returned 200. No genuine visitor records were used for acceptance.
+
+The initial deployment attempt omitted the existing private Compose environment file and stopped before replacing the service. The corrected deployment used the existing operator-provided configuration without changing its secrets. Rollback source/image were retained in the private release archive. A one-time sign-in is needed after this deployment because the previous sessions were memory-only.

@@ -1,13 +1,14 @@
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
-import { randomBytes } from 'node:crypto';
+import {createSessionStore} from './sessions.mjs';
 import {periodWindow,dailySeries} from './dashboard-data.mjs';
 import { sanitizeEvent, sameOrigin } from './security.mjs';
 const upstream=process.env.ANALYTICS_UPSTREAM ?? 'http://umami:3000';
 const origin=process.env.PUBLIC_SITE_URL ?? 'https://vcode.zeleznalady.cz';
 const statusPath=process.env.ANALYTICS_STATUS_FILE??'/state/connections.json';
 const registryPath=process.env.ANALYTICS_SITES_FILE ?? '/run/config/sites.json';
-const sessions=new Map(),attempts=new Map();
+const sessions=await createSessionStore(process.env.ANALYTICS_SESSION_DIR);
+const attempts=new Map();
 const enabled=process.env.ANALYTICS_COLLECTION_ENABLED==='true';
 const here=new URL('./',import.meta.url);
 const page=await readFile(new URL('dashboard.html',here));
@@ -20,10 +21,10 @@ async function sites(){return JSON.parse(await readFile(registryPath,'utf8'));}
 function send(res,status,body,type='application/json',headers={}){res.writeHead(status,{'Content-Type':type,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','X-Robots-Tag':'noindex, nofollow','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; connect-src 'self'; worker-src 'self'; manifest-src 'self'",...headers});res.end(typeof body==='object'&&!Buffer.isBuffer(body)?JSON.stringify(body):body);}
 async function body(req){let size=0,chunks=[];for await(const chunk of req){size+=chunk.length;if(size>4096)throw Object.assign(new Error('too large'),{status:413});chunks.push(chunk);}return JSON.parse(Buffer.concat(chunks).toString());}
 async function api(path,token,options={}){const r=await fetch(upstream+'/api/'+path,{...options,headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{}),...options.headers},signal:AbortSignal.timeout(12000)});if(!r.ok)throw Object.assign(new Error('upstream failed'),{status:r.status===401?401:502});return r.json();}
-function session(req){const id=/__Host-vcode-metrics=([a-f0-9]{64})/.exec(req.headers.cookie??'')?.[1];const s=sessions.get(id);if(!s||s.until<Date.now()){if(id)sessions.delete(id);return null;}return {...s,id};}
+function session(req){const id=/(?:^|;\s*)__Host-vcode-metrics=([a-f0-9]{64})(?:;|$)/.exec(req.headers.cookie??'')?.[1];return sessions.get(id);}
 const cookie=(id,age)=>`__Host-vcode-metrics=${id}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${age}`;
 function limited(req,limit,windowMs){const key=String(req.headers['x-real-ip']??req.socket.remoteAddress).split(',').at(-1).trim()+':'+(req.url?.includes('login')?'login':'event');const now=Date.now();const bucket=attempts.get(key)??{count:0,until:now+windowMs};if(bucket.until<now){bucket.count=0;bucket.until=now+windowMs;}bucket.count++;attempts.set(key,bucket);return bucket.count>limit;}
-setInterval(()=>{const now=Date.now();for(const [k,v]of sessions)if(v.until<now)sessions.delete(k);for(const[k,v]of attempts)if(v.until<now)attempts.delete(k);},60000).unref();
+setInterval(()=>{const now=Date.now();void sessions.prune().catch(()=>console.error('Session cleanup failed'));for(const[k,v]of attempts)if(v.until<now)attempts.delete(k);},60000).unref();
 createServer(async(req,res)=>{try{
  const url=new URL(req.url,origin),path=url.pathname;
  if(req.method==='GET'&&path==='/health'){send(res,200,{ok:true,collectionEnabled:enabled});return;}
@@ -43,13 +44,14 @@ createServer(async(req,res)=>{try{
   if(!sameOrigin(req,origin)){send(res,403,{});return;}
   if(path==='/prehled/api/login'){
    if(limited(req,10,900000)){send(res,429,{error:'Příliš mnoho pokusů. Zkuste to později.'});return;}
-   const input=await body(req);if(typeof input.username!=='string'||typeof input.password!=='string'||input.username.length>255||input.password.length>255){send(res,400,{});return;}
+   const input=await body(req);if(typeof input.username!=='string'||typeof input.password!=='string'||input.username.length>255||input.password.length>255||(input.remember!==undefined&&typeof input.remember!=='boolean')){send(res,400,{});return;}
    const auth=await api('auth/login',null,{method:'POST',body:JSON.stringify({username:input.username,password:input.password})});
    if(!auth.token){send(res,401,{error:'Přihlášení vyžaduje další ověření.'});return;}
    if(sessions.size>=1000){send(res,503,{});return;}
-   const id=randomBytes(32).toString('hex');sessions.set(id,{token:auth.token,until:Date.now()+3600000});send(res,200,{ok:true},'application/json',{'Set-Cookie':cookie(id,3600)});return;
+   const previous=session(req);if(previous)await sessions.remove(previous.id);
+   const created=await sessions.create(auth.token,input.remember===true);send(res,200,{ok:true},'application/json',{'Set-Cookie':cookie(created.id,Math.ceil((created.until-Date.now())/1000))});return;
   }
-  if(path==='/prehled/api/logout'){const s=session(req);if(s)sessions.delete(s.id);send(res,200,{ok:true},'application/json',{'Set-Cookie':cookie('',0)});return;}
+  if(path==='/prehled/api/logout'){const s=session(req);if(s)await sessions.remove(s.id);send(res,200,{ok:true},'application/json',{'Set-Cookie':cookie('',0)});return;}
  }
  const s=session(req);
  if(path==='/prehled/'&&req.method==='GET'){send(res,200,page,'text/html');return;}
