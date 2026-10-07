@@ -9,6 +9,9 @@ Support: mailto:podpora@zeleznalady.cz
 
 ## Products
 
+- [STRATOS Voice](https://vcode.zeleznalady.cz/aplikace/stratos-voice/): an iOS app being prepared for the App Store; local recording and Czech transcription, with optional user-initiated AI text review.
+- [Myslopis](https://vcode.zeleznalady.cz/aplikace/myslopis/): a Czech public pilot for adult self-exploration using IPIP-50; working Czech wording, not a diagnosis or a validated Czech norm-based assessment.
+
 - [APSYD](https://vcode.zeleznalady.cz/aplikace/apsyd/): a platform for secure assessment and organisational workflows.
 - [PAS](https://vcode.zeleznalady.cz/aplikace/pas/): a private iOS application for ÚVN supporting safe nursing workflows, structured clinical entry and patient-context work.
 - [Jízda](https://vcode.zeleznalady.cz/aplikace/jizda/): journey logging, navigation, vehicles, passengers, costs and secure communication for iPhone and Apple Watch.
@@ -25,7 +28,7 @@ Support: mailto:podpora@zeleznalady.cz
 - [ProjectFlow](https://vcode.zeleznalady.cz/aplikace/projectflow/): private project delivery, phases, tasks and stage gates.
 - [ArchFlow](https://vcode.zeleznalady.cz/aplikace/archflow/): private needs, goals, regulations and council decisions.
 - [AI Knowledge Base (AKB)](https://vcode.zeleznalady.cz/aplikace/akb/): privately deployed STRATOS-family application for governed document knowledge, source-linked answers and permission-based access.
-- [Kalorické tabulky](https://vcode.zeleznalady.cz/aplikace/kaloricke-tabulky/): Czech food diary, recipes, offline logging and nutritional context.
+- [Moje porce](https://vcode.zeleznalady.cz/aplikace/kaloricke-tabulky/): Czech public beta at https://mojeporce.cz/ for meal logging, recipes, household food stocks and shopping lists.
 
 ## Authoritative sections
 

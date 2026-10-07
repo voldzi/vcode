@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="aivtt-title" data-stratos-brand="aivtt" data-stratos-brand-version="flow-v1">
+  <title id="aivtt-title">STRATOS Voice — hlas a přepis</title>
+  <!-- Full-bleed opaque canvas. iOS applies the app icon mask. -->
+  <rect width="64" height="64" fill="#08213F"/>
+  <!-- Voice ribbon, returning into a folded microphone stand. -->
+  <path fill="#50D8F3" d="M12 29H17V33C17 39 20 42 25 42C30 42 33 39 33 33V29H38V33C38 40 34 45 28 46V51H21V46C15 45 12 40 12 33Z"/>
+  <path fill="#13AFD8" d="M21 45H28V51L21 47Z"/>
+  <!-- The cyan return and the white face form a single folded capsule. -->
+  <path fill="#50D8F3" d="M26 13 31 17V30Q31 35 26 35H24V19Z"/>
+  <path fill="#FFFFFF" d="M23 13H26V30Q26 35 21 35H20Q17 35 17 30V19Q17 13 23 13Z"/>
+  <!-- Transcript: three broad bands, deliberately legible at small sizes. -->
+  <path fill="#FFFFFF" d="M40 19H52V25H40Z M40 30H51V36H40Z M40 41H48V47H40Z"/>
+</svg>

@@ -1,0 +1,32 @@
+---
+const { lang = "cs" } = Astro.props;
+---
+{lang === "cs" ? <Fragment>
+<h2>Podpora STRATOS Voice</h2>
+<p>STRATOS Voice nahrává jednání a přepisuje je místně v iPhonu. Základní postup je <strong>Nahrát → Přepsat → Číst nebo sdílet</strong>. Volitelně můžete text doladit pomocí zvolené osobní či organizační AI.</p>
+<h2>Jak připojit AI</h2>
+<p>V knihovně jednání otevřete nabídku → <strong>Kontrola s AI</strong>. Zvolte <strong>Vlastní AI</strong>, poskytovatele, model dostupný ve svém účtu a svůj API klíč. Pro firemní server zadejte také adresu a typ podporovaného rozhraní. Klíč se ukládá pouze v iPhonu. API se účtuje poskytovateli; předplatné jeho chatu nemusí API zahrnovat.</p>
+<p>Pro organizační přihlášení zvolte <strong>STRATOS / AKB → Nastavit STRATOS</strong>. Název připojení, HTTPS adresu serveru a adresu přihlášení získáte od správce organizace. Na spravovaném iPhonu mohou být tyto hodnoty nastavené automaticky. Změna serveru vás odhlásí; místní nahrávky a přepisy zůstanou zachované. Nepoužívejte jako adresu serveru přímé připojení do databáze nebo API klíč poskytovatele AI.</p>
+<h2>Kde najdu opravený text</h2>
+<p>Po kontrole s AI vidíte <strong>Verzi navrženou AI</strong>. Jejím potvrzením vytvoříte novou revizi. Ve čtečce ji najdete jako <strong>Přepis s opravami AI</strong>; původní varianty zůstávají v historii.</p>
+<h2>Nahrávání na pozadí</h2>
+<p>Nahrávání nepotřebuje internet a může pokračovat při přechodu na pozadí. Použití mikrofonu indikuje iOS. Telefonní hovor nebo jiná výhradní činnost mikrofonu může zvukový vstup přerušit; aplikace uchová hotové části, ukáže přerušení a pokusí se obnovit záznam, když jej iOS znovu dovolí. Pro důležité jednání předem ověřte volné místo, baterii a mikrofon.</p>
+<h2>Když kontrola s AI není dostupná</h2>
+<p>Místní záznamy a přepisy zůstávají k dispozici. Zkontrolujte internet, zvolený model a stav API klíče nebo přihlášení STRATOS. Přímá kontrola běží při otevřené aplikaci. Při přerušení zůstávají hotové části uložené a v pokračování rozhodnete sami; poslední nedokončený požadavek mohla služba účtovat. Pokud službu omezuje organizace, obraťte se na jejího správce. Odeslání ani opakování kontroly neprobíhá samo od sebe.</p>
+<h2>Kontaktovat podporu</h2>
+<p>Podporu poskytuje <strong>VCode</strong>, kontakt: <strong>podpora@zeleznalady.cz</strong>. Připojte verzi aplikace z <strong>Soukromí a informace</strong>, model iPhonu, verzi iOS a stručný popis kroků. Provozní diagnostiku můžete výslovně sdílet ze <strong>Stavu aplikace</strong>. Neposílejte hesla, tokeny ani pracovní nahrávky či přepisy bez samostatné dohody s podporou a oprávnění vaší organizace.</p>
+</Fragment> : <Fragment>
+<h2>STRATOS Voice support</h2>
+<p>STRATOS Voice records meetings and transcribes them locally on iPhone. The basic flow is <strong>Record → Transcribe → Read or share</strong>. You can optionally refine text with personal or organisational AI.</p>
+<h2>Connecting AI</h2>
+<p>In the meeting library, open the menu → <strong>AI review</strong>. Select <strong>Personal AI</strong>, a provider, a model available in your account and your API key. For an enterprise server, also enter its address and supported interface type. The key stays on your iPhone. The provider bills API usage; a chat subscription may not include API access.</p>
+<p>For organisational sign-in, choose <strong>STRATOS / AKB → Configure STRATOS</strong>. Your administrator supplies the connection name, HTTPS server address and sign-in address. These may be configured automatically on managed iPhones. Changing the server signs you out but preserves local recordings and transcripts. Do not use a direct database address or an AI provider’s API key as the server address.</p>
+<h2>Finding corrected text</h2>
+<p>After AI review, you see an <strong>AI-proposed version</strong>. Accepting it creates a new revision, shown in the reader as <strong>Transcript with AI corrections</strong>. Original versions remain in history. Interface labels may be localised.</p>
+<h2>Background recording</h2>
+<p>Recording does not require internet and may continue in the background. iOS indicates microphone use. A phone call or another activity with exclusive microphone access may interrupt recording. The app preserves completed parts, displays the interruption and attempts to resume when iOS allows it. Before an important meeting, check storage space, battery and the microphone.</p>
+<h2>When AI review is unavailable</h2>
+<p>Local records and transcripts remain available. Check the internet connection, selected model and API key or STRATOS sign-in. Direct review runs while the app is open. Completed parts survive interruption and you choose whether to continue; the provider may have charged for the last unfinished request. Contact your administrator if organisational restrictions apply. Sending or retrying a review does not happen automatically.</p>
+<h2>Contact support</h2>
+<p>Support is provided by <strong>VCode</strong>, contact: <strong>podpora@zeleznalady.cz</strong>. Include the app version from <strong>Privacy and information</strong>, iPhone model, iOS version and a short description of the steps. You can explicitly share operational diagnostics from <strong>App status</strong>. Do not send passwords, tokens, work recordings or transcripts without a separate agreement with support and your organisation’s permission.</p>
+</Fragment>}

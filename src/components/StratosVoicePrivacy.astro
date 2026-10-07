@@ -1,0 +1,54 @@
+---
+const { lang = "cs" } = Astro.props;
+---
+{lang === "cs" ? <Fragment>
+<h2>STRATOS Voice a vaše data</h2>
+<p>STRATOS Voice slouží k nahrávání, místnímu přepisu a čtení záznamů. Nahrávání a přepis můžete používat bez účtu. Kontrola textu pomocí AI je volitelná. V nastavení můžete zvolit vlastní účet OpenAI, Claude, Perplexity, firemní kompatibilní server nebo STRATOS vaší organizace.</p>
+<h2>Nahrávky a místní přepisy</h2>
+<p>Zvuk, místní přepisy, označení hlasů, opravy a vlastní slovník se ukládají do soukromého prostoru aplikace v iPhonu. Nahrávání, rozpoznání řeči a rozlišení hlasů probíhají místně. První stažení některých modelů vyžaduje internet; samotné stažení neodesílá vaši nahrávku.</p>
+<p>Aplikace chrání záznamy prostředky iOS a vyřazuje je ze systémové zálohy. V knihovně můžete záznam smazat. Odinstalování aplikace odstraní její místní data; tento krok neodstraňuje kopie, které jste dříve exportovali, ani data již předaná službě organizace.</p>
+<h2>Sdílení</h2>
+<p>Text nebo zvuk sdílíte pouze vlastní akcí prostřednictvím nabídky iOS. Zvolíte příjemce a místo uložení. Exportovanou kopii dále spravuje zvolený příjemce nebo služba; smazání záznamu v STRATOS Voice tuto kopii nesmaže.</p>
+<h2>Volitelná kontrola s AI</h2>
+<p>Před odesláním vidíte přesný text, který bude zpracován. Podle zvolené kontroly se předá vybraný úsek nebo aktuální textový přepis s podklady dvou místních modelů. <strong>Zvuk ani hlasové embeddingy se při kontrole s AI neodesílají.</strong></p>
+<p>Při osobním nebo obecném firemním připojení se text předává přes HTTPS přímo zvolené službě. Nastavení a obrazovka kontroly uvádějí její název, server a model. Zpracování, další příjemce a uchování stanoví poskytovatel služby nebo provozovatel serveru. Vydavatel neposkytuje společný účet; API služby může účtovat jeho vlastníkovi.</p>
+<p>Při připojení STRATOS se text předává přes STRATOS do AKB. Současná integrace AKB používá OpenAI pro vytvoření návrhu oprav. Přístup ke službě ověřuje účet a oprávnění vaší organizace. Spolu s textem služba zpracovává identifikátory účtu, revize a úlohy potřebné pro kontrolu, načtení výsledku a provozní audit. Tyto údaje neslouží reklamnímu sledování.</p>
+<p>Návrh nezmění uložený přepis automaticky. Změny použijete až vlastním potvrzením; vznikne nová revize a původní znění zůstane zachované. AI může chybovat a její návrh nemusí odpovídat původnímu zvuku.</p>
+<p>U STRATOS konkrétní pravidla oprávnění, povoleného obsahu, uchování a odstranění vzdálených dat včetně záloh stanovuje organizace provozující připojení. Informace o těchto pravidlech a žádosti týkající se vzdálených dat řešte s jejím správcem. Podmínky AKB se nevztahují na vaše osobní AI účty nebo jiný firemní server.</p>
+<h2>API klíče, přihlášení a organizační správa</h2>
+<p>Osobní API klíč vkládáte v aplikaci a můžete jej odstranit nebo připojení odpojit. Klíč je uložen v Keychain pouze tohoto iPhonu, nesynchronizuje se do iCloudu a není součástí běžných exportů ani diagnostiky. Použije se pouze k přihlášení ke zvolenému serveru, nikdy se neposílá do jiného připojení. Uložením klíče se žádný přepis neodesílá. Klíč neposílejte podpoře; u poskytovatele jej můžete samostatně odvolat.</p>
+<p>Přihlášení STRATOS používá zabezpečenou stránku organizace. STRATOS Voice neukládá vaše heslo; údaje pro obnovení přihlášení chrání v úložišti iOS. Odhlásit se můžete v nastavení připojení. Změna organizace oddělí přihlášení a vzdálené kontroly, místní záznamy zachová.</p>
+<p>Na spravovaném zařízení může organizace nastavit připojení přes MDM a omezit dostupnost AI. Nastavení MDM samo nezahajuje nahrávání ani odeslání přepisu. Odebrání spravované aplikace může odstranit její místní data podle pravidel iOS a organizace.</p>
+<h2>Diagnostika</h2>
+<p>Aplikace uchovává omezenou místní historii provozních stavů a chyb bez audia, textu přepisů, hesel a tokenů. Diagnostiku pro podporu sdílíte sami. STRATOS Voice nepoužívá reklamní sledování. Případné zpracování diagnostiky distribuční platformou Apple popisují její vlastní pravidla.</p>
+<h2>Kontakt</h2>
+<p>Vydavatel: <strong>VCode</strong>. Kontakt pro soukromí: <strong>podpora@zeleznalady.cz</strong>. Napište, které služby a údajů se žádost týká; neposílejte samotné nahrávky, přepisy nebo přístupové údaje. U dat předaných organizaci kontaktujte rovněž správce příslušného připojení STRATOS. Podpora nesmí vyžadovat vaše heslo nebo přístupový token.</p>
+<p>Poslední aktualizace: 7. října 2026.</p>
+<h2>Podpora a web VCode</h2>
+<p>Pokud nás kontaktujete, použijeme údaje, které sami pošlete, k vyřízení dotazu. Vyřízené zprávy podpory mažeme nejpozději 90 dní po uzavření dotazu. Vydavatel nemůže z vlastního serveru obnovit místní záznamy v telefonu. Tyto stránky se řídí samostatnými zásadami webu VCode; webová analytika není měřením v iOS aplikaci.</p>
+</Fragment> : <Fragment>
+<h2>STRATOS Voice and your data</h2>
+<p>STRATOS Voice records meetings, transcribes them locally and lets you read saved records. Recording and transcription do not require an account. AI text review is optional. You can select your own OpenAI, Claude or Perplexity API account, a compatible enterprise server or your organisation’s STRATOS connection.</p>
+<h2>Recordings and local transcripts</h2>
+<p>Audio, local transcripts, speaker labels, corrections and your dictionary are stored in the app’s private space on your iPhone. Recording, speech recognition and speaker separation run locally. Some models require an initial internet download; downloading a model does not send your recording.</p>
+<p>The app protects records using iOS facilities and excludes them from system backup. You can delete a record in the library. Uninstalling the app removes its local data, but does not remove copies you previously exported or data already sent to an organisational service.</p>
+<h2>Sharing</h2>
+<p>You share text or audio through an explicit action in the iOS share sheet. You choose the recipient and destination. The recipient or service manages the exported copy; deleting a record in STRATOS Voice does not delete that copy.</p>
+<h2>Optional AI review</h2>
+<p>Before sending, you see the exact text to be processed. Depending on the review, the app sends a selected passage or the current transcript with supporting output from two local models. <strong>AI review does not send audio or voice embeddings.</strong></p>
+<p>With a personal or general enterprise connection, text is sent over HTTPS directly to the selected service. Settings and the review screen identify the service, server and model. Processing, further recipients and retention are determined by that provider or server operator. The publisher does not provide a shared API account; the service may charge the account owner.</p>
+<p>With STRATOS, text passes through STRATOS to AKB. The current AKB integration uses OpenAI to propose corrections. Your organisational account and permissions control access. The service also processes account, revision and job identifiers required for review, result retrieval and operational audit. These are not used for advertising tracking.</p>
+<p>A proposal does not automatically change a saved transcript. You explicitly accept changes into a new revision, preserving the original. AI may make mistakes and its proposals may differ from the original audio.</p>
+<p>The organisation operating a STRATOS connection determines permissions, permitted content, retention and deletion of remote data, including backups. Contact its administrator for these rules and requests about remote data. AKB conditions do not apply to personal AI accounts or other enterprise servers.</p>
+<h2>API keys, sign-in and organisational management</h2>
+<p>You enter your personal API key in the app and can remove it or disconnect the service. It is stored in this iPhone’s Keychain, is not synchronised to iCloud and is excluded from ordinary exports and diagnostics. It is used only to authenticate to the selected server and is never sent to another connection. Saving a key does not send a transcript. Never send it to support; you can revoke it separately with the provider.</p>
+<p>STRATOS sign-in uses your organisation’s secure page. STRATOS Voice does not store your password; iOS storage protects credentials used to renew sign-in. You can sign out in connection settings. Changing organisations separates sign-in and remote reviews while preserving local records.</p>
+<p>On managed devices, an organisation may configure connections through MDM and restrict AI availability. MDM configuration does not itself start recording or send transcripts. Removing a managed app may delete local data under iOS and organisational rules.</p>
+<h2>Diagnostics</h2>
+<p>The app keeps a limited local history of operational states and errors without audio, transcript text, passwords or tokens. You explicitly share diagnostics with support. STRATOS Voice does not use advertising tracking. Apple’s own rules describe any diagnostics processed by its distribution platform.</p>
+<h2>Contact</h2>
+<p>Publisher: <strong>VCode</strong>. Privacy contact: <strong>podpora@zeleznalady.cz</strong>. Describe the service and data your request concerns; do not include recordings, transcripts or credentials. For data sent to an organisation, also contact the administrator of that STRATOS connection. Support must never request your password or access token.</p>
+<p>Last updated: 7 October 2026.</p>
+<h2>Support and the VCode website</h2>
+<p>If you contact us, we use the information you choose to send to resolve your enquiry. We delete resolved support messages no later than 90 days after closure. The publisher cannot restore your local iPhone records from its own server. These pages are subject to the separate VCode website privacy policy; website analytics do not measure use of the iOS app.</p>
+</Fragment>}

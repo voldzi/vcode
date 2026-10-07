@@ -1,0 +1,5 @@
+# Myslopis portfolio and public integration
+
+7 October 2026. Product source: the Myslopis repository README and its verified public pilot at https://myslopis.cz/. VCode lists the existing Czech guest IPIP-50 pilot for adults, without advertising unpublished questionnaires, AI, accounts or payments. Working Czech wording has no documented Czech validation or population norms; results are not diagnoses. Myslopis is a standalone product, not a STRATOS family member or a clinical APSYD deployment.
+
+The owner explicitly authorised passing integration instructions to the Myslopis chat. Requirements sent: public robots/sitemap/canonical/social metadata; sensitive questionnaire/results/PDF/token routes excluded from indexing and analytics; shared public analytics contract, DNT/GPC/offline controls; exact new privacy notice approval before activation. Production root returned 200; robots.txt and sitemap.xml returned 404 on the first check. No enabled registry entry or synthetic visit has been created. Site-level integration remains pending the application's implementation and specific owner privacy approval.

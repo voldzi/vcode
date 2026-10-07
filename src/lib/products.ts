@@ -25,6 +25,27 @@ export type Product = {
 
 export const products: Product[] = [
   {
+    id: "myslopis", name: "Myslopis", href: "myslopis", tone: "violet",
+    categoryCs: "Sebepoznání", categoryEn: "Self-exploration",
+    headlineCs: "Poznejte svoje souvislosti.", headlineEn: "Explore what connects you.",
+    summaryCs: "Český web pro sebepoznání dospělých. Veřejný pilot nabízí dotazník IPIP-50, přehled pěti rozměrů osobnosti a PDF bez účtu. Pracovní české znění nemá doloženou českou validaci ani populační normy; výsledek není diagnóza.",
+    summaryEn: "A Czech website for adult self-exploration. The public pilot offers IPIP-50, an overview of five personality dimensions and a PDF without an account. The working Czech wording has no documented Czech validation or population norms; the result is not a diagnosis.",
+    capabilitiesCs: ["IPIP-50 pro dospělé od 18 let", "Přehled pěti rozměrů osobnosti", "Výsledek a PDF bez registrace", "Možnost smazat výsledek"],
+    capabilitiesEn: ["IPIP-50 for adults aged 18 and over", "An overview of five personality dimensions", "Results and PDF without registration", "Option to delete the result"],
+    externalUrl: "https://myslopis.cz/",
+    availabilityCs: "Veřejný pilot v češtině", availabilityEn: "Public pilot in Czech"
+  },
+  {
+    id: "stratos-voice", name: "STRATOS Voice", href: "stratos-voice", tone: "violet", family: "stratos", inDevelopment: true,
+    categoryCs: "Záznam a přepis", categoryEn: "Recording and transcription",
+    headlineCs: "Záznam, přepis a chytré úpravy.", headlineEn: "Record, transcribe and refine.",
+    summaryCs: "iOS aplikace pro nahrávání jednání, místní český přepis a pohodlné čtení v iPhonu. Volitelnou kontrolu textu pomocí vlastní nebo organizační AI spouštíte sami a změny přijímáte do nové revize.",
+    summaryEn: "An iOS app for recording meetings, local Czech transcription and comfortable reading on iPhone. You choose when to request a review with personal or organisational AI and accept changes into a new revision.",
+    capabilitiesCs: ["Nahrávání a místní přepis bez účtu", "Hledání, čtení a sdílení TXT/PDF nebo audia", "Volitelná kontrola textu s vlastní či organizační AI", "Původní přepis a historie revizí"],
+    capabilitiesEn: ["Recording and local transcription without an account", "Search, reading and TXT/PDF or audio sharing", "Optional text review with personal or organisational AI", "Original transcript and revision history"],
+    availabilityCs: "Připravujeme pro App Store", availabilityEn: "Preparing for the App Store"
+  },
+  {
     id: "event", name: "Event", href: "event", tone: "azure", inDevelopment: true,
     categoryCs: "Akce a vzdělávání", categoryEn: "Events and learning",
     headlineCs: "Od programu k přehledu o celé akci.", headlineEn: "From the programme to a clear view of every event.",
@@ -333,8 +354,8 @@ export const products: Product[] = [
     headlineEn: "Decisions grounded in one source of truth.",
     summaryCs: "Rodina aplikací pro strategii, finance, realizaci projektů, architekturu a řízené znalosti. Jednotlivé aplikace mají vlastní účel a společné principy oprávnění a auditu.",
     summaryEn: "A family of applications for strategy, finance, project delivery, architecture and governed knowledge. Each has its own purpose and shares access and audit principles.",
-    capabilitiesCs: ["Budget & Contract a Executive Center", "ProjectFlow", "ArchFlow", "AI Knowledge Base (AKB)"],
-    capabilitiesEn: ["Budget & Contract and Executive Center", "ProjectFlow", "ArchFlow", "AI Knowledge Base (AKB)"],
+    capabilitiesCs: ["Budget & Contract a Executive Center", "ProjectFlow a ArchFlow", "AI Knowledge Base (AKB)", "STRATOS Voice pro iPhone"],
+    capabilitiesEn: ["Budget & Contract and Executive Center", "ProjectFlow and ArchFlow", "AI Knowledge Base (AKB)", "STRATOS Voice for iPhone"],
     externalUrl: "https://stratos.zeleznalady.cz/",
     availabilityCs: "Soukromé nasazení",
     availabilityEn: "Private deployment"
