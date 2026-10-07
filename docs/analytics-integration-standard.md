@@ -1,6 +1,6 @@
 # Jednotné připojení veřejných webů k analytice VCode
 
-Stav 7. 10. 2026: společný přehled obsahuje osm webů včetně Myslopisu a Eventu. Sedm veřejných webů má měření zapnuté; nově zaregistrovaný Event čeká na konkrétní schválení a zveřejnění textu v `event-analytics-privacy-review.md`, proto zůstává vypnutý. Myslopis má vlastní konkrétní schválení a zveřejněný text v `myslopis-analytics-privacy-review.md`. Konkrétní CS/EN doplňky včetně rozšíření o obecné zdroje příchodů a skutečná veřejná kliknutí byly schváleny, zveřejněny a centrální aktivace dokončena. Šest zapnutých webů používá v2; VCode zachovává původní schválenou integraci. Soukromé části zůstávají vyloučené.
+Stav 7. 10. 2026: společný přehled obsahuje osm webů včetně Myslopisu a Eventu. Všech osm má měření zapnuté. Event má konkrétní schválený a zveřejněný CZ/EN text v `event-analytics-privacy-review.md`, ověřené propojení a měří pouze nepřihlášený úvod a obecné zdroje příchodu; viz `event-integration.md`. Myslopis má vlastní konkrétní schválení a zveřejněný text v `myslopis-analytics-privacy-review.md`. Konkrétní CS/EN doplňky včetně rozšíření o obecné zdroje příchodů a skutečná veřejná kliknutí byly schváleny, zveřejněny a centrální aktivace dokončena. Sedm zapnutých webů používá v2; VCode zachovává původní schválenou integraci. Soukromé části zůstávají vyloučené.
 
 ## Trvalé uspořádání
 
@@ -44,7 +44,7 @@ Seznam vychází ze src/lib/products.ts; není úplným soupisem všech serverov
 | cop.zeleznalady.cz | Proxy ověřena; schválený doplněk zveřejněn, měření zapnuté | Pouze syntetická ukázka /demo/flood-central-bohemia; bez poloh, hlášení a komunikace |
 | mojeporce.cz (Moje porce) | Proxy ověřena; schválený doplněk zveřejněn, měření zapnuté | Pouze veřejná prezentace; bez jídelního deníku a zdravotních údajů |
 | myslopis.cz | Schválený text zveřejněn, měření zapnuté a propojení ověřené | Jen úvod, katalog a metodika; kontakt a určené veřejné odkazy. Bez dotazníků, odpovědí, výsledků, PDF, účtů a osobního průchodu |
-| events.zeleznalady.cz (Event) | Zaregistrováno; aktivace čeká na konkrétní schválení textu a ověření publikace | Pouze nepřihlášený úvod `/` a obecný zdroj. Bez kliknutí, přihlášek, účastníků, docházky, účtů a administrace |
+| events.zeleznalady.cz (Event) | Schválený CZ/EN text zveřejněn, měření zapnuté a propojení ověřené | Pouze nepřihlášený úvod `/` a obecný zdroj. Bez kliknutí, přihlášek, účastníků, docházky, účtů a administrace |
 | STRATOS a AKB | Vyloučeno | Soukromé nasazení |
 
 NEST a Šibenice mají již měřené produktové stránky na VCode. Nativní používání a instalace z App Storu jsou jiné metriky a vyžadují samostatnou integraci.

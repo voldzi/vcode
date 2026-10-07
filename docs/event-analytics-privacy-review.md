@@ -1,6 +1,6 @@
 # Event: veřejná analytika – text ke schválení
 
-Stav 7. 10. 2026: připraveno ke kontrole vlastníkem. Před zveřejněním tohoto textu a aktivací měření je vyžadováno konkrétní schválení podle AGENTS.md. Souhlas pro jiné weby jej nenahrazuje.
+Stav 7. 10. 2026: **SCHVÁLENO VLASTNÍKEM.** Vlastník v návaznosti na předložený konkrétní CZ/EN text a aktivaci odpověděl „Souhlasím“. Podmínka kontroly podle AGENTS.md je splněna. Obě znění jsou zveřejněná na `/privacy/analytics`. Produkční aktivace začala v 21:43:21 Europe/Prague a propojení prošlo kontrolou; viz `event-integration.md`.
 
 ## Rozsah
 
