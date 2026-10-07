@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">APSYD Central</title>
+  <desc id="desc">Zlatý centrální uzel se čtyřmi připojenými pracovišti na tmavém modrém podkladu.</desc>
+  <defs>
+    <linearGradient id="background" x1="60" y1="0" x2="450" y2="512" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#23374f"/>
+      <stop offset="1" stop-color="#0c1c30"/>
+    </linearGradient>
+    <linearGradient id="mark" x1="160" y1="160" x2="352" y2="352" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff1ba"/>
+      <stop offset="1" stop-color="#edbd64"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#background)"/>
+  <path d="M178 178l156 156M334 178L178 334" fill="none" stroke="#dcb768" stroke-width="24" stroke-linecap="round"/>
+  <circle cx="256" cy="256" r="58" fill="url(#mark)"/>
+  <circle cx="178" cy="178" r="24" fill="#fff1ba"/>
+  <circle cx="334" cy="178" r="24" fill="#f8d98d"/>
+  <circle cx="178" cy="334" r="24" fill="#f8d98d"/>
+  <circle cx="334" cy="334" r="24" fill="#edbd64"/>
+  <circle cx="256" cy="256" r="19" fill="#162a40"/>
+</svg>

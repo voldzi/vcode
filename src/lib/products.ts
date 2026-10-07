@@ -103,6 +103,18 @@ export const products: Product[] = [
     availabilityEn: "Controlled healthcare deployment"
   },
   {
+    id: "apsyd-central", name: "APSYD Central", href: "apsyd-central", tone: "teal",
+    categoryCs: "Koordinace pracovišť", categoryEn: "Site coordination",
+    headlineCs: "Společný přehled pro řízenou síť pracovišť.",
+    headlineEn: "A shared overview for a governed network of sites.",
+    summaryCs: "Centrální aplikace ekosystému APSYD pro registr pracovišť, dohled nad dostupností a čerstvostí synchronizace a řízené sdílení verzí vyšetřovacích protokolů. Určená oprávněným správcům v soukromém zdravotnickém nasazení.",
+    summaryEn: "The central application in the APSYD ecosystem for the site registry, availability and synchronisation freshness monitoring, and governed sharing of assessment protocol versions. Intended for authorised administrators in a private healthcare deployment.",
+    capabilitiesCs: ["Registr a koordinace pracovišť", "Dohled nad stavem a synchronizací", "Řízený katalog vyšetřovacích protokolů", "Souhrnné provozní přehledy a audit"],
+    capabilitiesEn: ["Site registry and coordination", "Status and synchronisation monitoring", "Governed assessment protocol catalogue", "Aggregate operational overviews and audit"],
+    availabilityCs: "Soukromé zdravotnické nasazení",
+    availabilityEn: "Private healthcare deployment"
+  },
+  {
     id: "pas",
     name: "PAS",
     href: "pas",

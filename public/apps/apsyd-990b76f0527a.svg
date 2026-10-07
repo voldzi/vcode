@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">APSYD Clinical</title>
+  <desc id="desc">Bílý symbol psychologie na tmavém tyrkysovém podkladu.</desc>
+  <defs>
+    <linearGradient id="background" x1="60" y1="0" x2="450" y2="512" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#103b48"/>
+      <stop offset="1" stop-color="#08232f"/>
+    </linearGradient>
+    <linearGradient id="mark" x1="170" y1="150" x2="350" y2="365" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#b3f5e6"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#background)"/>
+  <path d="M166 170v70c0 53 40 82 90 82s90-29 90-82v-70M256 154v204" fill="none" stroke="url(#mark)" stroke-width="32" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="346" cy="170" r="16" fill="#42d8bd"/>
+</svg>
