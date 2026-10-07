@@ -9,6 +9,8 @@ const copy = cs ? {
     ["Doplňte nákup", "Přidejte chybějící suroviny do nákupního seznamu. Uložené věrnostní karty můžete mít po ruce."],
     ["Zapište skutečnou porci", "Po uvaření upravte množství a potvrďte zápis do deníku. Přehledy pomohou sledovat vývoj v čase."]
   ],
+  native: "iPhone, iPad a Apple Watch připravujeme",
+  nativeText: "Webová aplikace a její instalace jako PWA jsou dostupné nyní. Současně vyvíjíme samostatnou aplikaci pro iPhone a iPad a doprovodnou verzi pro Apple Watch. Tyto nativní verze zatím nejsou zveřejněné v App Storu.",
   plans: "Co je zdarma a co přidává Premium",
   free: "Ruční deník, základní přehledy, vlastní recepty, domácí zásoby, nákupní seznamy a uložené věrnostní karty jsou dostupné zdarma.",
   premium: "Premium beta přidává například upravitelné AI návrhy z fotografie jídla či etikety, vytěžení účtenek a pokročilé plánování. Samoobslužný nákup předplatného zatím není spuštěný. Aktuální možnosti přístupu a informace o AI kreditech najdete přímo v aplikaci.",
@@ -39,6 +41,8 @@ const copy = cs ? {
     ["Update your shopping list", "Add missing ingredients to your shopping list. Keep your stored loyalty cards handy."],
     ["Log the portion you ate", "After cooking, adjust the quantity and confirm the diary entry. Insights help you follow changes over time."]
   ],
+  native: "iPhone, iPad and Apple Watch versions in preparation",
+  nativeText: "The web app and its PWA installation are available now. A separate native iPhone and iPad app and an Apple Watch companion are also being developed. These native versions have not yet been published on the App Store.",
   plans: "Free features and Premium",
   free: "Manual logging, basic insights, personal recipes, pantry, shopping lists and stored loyalty cards are available free of charge.",
   premium: "Premium beta adds features such as editable AI suggestions from food or label photos, receipt extraction and advanced planning. Self-service subscription purchasing has not launched. See the app for current access options and information about AI credits.",
@@ -66,6 +70,9 @@ const copy = cs ? {
 <section class="detail-support">
   <h2>{copy.workflow}</h2><p>{copy.intro}</p>
   <ol class="workflow-steps">{copy.steps.map(([title, text]) => <li><h3>{title}</h3><p>{text}</p></li>)}</ol>
+</section>
+<section class="detail-support">
+  <h2>{copy.native}</h2><p>{copy.nativeText}</p>
 </section>
 <section class="detail-support">
   <h2>{copy.plans}</h2><p>{copy.free}</p><p>{copy.premium}</p>

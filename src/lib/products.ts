@@ -381,15 +381,15 @@ export const products: Product[] = [
     categoryEn: "Nutrition",
     headlineCs: "Od nákupu přes vaření až po zápis jídla.",
     headlineEn: "From shopping and cooking to logging your meals.",
-    summaryCs: "Propojte vlastní recepty, domácí zásoby a nákupní seznam s jídelním deníkem. Začněte jedním zápisem a další části používejte podle potřeby.",
-    summaryEn: "Connect your own recipes, pantry and shopping list with a food diary. Start by logging one meal and add other parts as you need them. The app currently uses primarily Czech.",
+    summaryCs: "Propojte vlastní recepty, domácí zásoby a nákupní seznam s jídelním deníkem. Začněte jedním zápisem a další části používejte podle potřeby. Vedle webu připravujeme nativní aplikaci pro iPhone a iPad a doprovodnou verzi pro Apple Watch.",
+    summaryEn: "Connect your own recipes, pantry and shopping list with a food diary. Start by logging one meal and add other parts as you need them. The app currently uses primarily Czech. A native iPhone and iPad app and an Apple Watch companion are in preparation alongside the web app.",
     capabilitiesCs: ["Deník jídla a vody", "Vlastní recepty a skutečné porce", "Domácí zásoby a nákupní seznam", "Uložené věrnostní karty a přehledy"],
     capabilitiesEn: ["Food and water diary", "Personal recipes and actual portions", "Pantry and shopping list", "Stored loyalty cards and insights"],
     externalUrl: "https://mojeporce.cz/",
     startUrl: "https://mojeporce.cz/domu",
     learnMoreUrl: "https://mojeporce.cz/o-aplikaci",
-    availabilityCs: "Veřejná beta · základ zdarma · PWA",
-    availabilityEn: "Public beta · free core features · PWA"
+    availabilityCs: "Webová beta · iOS a Apple Watch připravujeme",
+    availabilityEn: "Web beta · iOS and Apple Watch in preparation"
   }
 ];
 

@@ -29,7 +29,7 @@ Support: mailto:podpora@zeleznalady.cz
 - [ProjectFlow](https://vcode.zeleznalady.cz/aplikace/projectflow/): private project delivery, phases, tasks and stage gates.
 - [ArchFlow](https://vcode.zeleznalady.cz/aplikace/archflow/): private needs, goals, regulations and council decisions.
 - [AI Knowledge Base (AKB)](https://vcode.zeleznalady.cz/aplikace/akb/): privately deployed STRATOS-family application for governed document knowledge, source-linked answers and permission-based access.
-- [Moje porce](https://vcode.zeleznalady.cz/aplikace/kaloricke-tabulky/): Czech public beta at https://mojeporce.cz/ for meal logging, recipes, household food stocks and shopping lists.
+- [Moje porce](https://vcode.zeleznalady.cz/aplikace/kaloricke-tabulky/): Czech public web/PWA beta at https://mojeporce.cz/ for meal logging, recipes, household food stocks and shopping lists. Native iPhone/iPad and Apple Watch companion apps are in preparation and are not yet on the App Store.
 
 ## Authoritative sections
 

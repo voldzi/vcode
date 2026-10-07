@@ -3,8 +3,8 @@ const { id, size = 64 } = Astro.props as { id: string; size?: number };
 const flowApps = ["stratos", "budget-contract", "projectflow", "archflow", "akb", "stratos-voice"];
 const brand = id === "executive-center" ? "stratos" : id;
 const clinicalIcons: Record<string, string> = { apsyd: "apsyd-990b76f0527a", "apsyd-central": "apsyd-central-dcaaa0627b91" };
-const icon = clinicalIcons[id] ?? (flowApps.includes(brand) ? `${brand}-flow-v1` : brand);
-const extension = (id in clinicalIcons || icon.endsWith("-flow-v1") || ["apsyd", "kaloricke-tabulky", "event", "myslopis"].includes(icon)) ? "svg" : ["nest", "pas", "mestem-hrou", "sibenice"].includes(icon) ? "png" : "webp";
+const icon = id === "kaloricke-tabulky" ? "mojeporce-b244faa9e68a" : clinicalIcons[id] ?? (flowApps.includes(brand) ? `${brand}-flow-v1` : brand);
+const extension = (id === "kaloricke-tabulky" || id in clinicalIcons || icon.endsWith("-flow-v1") || ["apsyd", "kaloricke-tabulky", "event", "myslopis"].includes(icon)) ? "svg" : ["nest", "pas", "mestem-hrou", "sibenice"].includes(icon) ? "png" : "webp";
 ---
 <span class:list={["product-icon", `product-icon-${id}`]} style={`--icon-size:${size}px`} aria-hidden="true">
   <img src={`/apps/${icon}.${extension}`} alt="" width={size} height={size} loading="lazy" decoding="async" />
