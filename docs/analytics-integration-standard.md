@@ -1,6 +1,6 @@
 # Jednotné připojení veřejných webů k analytice VCode
 
-Stav 4. 10. 2026: společný přehled obsahuje šest webů. Všech šest veřejných webů má měření zapnuté. Konkrétní CS/EN doplňky včetně rozšíření o obecné zdroje příchodů a skutečná veřejná kliknutí byly schváleny, zveřejněny a centrální aktivace dokončena. Pět připojených webů používá v2; VCode zachovává původní schválenou integraci. Soukromé části zůstávají vyloučené.
+Stav 7. 10. 2026: společný přehled obsahuje sedm webů včetně Myslopisu. Všech sedm veřejných webů má měření zapnuté. Myslopis má vlastní konkrétní schválení a zveřejněný text v `myslopis-analytics-privacy-review.md`. Konkrétní CS/EN doplňky včetně rozšíření o obecné zdroje příchodů a skutečná veřejná kliknutí byly schváleny, zveřejněny a centrální aktivace dokončena. Šest připojených webů používá v2; VCode zachovává původní schválenou integraci. Soukromé části zůstávají vyloučené.
 
 ## Trvalé uspořádání
 
@@ -18,7 +18,7 @@ Do místního AGENTS.md se při připojení vloží následující pravidlo:
 
 1. Ověřit repozitář, skutečné produkční nasazení a místní AGENTS.md.
 2. Stanovit povolené veřejné cesty a události; dynamické identifikátory a citlivé parametry odstranit před odesláním. U jednostránkových aplikací měřit změny veřejných tras bez dvojitého započtení.
-3. Připravit informaci o měření a získat její schválení pro daný web. Nové weby vyžadují vlastní přezkoumání konkrétního rozsahu a textu. Schválení šesti zde uvedených veřejných webů neplatí automaticky pro jiné domény nebo soukromé aplikace.
+3. Připravit informaci o měření a získat její schválení pro daný web. Nové weby vyžadují vlastní přezkoumání konkrétního rozsahu a textu. Schválení již připojených veřejných webů neplatí automaticky pro jiné domény nebo soukromé aplikace.
 4. Zaregistrovat samostatný web v Umami a neveřejném registru VCode. Nevytvářet veřejné odkazy na statistiky.
 5. Nasadit sdílenou integraci, potřebné CSP a serverový adaptér. Ověřit důvěryhodný původ adresy klienta; nepřijímat její podvržení z prohlížeče. Veřejný adaptér nesmí zpřístupnit přehled ani administrační API.
 6. Provést izolovaný test zkušebního webu: zobrazení stránky, schválené kliknutí, odmítnutí soukromé cesty, cizího původu a neznámé události; DNT/GPC nic neodesílá. Zkušební data nesmějí navyšovat reálné statistiky.
@@ -42,7 +42,8 @@ Seznam vychází ze src/lib/products.ts; není úplným soupisem všech serverov
 | masaze.zeleznalady.cz | Proxy ověřena; schválený doplněk zveřejněn, měření zapnuté | Nabídka a veřejné stránky; bez rezervací a klientské samoobsluhy |
 | studio-balance.cz | Proxy ověřena; schválený doplněk zveřejněn, měření zapnuté | Veřejná nabídka a rozvrh; bez účtů a osobních rezervací |
 | cop.zeleznalady.cz | Proxy ověřena; schválený doplněk zveřejněn, měření zapnuté | Pouze syntetická ukázka /demo/flood-central-bohemia; bez poloh, hlášení a komunikace |
-| kaloricketabulky.zeleznalady.cz | Proxy ověřena; schválený doplněk zveřejněn, měření zapnuté | Pouze veřejná prezentace; bez jídelního deníku a zdravotních údajů |
+| mojeporce.cz (Moje porce) | Proxy ověřena; schválený doplněk zveřejněn, měření zapnuté | Pouze veřejná prezentace; bez jídelního deníku a zdravotních údajů |
+| myslopis.cz | Schválený text zveřejněn, měření zapnuté a propojení ověřené | Jen úvod, katalog a metodika; kontakt a určené veřejné odkazy. Bez dotazníků, odpovědí, výsledků, PDF, účtů a osobního průchodu |
 | STRATOS a AKB | Vyloučeno | Soukromé nasazení |
 
 NEST a Šibenice mají již měřené produktové stránky na VCode. Nativní používání a instalace z App Storu jsou jiné metriky a vyžadují samostatnou integraci.
