@@ -1,0 +1,19 @@
+---
+import * as privacy from '../../docs/recall-download-privacy-review.md';
+import * as terms from '../../docs/recall-distribution-terms-review.md';
+import approval from '../data/recall-legal-approval.json';
+import { recallLegalHTML } from '../lib/recallLegal.mjs';
+const { lang, document, backHref } = Astro.props as { lang: 'cs' | 'en'; document: 'privacy' | 'terms'; backHref: string };
+const html = recallLegalHTML(await (document === 'privacy' ? privacy : terms).compiledContent(), document, lang).replace(/<(\/?)h3(?=[\s>])/g, '<$1h2');
+const title = document === 'privacy' ? (lang === 'cs' ? 'Soukromí VCode Recall' : 'VCode Recall privacy') : (lang === 'cs' ? 'Podmínky VCode Recall' : 'VCode Recall terms');
+---
+<article class="guide" data-recall-approved-copy={approval[document]}>
+  <a class="back-link" href={backHref}>← VCode Recall</a>
+  <header><h1>{title}</h1></header>
+  <div class="guide-body" set:html={html} />
+</article>
+<style>
+  .guide { min-width:0; overflow-wrap:anywhere; }
+  .guide h1 { overflow-wrap:anywhere; }
+  .guide-body :global(a) { overflow-wrap:anywhere; }
+</style>

@@ -1,0 +1,13 @@
+---
+import BaseLayout from '../../../../../layouts/BaseLayout.astro';
+import RecallLegal from '../../../../../components/RecallLegal.astro';
+export function getStaticPaths() { return import.meta.env.DEV ? ['cs','en','cs-zoom','en-zoom'].flatMap(lang => ['privacy','terms'].map(document => ({params:{lang,document}}))) : []; }
+const lang = Astro.params.lang!.replace('-zoom','') as 'cs' | 'en';
+const document = Astro.params.document as 'privacy' | 'terms';
+const path = `/preview-local/recall/${Astro.params.lang}/legal/${document}/`;
+const alternatePath = `/preview-local/recall/${lang === 'cs' ? 'en' : 'cs'}${Astro.params.lang!.endsWith('-zoom') ? '-zoom' : ''}/legal/${document}/`;
+---
+<BaseLayout title="VCode Recall — private legal preview" description="Private approved-copy preview" {lang} {path} {alternatePath} noindex analytics={false}>
+  <style is:inline set:html={Astro.params.lang!.endsWith('-zoom') ? 'html { font-size:200%; }' : ''} />
+  <RecallLegal {lang} {document} backHref={`/preview-local/recall/${Astro.params.lang}/`} />
+</BaseLayout>

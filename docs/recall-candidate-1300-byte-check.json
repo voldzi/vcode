@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "status": "SUPERSEDED-CANDIDATE-BYTE-CHECK-ONLY",
+  "supersededByBuild": "202610081600",
+  "verifiedOn": "2026-10-08",
+  "product": "vcode-recall",
+  "version": "0.6.0",
+  "build": "202610081300",
+  "manifestFile": "VCodeRecall-0.6.0-202610081300-macos-arm64.manifest.json",
+  "manifestSHA256": "21e207081e627bba238e7d9a782abae1fa9c80cacdd9b991131b6b59875d6aa5",
+  "artifacts": [
+    {
+      "file": "VCodeRecall-0.6.0-202610081300-macos-arm64.zip",
+      "kind": "installer",
+      "sha256": "423b426bbf53f9b3484007de5fbe460b502f9aad2bbec9c49dfe598ad5b898a3",
+      "sizeBytes": 1811209707
+    },
+    {
+      "file": "VCodeRecall-0.6.0-202610081300-macos-arm64.dmg",
+      "kind": "installer",
+      "sha256": "637ef2dadd75f4323d3346a54067cc3ec60c612b906bc0b07ba97adbe251c170",
+      "sizeBytes": 1819418556
+    },
+    {
+      "file": "VCodeRecall-0.6.0-202610081300-macos-arm64.licenses.zip",
+      "kind": "license",
+      "sha256": "d6654b9dbac0b70eeaee5d95bb460bdad2f5650b4015ee081ba64e82aafab122",
+      "sizeBytes": 614414
+    },
+    {
+      "file": "VCodeRecall-0.6.0-202610081300-macos-arm64.sources.tar.gz",
+      "kind": "source",
+      "sha256": "729384b0fe962d8acc49b201d453872c28b1bb654d4e4df1026568636ed2f727",
+      "sizeBytes": 240232621
+    }
+  ],
+  "checks": {
+    "manifestSchema2": true,
+    "closedArtifactNames": true,
+    "actualFileSHA256AndSize": true,
+    "licenseReviewAccepted": false,
+    "installedApplicationAccepted": false,
+    "signedPublisherReceiptAccepted": false,
+    "readyToPublish": false,
+    "publicationChanged": false
+  }
+}

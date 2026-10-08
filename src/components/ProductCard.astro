@@ -1,11 +1,11 @@
 ---
 import type { Product } from "../lib/products";
 import ProductIcon from "./ProductIcon.astro";
-const { product, lang = "cs", featured = false } = Astro.props as { product: Product; lang?: "cs" | "en"; featured?: boolean };
+const { product, lang = "cs", featured = false, href: customHref } = Astro.props as { product: Product; lang?: "cs" | "en"; featured?: boolean; href?: string };
 const cs = lang === "cs";
-const href = cs ? `/aplikace/${product.href}/` : `/en/apps/${product.href}/`;
+const href = customHref ?? (cs ? `/aplikace/${product.href}/` : `/en/apps/${product.href}/`);
 ---
-<article class:list={["product-card", `tone-${product.tone}`, { featured }]}>
+<article id={product.id === "vcode-recall" ? "chromadb-status" : undefined} class:list={["product-card", `tone-${product.tone}`, { featured, "product-card-recall": product.id === "vcode-recall" }]}>
   <div class="product-topline">
     <ProductIcon id={product.id} size={featured ? 72 : 60} />
     <span class="availability">{cs ? product.availabilityCs : product.availabilityEn}</span>
@@ -16,3 +16,8 @@ const href = cs ? `/aplikace/${product.href}/` : `/en/apps/${product.href}/`;
   <p>{cs ? product.summaryCs : product.summaryEn}</p>
   <a class="text-link" href={href}>{product.kind === "game" ? (cs ? "Poznat hru" : "Explore the game") : (cs ? "Poznat aplikaci" : "Explore the app")}<span aria-hidden="true">↗</span></a>
 </article>
+<style>
+  .product-card-recall { min-width:0; overflow-wrap:anywhere; }
+  .product-card-recall .text-link { width:auto; max-width:100%; flex-wrap:wrap; }
+  @media (max-width:600px) { .product-card-recall { padding:clamp(16px,4vw,28px); } }
+</style>

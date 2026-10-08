@@ -1,0 +1,41 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import RecallHero from "../../../components/RecallHero.astro";
+import ProductCard from "../../../components/ProductCard.astro";
+import RecallDetails from "../../../components/RecallDetails.astro";
+import { products } from "../../../lib/products";
+export function getStaticPaths() {
+  return import.meta.env.DEV ? ["cs", "en", "cs-zoom", "en-zoom"].map(lang => ({ params: { lang } })) : [];
+}
+const lang = Astro.params.lang!.replace("-zoom", "") as "cs" | "en";
+const cs = lang === "cs";
+const textZoom = Astro.params.lang!.endsWith("-zoom");
+const product = products.find(item => item.id === "vcode-recall")!;
+const path = `/preview-local/recall/${Astro.params.lang}/`;
+const guideHref = `${path}guide/`;
+---
+<BaseLayout title="VCode Recall — private preview" description={cs ? product.summaryCs : product.summaryEn} {lang} {path} alternatePath={`/preview-local/recall/${cs ? "en" : "cs"}/`} noindex analytics={false}>
+  <style is:inline set:html={textZoom ? "html { font-size:200%; }" : ""} />
+  <aside class="preview-notice" aria-label={cs ? "Stav přípravy" : "Preparation status"}>
+    <strong>{cs ? "Neveřejný pracovní náhled" : "Private working preview"}</strong>
+    <span>{cs ? "Není součástí veřejného webu. Finální instalátor a schválení vydání zatím nebyly předány." : "Not part of the public website. The final installer and release acceptance have not been handed over."}</span>
+  </aside>
+  <article class="product-detail recall-preview">
+    <RecallHero {product} {lang} {guideHref} />
+    <RecallDetails {lang} {guideHref} />
+    <section class="detail-support" aria-labelledby="portfolio-example">
+      <h2 id="portfolio-example">{cs ? "Karta v portfoliu" : "Portfolio card"}</h2>
+      <p>{cs ? "Ukázka budoucího zařazení. Veřejný katalog tento koncept zatím neobsahuje." : "An example of the future listing. The public catalogue does not include this draft."}</p>
+      <div class="recall-card-example"><ProductCard {product} {lang} href={path} /></div>
+    </section>
+  </article>
+</BaseLayout>
+<style>
+  .preview-notice { margin:1.25rem clamp(1rem,5vw,5rem) 0; padding:1rem 1.25rem; background:#fff5d9; border:1px solid #d9bd67; border-radius:.75rem; display:flex; flex-wrap:wrap; gap:.4rem 1rem; color:#5e4812; font-size:.85rem; line-height:1.7; }
+  .preview-notice span { flex-basis:100%; }
+  .recall-preview { padding-top:clamp(3rem,7vw,6rem); min-width:0; overflow-wrap:anywhere; }
+  .recall-preview :global(.text-link) { width:auto; max-width:100%; flex-wrap:wrap; }
+  .recall-preview :global(.product-card) { min-width:0; }
+  .recall-card-example { max-width:34rem; border:1px solid var(--line); border-radius:1rem; overflow:hidden; }
+  @media (max-width:600px) { .recall-preview :global(.product-card) { padding:clamp(16px,4vw,28px); } }
+</style>

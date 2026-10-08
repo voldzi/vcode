@@ -159,6 +159,9 @@ img, svg { display: block; max-width: 100%; }
 .guide-next-step h2 { margin:.25rem 0 .5rem; font:750 clamp(1.5rem,3vw,2.2rem) "Manrope Variable",sans-serif; color:var(--navy); }
 .guide-next-step p:last-child { margin:0; color:var(--muted); }
 .guide { max-width:1180px; margin:auto; }
+.recall-guide { min-width:0; overflow-wrap:anywhere; }
+.recall-guide pre { max-width:100%; overflow:auto; }
+.recall-guide .guide-meta { flex-wrap:wrap; }
 .guide header { max-width:820px; }
 .guide h1 { margin:0; font:760 clamp(2.6rem,6vw,5.5rem)/1.02 "Manrope Variable",sans-serif; letter-spacing:-.055em; color:var(--navy); }
 .guide header>p:not(.kicker) { color:var(--muted); font-size:1.18rem; }

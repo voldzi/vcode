@@ -1,0 +1,8 @@
+FROM node:24.20.0-alpine
+WORKDIR /app
+COPY --chown=node:node services/downloads/ /app/services/downloads/
+USER node
+ENV DOWNLOADS_PORT=8096 DOWNLOADS_HEALTH_PORT=8097
+EXPOSE 8096
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 CMD node --input-type=module -e "const r=await fetch('http://127.0.0.1:8097/health');process.exit(r.ok?0:1)"
+CMD ["node","services/downloads/server.mjs"]

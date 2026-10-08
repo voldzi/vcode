@@ -1,4 +1,4 @@
-import { products, type Product } from "./products";
+import { getPublicProducts, type Product } from "./products";
 
 export type AppStoreProduct = Product & {
   storeSlug: string;
@@ -13,7 +13,7 @@ export type AppStoreProduct = Product & {
 };
 
 const byId = (id: string) => {
-  const product = products.find(item => item.id === id);
+  const product = getPublicProducts().find(item => item.id === id);
   if (!product) throw new Error(`Missing product ${id}`);
   return product;
 };

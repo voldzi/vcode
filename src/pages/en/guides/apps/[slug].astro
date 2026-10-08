@@ -2,11 +2,11 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "../../../../layouts/BaseLayout.astro";
 import ProductIcon from "../../../../components/ProductIcon.astro";
-import { products } from "../../../../lib/products";
+import { getPublicProducts } from "../../../../lib/products";
 
 export async function getStaticPaths() {
-  const guides = await getCollection("guides", ({ data }) => data.language === "en" && data.status === "published");
-  return products.filter(product => !product.inDevelopment && (!product.family || product.id === "stratos")).map(product => ({
+  const guides = await getCollection("guides", ({ data }) => data.language === "en" && data.status === "published" && data.classification === "public" && getPublicProducts().some(product => product.id === data.application_id));
+  return getPublicProducts().filter(product => !product.inDevelopment && (!product.family || product.id === "stratos")).map(product => ({
     params: { slug: product.href },
     props: {
       product,

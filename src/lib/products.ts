@@ -21,9 +21,24 @@ export type Product = {
   family?: "stratos";
   kind?: "game";
   inDevelopment?: boolean;
+  /** Draft products are available only through the explicitly gated local preview. */
+  publication?: "draft" | "published";
 };
 
 export const products: Product[] = [
+  {
+    id: "vcode-recall", name: "VCode Recall", href: "vcode-recall", tone: "azure",
+    categoryCs: "Paměť projektů pro AI", categoryEn: "Project memory for AI",
+    headlineCs: "Váš projekt. Jeho souvislosti. Na vašem Macu.",
+    headlineEn: "Your project. Its context. On your Mac.",
+    summaryCs: "macOS aplikace pro místní vyhledávání v dokumentaci a zdrojových souborech vybraných projektů. Připravuje kontext pro Codex a Claude Code přes MCP a ukazuje, zda jsou indexy aktuální a vyhledávání připravené.",
+    summaryEn: "A macOS app for local retrieval across the documentation and source files of selected projects. It supplies context to Codex and Claude Code through MCP and shows whether indexes are current and retrieval is ready.",
+    capabilitiesCs: ["Vyhledávání v místních projektech přes MCP", "Přibalené prostředí a offline embeddingový model", "Výběr složek a přírůstková indexace", "Přehled připravenosti, odezvy a stavu indexů", "České a anglické rozhraní"],
+    capabilitiesEn: ["Local project retrieval through MCP", "Bundled runtime and offline embedding model", "Folder selection and incremental indexing", "Retrieval readiness, latency and index status", "Czech and English interface"],
+    availabilityCs: "Zdarma pro Apple Silicon · macOS 26+",
+    availabilityEn: "Free for Apple Silicon · macOS 26+",
+    publication: "published"
+  },
   {
     id: "myslopis", name: "Myslopis", href: "myslopis", tone: "violet",
     categoryCs: "Sebepoznání", categoryEn: "Self-exploration",
@@ -393,8 +408,13 @@ export const products: Product[] = [
   }
 ];
 
+/** Only this subset may feed public routes, discovery metadata or public APIs. */
+export function getPublicProducts(): Product[] {
+  return products.filter(product => product.publication !== "draft");
+}
+
 /** Shared order for the homepage and bilingual games hub. */
-export const games = ["nest", "sibenice", "mestem-hrou", "foldlight", "rinklet", "millora"].map(id => products.find(product => product.id === id)!);
+export const games = ["nest", "sibenice", "mestem-hrou", "foldlight", "rinklet", "millora"].map(id => getPublicProducts().find(product => product.id === id)).filter((product): product is Product => Boolean(product));
 
 /** Public services presented first on the bilingual homepage. */
-export const everydayProducts = ["kaloricke-tabulky", "masaze", "studio-balance"].map(id => products.find(product => product.id === id)!);
+export const everydayProducts = ["kaloricke-tabulky", "masaze", "studio-balance"].map(id => getPublicProducts().find(product => product.id === id)).filter((product): product is Product => Boolean(product));

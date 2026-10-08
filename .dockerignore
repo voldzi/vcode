@@ -7,3 +7,15 @@ dist
 .DS_Store
 ._*
 **/._*
+.downloads
+.secrets
+.env.*
+.chroma-state
+.codex
+.agents
+.aws
+**/*.key
+**/*.pem
+**/*.p12
+**/*.p8
+**/*private-build-proof*.json

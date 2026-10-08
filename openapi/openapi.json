@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "VCode public and authenticated API",
-    "version": "1.2.0",
-    "description": "Health, moderated comments, minimal public analytics collection and authenticated portfolio metrics."
+    "version": "1.3.0",
+    "description": "Health, moderated comments, minimal public analytics collection and authenticated portfolio metrics. Prepared, disabled-by-default Recall distribution and private aggregate counters."
   },
   "servers": [
     {
@@ -329,7 +329,8 @@
                     "generatedAt",
                     "sessionExpiresAt",
                     "timezone",
-                    "incomplete"
+                    "incomplete",
+                    "downloads"
                   ],
                   "properties": {
                     "startAt": {
@@ -422,6 +423,9 @@
                           }
                         }
                       }
+                    },
+                    "downloads": {
+                      "$ref": "#/components/schemas/DownloadMetrics"
                     }
                   }
                 }
@@ -561,6 +565,232 @@
           }
         }
       }
+    },
+    "/downloads/chromadb-status/latest.json": {
+      "x-release-state": "disabled-by-default",
+      "get": {
+        "operationId": "getRecallLatest",
+        "description": "Compatibility endpoint. No redirect; direct JSON up to 65536 bytes only after accepted publication. No functional release is active in preparation.",
+        "responses": {
+          "200": {
+            "description": "Latest accepted public release; immutable DMG download URL.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecallLatest"
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Unchanged cached metadata"
+          },
+          "404": {
+            "description": "Distribution disabled, no accepted release or invalid catalog"
+          }
+        }
+      },
+      "head": {
+        "operationId": "headRecallLatest",
+        "responses": {
+          "200": {
+            "description": "Latest metadata headers only"
+          },
+          "404": {
+            "description": "No accepted public release"
+          }
+        }
+      }
+    },
+    "/downloads/chromadb-status/{release}/{file}": {
+      "x-release-state": "disabled-by-default",
+      "parameters": [
+        {
+          "name": "release",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[0-9]{1,6}\\.[0-9]{1,6}\\.[0-9]{1,6}-[1-9][0-9]{0,19}$"
+          }
+        },
+        {
+          "name": "file",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 180
+          },
+          "description": "Exact immutable allowlisted file declared by the accepted catalog; no arbitrary path, query, encoded alias or symlink."
+        }
+      ],
+      "get": {
+        "operationId": "getRecallArtifact",
+        "description": "Read-only immutable approved installers and OSS compliance files. Never serves build/source directories or signing material. Requests are aggregate operational counts, not installations.",
+        "responses": {
+          "200": {
+            "description": "Exact hash-verified file or public metadata. MIME is selected from its approved installer/license/source type.",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Content-Disposition": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Accept-Ranges": {
+                "schema": {
+                  "const": "bytes"
+                }
+              }
+            },
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "206": {
+            "description": "One validated byte range only",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Content-Disposition": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Accept-Ranges": {
+                "schema": {
+                  "const": "bytes"
+                }
+              },
+              "Content-Range": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "ETag matched"
+          },
+          "404": {
+            "description": "Not allowlisted or not active"
+          },
+          "416": {
+            "description": "Unsupported or unsatisfiable byte range"
+          },
+          "503": {
+            "description": "Artifact drift or storage failure; fail closed"
+          }
+        }
+      },
+      "head": {
+        "operationId": "headRecallArtifact",
+        "responses": {
+          "200": {
+            "description": "Approved representation headers, no body",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Content-Disposition": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Accept-Ranges": {
+                "schema": {
+                  "const": "bytes"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not allowlisted"
+          },
+          "416": {
+            "description": "Unsupported range"
+          },
+          "503": {
+            "description": "Artifact drift"
+          }
+        }
+      }
+    },
+    "/analytics/download-intent": {
+      "x-release-state": "disabled-by-default",
+      "post": {
+        "operationId": "recordRecallDownloadIntent",
+        "description": "Optional anonymous aggregate download intent for an accepted active release and approved notice. Same-origin browser request only, respects DNT/GPC, no visitor cookie, identity, URLs or referrer. Aggregate retention is 30 days.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "product"
+                ],
+                "properties": {
+                  "product": {
+                    "const": "vcode-recall"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Intent accepted or privacy preference suppressed recording"
+          },
+          "400": {
+            "description": "Invalid fixed payload"
+          },
+          "403": {
+            "description": "Invalid origin or credential-bearing request"
+          },
+          "404": {
+            "description": "Collection disabled at the public edge"
+          },
+          "413": {
+            "description": "Body exceeds 128 bytes"
+          },
+          "503": {
+            "description": "No approved active release or durable aggregate collection unavailable"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -605,6 +835,256 @@
             "type": "string",
             "pattern": "^/[a-zA-Z0-9_:/-]*$",
             "description": "Exact registered general public path, without identifiers, query or fragment."
+          }
+        }
+      },
+      "DownloadCounters": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "getRequests",
+          "headRequests",
+          "fullResponses",
+          "rangeResponses",
+          "errorResponses",
+          "abortedResponses",
+          "bytesWritten",
+          "clickIntents"
+        ],
+        "properties": {
+          "getRequests": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "headRequests": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "fullResponses": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "rangeResponses": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "errorResponses": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "abortedResponses": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "bytesWritten": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "clickIntents": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "description": "Numeric daily aggregates only; bytesWritten is file-body data written from the distribution service to its proxy, not client acknowledgment or installation."
+      },
+      "DownloadMetrics": {
+        "type": "object",
+        "required": [
+          "availability",
+          "product",
+          "totals",
+          "series",
+          "artifacts"
+        ],
+        "properties": {
+          "availability": {
+            "type": "string",
+            "enum": [
+              "available",
+              "unavailable"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "enum": [
+              "not-configured",
+              "not-ready",
+              "not-authorized",
+              "invalid"
+            ]
+          },
+          "product": {
+            "const": "vcode-recall"
+          },
+          "totals": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DownloadCounters"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "series": {
+            "type": "array",
+            "maxItems": 30,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "date",
+                "getRequests",
+                "headRequests",
+                "fullResponses",
+                "rangeResponses",
+                "errorResponses",
+                "abortedResponses",
+                "bytesWritten",
+                "clickIntents"
+              ],
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "getRequests": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "headRequests": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "fullResponses": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "rangeResponses": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "errorResponses": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "abortedResponses": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "bytesWritten": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "clickIntents": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                }
+              }
+            }
+          },
+          "artifacts": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "type": "object"
+            }
+          },
+          "retentionDays": {
+            "const": 30
+          },
+          "timezone": {
+            "const": "UTC"
+          },
+          "measurement": {
+            "const": "service-to-proxy"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "coverageStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/DownloadCounters"
+          }
+        },
+        "description": "Requires a current authenticated account with permission to the canonical VCode website. Unconfigured or invalid data is unavailable with null totals. Operational counters are separate from website analytics; no visitor identities, referrers, cookies or project content."
+      },
+      "RecallLatest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schemaVersion",
+          "version",
+          "build",
+          "buildNumber",
+          "minimumSystemVersion",
+          "platform",
+          "downloadURL",
+          "sha256",
+          "sizeBytes",
+          "distribution",
+          "signing",
+          "notarized"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "const": 1
+          },
+          "version": {
+            "type": "string"
+          },
+          "build": {
+            "type": "string"
+          },
+          "buildNumber": {
+            "type": "string"
+          },
+          "minimumSystemVersion": {
+            "const": "26.0"
+          },
+          "platform": {
+            "const": "macos-arm64"
+          },
+          "downloadURL": {
+            "type": "string",
+            "format": "uri"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "sizeBytes": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "distribution": {
+            "const": "public"
+          },
+          "signing": {
+            "const": "developer-id"
+          },
+          "notarized": {
+            "const": true
           }
         }
       }

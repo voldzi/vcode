@@ -95,6 +95,26 @@ services:
     healthcheck:
       disable: true
 
+  downloads:
+    profiles: [downloads]
+    build:
+      context: .
+      dockerfile: Dockerfile.downloads
+    restart: unless-stopped
+    user: "1000:1000"
+    read_only: true
+    environment:
+      DOWNLOADS_ROOT: /releases
+      DOWNLOADS_CATALOG_PATH: /releases/publication.json
+      DOWNLOADS_TRUSTED_PUBLIC_KEY_FILE: /run/config/publisher-public.pem
+      DOWNLOAD_METRICS_PATH: /state/downloads.json
+    volumes:
+      - ${VCODE_DOWNLOADS_STORE:-./.downloads/store}:/releases:ro
+      - ${VCODE_DOWNLOADS_TRUST:-./.downloads/trust}:/run/config:ro
+      - ${VCODE_DOWNLOADS_STATE:-./.downloads/state}:/state
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+
 secrets:
   vcode_database_url:
     file: ${VCODE_SECRETS_DIR:-.secrets}/database_url

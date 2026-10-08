@@ -1,0 +1,48 @@
+{
+  "release": {
+    "version": "0.6.0",
+    "buildNumber": "202610081600",
+    "minimumSystemVersion": "26.0",
+    "platform": "macos-arm64",
+    "manifestURL": "/downloads/chromadb-status/0.6.0-202610081600/VCodeRecall-0.6.0-202610081600-macos-arm64.manifest.json",
+    "artifacts": [
+      {
+        "file": "VCodeRecall-0.6.0-202610081600-macos-arm64.zip",
+        "sha256": "370311a313cafddfc5deb3b09690b549fda837463bde9a4bd19d4b7a7e6ce6d7",
+        "sizeBytes": 1817064802,
+        "url": "/downloads/chromadb-status/0.6.0-202610081600/VCodeRecall-0.6.0-202610081600-macos-arm64.zip"
+      },
+      {
+        "file": "VCodeRecall-0.6.0-202610081600-macos-arm64.dmg",
+        "sha256": "7dd543b6ce63dc6bf9c2b61ec9fbcacfabb53cd3cff0660e925ad521bd3cf7e3",
+        "sizeBytes": 3025714824,
+        "url": "/downloads/chromadb-status/0.6.0-202610081600/VCodeRecall-0.6.0-202610081600-macos-arm64.dmg"
+      }
+    ],
+    "complianceArtifacts": [
+      {
+        "file": "VCodeRecall-0.6.0-202610081600-macos-arm64.licenses.zip",
+        "sha256": "0cf234bc5ade0189831ad507d95364e2c3b04a9462ee91d614e4d02800c5c0a1",
+        "sizeBytes": 5643749,
+        "url": "/downloads/chromadb-status/0.6.0-202610081600/VCodeRecall-0.6.0-202610081600-macos-arm64.licenses.zip",
+        "kind": "license"
+      },
+      {
+        "file": "VCodeRecall-0.6.0-202610081600-macos-arm64.sources.tar.gz",
+        "sha256": "ad9e798b6b3cd7a2c024cbde47b1fba64efd0dac923b4f498db01690dca1fedd",
+        "sizeBytes": 243384733,
+        "url": "/downloads/chromadb-status/0.6.0-202610081600/VCodeRecall-0.6.0-202610081600-macos-arm64.sources.tar.gz",
+        "kind": "source"
+      }
+    ],
+    "validation": {
+      "scope": "existing-owner-account",
+      "notRunChecks": [
+        "cleanInstall",
+        "quarantineLaunch",
+        "removal",
+        "rollback"
+      ]
+    }
+  }
+}

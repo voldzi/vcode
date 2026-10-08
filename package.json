@@ -10,20 +10,21 @@
   },
   "scripts": {
     "dev": "astro dev --host 0.0.0.0",
-    "build": "pnpm validate:content && astro check && astro build",
+    "build": "pnpm validate:content && astro check && astro build && node scripts/validate-recall-build.mjs",
     "preview": "astro preview --host 0.0.0.0",
     "check": "pnpm validate:public && pnpm validate:openapi && pnpm validate:content && astro check",
     "validate:public": "node scripts/validate-public-repository.mjs",
     "validate:openapi": "node scripts/validate-openapi.mjs",
     "validate:content": "node scripts/validate-content.mjs",
-    "test": "pnpm test:blog && node --test services/analytics/test/*.test.mjs",
+    "test": "pnpm test:blog && node --test services/analytics/test/*.test.mjs && pnpm test:downloads",
     "test:blog": "node --test services/blog/test/*.test.mjs",
     "blog:moderate": "node services/blog/moderate.mjs",
     "blog:articles": "node services/blog/articles.mjs",
     "blog:validate-sources": "node scripts/validate-blog-sources.mjs",
     "indexnow:submit": "node scripts/submit-indexnow.mjs",
     "telegram:webhook": "node scripts/configure-telegram-webhook.mjs",
-    "brand:assets": "node scripts/generate-brand-assets.mjs"
+    "brand:assets": "node scripts/generate-brand-assets.mjs",
+    "test:downloads": "node --test services/downloads/test/*.test.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "3.7.4",

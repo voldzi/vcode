@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import RecallLegal from '../../components/RecallLegal.astro';
+import { getPublicProducts } from '../../lib/products';
+export function getStaticPaths() { return getPublicProducts().some(p => p.id === 'vcode-recall') ? ['privacy', 'terms'].map(document => ({params:{document}})) : []; }
+const document = Astro.params.document as 'privacy' | 'terms';
+const title = document === 'privacy' ? 'Soukromí VCode Recall' : 'Podmínky VCode Recall';
+---
+<BaseLayout {title} description={title} lang="cs" path={`/vcode-recall/${document}/`} alternatePath={`/en/vcode-recall/${document}/`} analytics={false}>
+  <RecallLegal lang="cs" {document} backHref="/aplikace/vcode-recall/" />
+</BaseLayout>

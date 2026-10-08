@@ -1,0 +1,22 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+export function getStaticPaths() {
+  return import.meta.env.DEV ? ["cs", "en", "cs-zoom", "en-zoom"].map(lang => ({ params: { lang } })) : [];
+}
+const lang = Astro.params.lang!.replace("-zoom", "") as "cs" | "en";
+const cs = lang === "cs";
+const textZoom = Astro.params.lang!.endsWith("-zoom");
+const [entry] = await getCollection("guides", ({ data }) => data.application_id === "vcode-recall" && data.language === lang);
+if (!entry) throw new Error("Recall draft guide is missing");
+const { Content } = await render(entry);
+const path = `/preview-local/recall/${Astro.params.lang}/guide/`;
+---
+<BaseLayout title={`${entry.data.title} — private preview`} description={entry.data.summary} {lang} {path} alternatePath={`/preview-local/recall/${cs ? "en" : "cs"}/guide/`} noindex analytics={false}>
+  <style is:inline set:html={textZoom ? "html { font-size:200%; }" : ""} />
+  <article class="guide recall-guide">
+    <a class="back-link" href={`/preview-local/recall/${Astro.params.lang}/`}>← VCode Recall</a>
+    <header><p class="kicker">{cs ? "Neveřejný návrh návodu" : "Private draft guide"}</p><h1>{entry.data.title}</h1><p>{entry.data.summary}</p><div class="guide-meta"><span>{cs ? "Návrh" : "Draft"} {entry.data.document_revision}</span><span>{cs ? "Čeká na ověření finálního balíčku" : "Awaiting final package verification"}</span></div></header>
+    <div class="guide-body"><Content /></div>
+  </article>
+</BaseLayout>

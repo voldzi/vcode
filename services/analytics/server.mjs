@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import {createSessionStore} from './sessions.mjs';
 import {periodWindow,dailySeries} from './dashboard-data.mjs';
 import { sanitizeEvent, sameOrigin } from './security.mjs';
+import {canReadDownloadMetrics,readDownloadMetrics,unavailableDownloadMetrics} from './lib/download-metrics.mjs';
 const upstream=process.env.ANALYTICS_UPSTREAM ?? 'http://umami:3000';
 const origin=process.env.PUBLIC_SITE_URL ?? 'https://vcode.zeleznalady.cz';
 const statusPath=process.env.ANALYTICS_STATUS_FILE??'/state/connections.json';
@@ -15,7 +16,7 @@ const page=await readFile(new URL('dashboard.html',here));
 const script=await readFile(new URL('dashboard.js',here));
 const css=await readFile(new URL('dashboard.css',here));
 const staticAssets=new Map();
-for(const [name,type] of [['manifest.webmanifest','application/manifest+json'],['sw.js','text/javascript'],['offline.html','text/html'],['icon-192.png','image/png'],['icon-512.png','image/png']])staticAssets.set('/prehled/'+name,{body:await readFile(new URL(name,here)),type});
+for(const [name,type] of [['manifest.webmanifest','application/manifest+json'],['sw.js','text/javascript'],['offline.html','text/html'],['icon-192.png','image/png'],['icon-512.png','image/png'],['download-metrics-ui.js','text/javascript']])staticAssets.set('/prehled/'+name,{body:await readFile(new URL(name,here)),type});
 const tracker=await readFile(new URL('tracker.js',here),'utf8');
 async function sites(){return JSON.parse(await readFile(registryPath,'utf8'));}
 function send(res,status,body,type='application/json',headers={}){res.writeHead(status,{'Content-Type':type,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','X-Robots-Tag':'noindex, nofollow','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; connect-src 'self'; worker-src 'self'; manifest-src 'self'",...headers});res.end(typeof body==='object'&&!Buffer.isBuffer(body)?JSON.stringify(body):body);}
@@ -78,7 +79,7 @@ createServer(async(req,res)=>{try{
     ]);
     return {...metadata,available:true,stats,pages,referrers,events,series:dailySeries(series,window,metadata.collectionStartedAt??metadata.registeredAt)};
    } catch(error) {if(error.status===401)throw error;return {...metadata,available:false,stats:null,pages:[],referrers:[],events:[],series:[]};}
-  }));send(res,200,{...window,collectionEnabled:enabled,generatedAt:new Date().toISOString(),sessionExpiresAt:new Date(s.until).toISOString(),incomplete:data.some(site=>site&&site.available===false),sites:data.filter(Boolean)});return;
+  }));const downloads=canReadDownloadMetrics(rows,process.env.VCODE_ANALYTICS_WEBSITE_ID)?await readDownloadMetrics(process.env.DOWNLOAD_METRICS_PATH,{days}):unavailableDownloadMetrics('not-authorized');send(res,200,{...window,collectionEnabled:enabled,generatedAt:new Date().toISOString(),sessionExpiresAt:new Date(s.until).toISOString(),incomplete:data.some(site=>site&&site.available===false),sites:data.filter(Boolean),downloads});return;
  }
  send(res,404,{});
  }catch(error){const status=error.status??(error instanceof SyntaxError?400:502);send(res,status,{error:status===401?'Nesprávné přihlašovací údaje.':'Požadavek se nepodařilo dokončit.'});}

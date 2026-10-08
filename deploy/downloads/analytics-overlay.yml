@@ -1,0 +1,9 @@
+# Apply only during the separately approved distribution activation.
+# Mount the directory: atomic replacement must remain visible to the dashboard.
+services:
+  dashboard:
+    environment:
+      DOWNLOAD_METRICS_PATH: /downloads-state/downloads.json
+      VCODE_ANALYTICS_WEBSITE_ID: ${VCODE_ANALYTICS_WEBSITE_ID:?Configure the canonical VCode website ID}
+    volumes:
+      - ${VCODE_DOWNLOADS_STATE:?Configure private distribution state}:/downloads-state:ro
