@@ -14,14 +14,20 @@ export function acceptPublicEvent(input,headers,sites){
 }
 
 const sourceDomains={google:'google.com',seznam:'seznam.cz',bing:'bing.com',duckduckgo:'duckduckgo.com',facebook:'facebook.com',instagram:'instagram.com',tiktok:'tiktok.com',linkedin:'linkedin.com',openai:'chatgpt.com',claude:'claude.ai',perplexity:'perplexity.ai'};
-const supportedEvents=new Set(['app-store-click','contact-click','outbound-click']);
+const portfolioEvents=new Set(['portfolio-vcode-click','portfolio-moje-porce-click','portfolio-mestem-hrou-click']);
+const supportedEvents=new Set(['app-store-click','contact-click','outbound-click',...portfolioEvents]);
+export function effectiveApprovedEvents(site){
+ if(site?.integrationVersion!=='vcode-public-v2'||!site.metricsApprovedAt||!Array.isArray(site.allowedEvents))return [];
+ const portfolioApproved=typeof site.portfolioMetricsApprovedAt==='string'&&Number.isFinite(Date.parse(site.portfolioMetricsApprovedAt));
+ return [...new Set(site.allowedEvents)].filter(name=>supportedEvents.has(name)&&(!portfolioEvents.has(name)||portfolioApproved));
+}
 export function acceptExpandedPublicEvent(input,headers,sites){
  if(!input||Object.keys(input).some(k=>!['website','name','path','source'].includes(k)))throw new Error('Unexpected properties');
  const site=sites.find(s=>s.id===input.website);
  if(site?.integrationVersion!=='vcode-public-v2'||!site.metricsApprovedAt)throw new Error('Expanded metrics unapproved');
  const accepted=acceptPublicEvent({website:input.website,name:'pageview',path:input.path},headers,sites);
  if(input.name!=='pageview'){
-  if(!supportedEvents.has(input.name)||!site.allowedEvents?.includes(input.name)||Object.hasOwn(input,'source'))throw new Error('Unapproved event');
+  if(!effectiveApprovedEvents(site).includes(input.name)||Object.hasOwn(input,'source'))throw new Error('Unapproved event');
   accepted.payload.name=input.name;
  }
  if(Object.hasOwn(input,'source')){

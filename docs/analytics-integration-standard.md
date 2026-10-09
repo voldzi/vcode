@@ -54,3 +54,31 @@ NEST a Šibenice mají již měřené produktové stránky na VCode. Nativní po
 Revize pro TikTok používá `services/analytics/public-v2-tiktok.js`, SHA384 `sha384-JpAOJexapVVtAZAFpz3dwp4AHY8PLbao7cLk7Mg7VFIDy2g0/bOUl0zb/HO1qbX5`. Původní `public-v2.js` a jeho adresu/otisk zachovávejte beze změn. Novou revizi lze dodat jako přesnou kopii statického assetu aplikace, ověřenou SRI; bridge mění pouze cestu runtime a otisk. Kolektor událostí, kontrakt v2, cestové a událostní allowlisty i soukromé výluky zůstávají stejné. Tím lze převádět weby postupně bez výpadku starých klientů a bez změny chráněného edge.
 
 Zdrojovým místem vendorizovaného assetu zůstává VCode. Běžný release aplikace musí ověřit kopii proti tomuto otisku a zachovat ji v repozitáři; neprovádět automatickou neověřenou aktualizaci. Neveřejný registr přepne trackerPath/runtimeIntegrity až po ověření veřejného assetu a skutečně nasazeného bridge. Monitor pak ověřuje tuto konkrétní revizi.
+
+### Samostatné odkazy v patičce
+
+Revize `services/analytics/public-v2-portfolio.js` zachovává wire kontrakt
+`vcode-public-v2` a přidává `runtimeRevision: portfolio-1`. SRI je
+`sha384-zkZSzDImQVzQLiRsYnPvb7exdTP5bDp+cGuBD0J+Tb40PGH8ffG+b4qQGqfrP6lf`.
+Původní v2 a TikTok revize zůstávají beze změny. Přijímací cesta veřejné
+aplikace zůstává `/analytics/v2/events`; jde o stejný oddělený veřejný kolektor.
+
+Tři pevné názvy `portfolio-vcode-click`, `portfolio-moje-porce-click` a
+`portfolio-mestem-hrou-click` rozlišují výslovná kliknutí na odkazy dané patičky.
+Payload obsahuje jen `website`, `name` a schválenou veřejnou `path`. Zdroj je
+povolen pouze u pageview. Žádná cílová URL, text odkazu ani totožnost se nepřenáší.
+Patičkové odkazy se v bridge vyloučí z obecného `outbound-click`, aby nevznikaly
+dvě události za jedno kliknutí. Ostatní obecné odchozí odkazy zůstávají stejné.
+
+Samotné `metricsApprovedAt` tento podrobnější rozsah nepovoluje. Konkrétní web
+potřebuje zveřejněné doplnění soukromí v souladu se schválením vlastníka,
+platné datum `portfolioMetricsApprovedAt` a výslovně povolené názvy v
+`allowedEvents`. Schválené `allowedPaths` se nemění. Bez tohoto dodatečného
+schválení kolektor nové události odmítá a Přehled je nenabízí. Volitelné
+`portfolioMetricsCollectionStartedAt` označuje skutečný začátek rozlišení;
+jinak Přehled použije datum aktivace schválení. Vypnutí sběru nadále zastavuje
+příjem všech událostí. Historický schválený rozsah může zůstat viditelný.
+
+Nasazení a konkrétní předání pro Studio Balance jsou popsány v
+`studio-balance-footer-analytics.md`. Neveřejný registr a edge klíče zůstávají
+výhradně na serveru. Testy používají izolovaný syntetický web.

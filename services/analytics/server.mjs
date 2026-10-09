@@ -5,6 +5,7 @@ import { isAbsolute } from 'node:path';
 import {createSessionStore} from './sessions.mjs';
 import {periodWindow,dailySeries} from './dashboard-data.mjs';
 import { sanitizeEvent, sameOrigin } from './security.mjs';
+import {effectiveApprovedEvents} from './collector-security.mjs';
 import {canReadDownloadMetrics,readDownloadMetrics,unavailableDownloadMetrics} from './lib/download-metrics.mjs';
 import {createPublicShell} from './public-shell.mjs';
 const upstream=process.env.ANALYTICS_UPSTREAM ?? 'http://umami:3000';
@@ -126,8 +127,11 @@ createServer(async(req,res)=>{try{
    const website=rows.find(w=>w.id===site.id);if(!website)return null;
    const legacy=!['vcode-public-v1','vcode-public-v2'].includes(site.integrationVersion);
    const expanded=site.integrationVersion==='vcode-public-v2'&&Boolean(site.metricsApprovedAt);
-   const hasSources=legacy||(expanded&&site.captureSources===true),hasEvents=legacy||(expanded&&site.allowedEvents?.length>0);
-   const metadata={name:site.name,domain:site.domain,collectionEnabled:site.collectionEnabled??(site.domain===new URL(origin).hostname&&enabled),approvedAt:site.approvedAt??null,collectionStartedAt:site.collectionStartedAt??null,metricsCollectionStartedAt:site.metricsCollectionStartedAt??null,registeredAt:website.createdAt??null,integrationVersion:site.integrationVersion??'vcode-legacy',capabilities:{referrers:hasSources,events:legacy?['app-store-click','contact-click','collaboration-click']:expanded?(site.allowedEvents??[]):[]},connection:connections.find(c=>c.domain===site.domain)??null};
+   const approvedEvents=effectiveApprovedEvents(site);
+   const hasSources=legacy||(expanded&&site.captureSources===true),hasEvents=legacy||approvedEvents.length>0;
+   const portfolioEnabled=approvedEvents.some(name=>name.startsWith('portfolio-'));
+   const portfolioStartedAt=portfolioEnabled?(Number.isFinite(Date.parse(site.portfolioMetricsCollectionStartedAt))?site.portfolioMetricsCollectionStartedAt:site.portfolioMetricsApprovedAt):null;
+   const metadata={name:site.name,domain:site.domain,collectionEnabled:site.collectionEnabled??(site.domain===new URL(origin).hostname&&enabled),approvedAt:site.approvedAt??null,collectionStartedAt:site.collectionStartedAt??null,metricsCollectionStartedAt:site.metricsCollectionStartedAt??null,portfolioMetricsCollectionStartedAt:portfolioStartedAt,registeredAt:website.createdAt??null,integrationVersion:site.integrationVersion??'vcode-legacy',capabilities:{referrers:hasSources,events:legacy?['app-store-click','contact-click','collaboration-click']:approvedEvents},connection:connections.find(c=>c.domain===site.domain)??null};
    const q=`startAt=${startAt}&endAt=${endAt}&timezone=Europe%2FPrague`;
    try {
     const [stats,pages,referrers,events,series]=await Promise.all([
@@ -137,7 +141,7 @@ createServer(async(req,res)=>{try{
      hasEvents?api(`websites/${site.id}/metrics?${q}&type=event&limit=10`,s.token):[],
      api(`websites/${site.id}/pageviews?${q}&unit=day`,s.token)
     ]);
-    return {...metadata,available:true,stats,pages,referrers,events,series:dailySeries(series,window,metadata.collectionStartedAt??metadata.registeredAt)};
+    return {...metadata,available:true,stats,pages,referrers,events:legacy?events:events.filter(event=>approvedEvents.includes(event.x)),series:dailySeries(series,window,metadata.collectionStartedAt??metadata.registeredAt)};
    } catch(error) {if(error.status===401)throw error;return {...metadata,available:false,stats:null,pages:[],referrers:[],events:[],series:[]};}
   }));const downloads=canReadDownloadMetrics(rows,process.env.VCODE_ANALYTICS_WEBSITE_ID)?await readDownloadMetrics(process.env.DOWNLOAD_METRICS_PATH,{days}):unavailableDownloadMetrics('not-authorized');send(res,200,{...window,collectionEnabled:enabled,generatedAt:new Date().toISOString(),sessionExpiresAt:new Date(s.until).toISOString(),incomplete:data.some(site=>site&&site.available===false),sites:data.filter(Boolean),downloads});return;
  }

@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "VCode public and authenticated API",
-    "version": "1.4.0",
+    "version": "1.5.0",
     "description": "Health, moderated comments, privacy-limited public analytics, authenticated website and distribution metrics, and guarded collaboration enquiries. Enquiry content is never sent to website analytics. Internal service endpoints and credentials are not part of this contract."
   },
   "servers": [
@@ -1228,6 +1228,69 @@
           }
         }
       }
+    },
+    "/analytics/v2/events": {
+      "servers": [
+        {
+          "url": "https://masaze.zeleznalady.cz"
+        },
+        {
+          "url": "https://studio-balance.cz"
+        },
+        {
+          "url": "https://cop.zeleznalady.cz"
+        },
+        {
+          "url": "https://mojeporce.cz"
+        },
+        {
+          "url": "https://mestemhrou.cz"
+        },
+        {
+          "url": "https://myslopis.cz"
+        },
+        {
+          "url": "https://events.zeleznalady.cz"
+        }
+      ],
+      "post": {
+        "operationId": "sendPublicAnalyticsEventV2",
+        "description": "Same-origin public collector for registered applications. Exact approved public path and finite event names only. Source is a general public-service category on pageviews only. Portfolio footer events require separate site-specific approval. No target URLs, link text, accounts or cookies. DNT/GPC suppress collection. Trusted edge authorization stays server-side. VCode retains its legacy collector route.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublicEventV2"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Accepted or suppressed by privacy preference"
+          },
+          "400": {
+            "description": "Unapproved site, incorrect origin or payload"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "413": {
+            "description": "Payload exceeds 2 KiB"
+          },
+          "415": {
+            "description": "JSON content type required"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "502": {
+            "description": "Analytics backend unavailable"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2031,6 +2094,80 @@
           }
         },
         "description": "A public portfolio name; contains no service endpoints or private deployment information."
+      },
+      "PublicEventV2": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "website",
+              "name",
+              "path"
+            ],
+            "properties": {
+              "website": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^/[a-zA-Z0-9_:/-]*$",
+                "description": "Exact approved public path. Private routes and arbitrary identifiers are rejected."
+              },
+              "name": {
+                "const": "pageview"
+              },
+              "source": {
+                "type": "string",
+                "enum": [
+                  "google",
+                  "seznam",
+                  "bing",
+                  "duckduckgo",
+                  "facebook",
+                  "instagram",
+                  "tiktok",
+                  "linkedin",
+                  "openai",
+                      "claude",
+                  "perplexity"
+                ],
+                "description": "Only finite public-service categories; no original referral URL."
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "website",
+              "name",
+              "path"
+            ],
+            "properties": {
+              "website": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^/[a-zA-Z0-9_:/-]*$",
+                "description": "Exact approved public path. Private routes and arbitrary identifiers are rejected."
+              },
+              "name": {
+                "type": "string",
+                "enum": [
+                  "app-store-click",
+                  "contact-click",
+                  "outbound-click",
+                  "portfolio-vcode-click",
+                  "portfolio-moje-porce-click",
+                  "portfolio-mestem-hrou-click"
+                ],
+                "description": "Each name must be explicitly approved for the site. The three portfolio names additionally require reviewed site-specific footer scope."
+              }
+            }
+          }
+        ]
       }
     },
     "securitySchemes": {
