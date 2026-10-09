@@ -59,7 +59,7 @@ phones at 200% text zoom. Native links need no client-side enhancement.
   and /private/tmp/vcode-mestemhrou-guide-20261009/production-guide.png.
 - Only web was recreated. Blog, worker, dashboard and downloads retained their
   container identities, images and start timestamps. Rollback files and the
-  preceding web image remain in /srv/vcode/releases/mestemhrou-guide-20261009.
+  preceding web image remain in the private release record on the server.
 
 This checks documentation and rendering, not a physical trail walk or an actual
 installation on a phone.

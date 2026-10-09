@@ -16,7 +16,6 @@ const copy = cs ? {
     { file: "03-mapa-vypravy", title: "Zastavení najdeš na mapě.", text: "Mapa výpravy v Karlově Studánce ukazuje body zastavení a spojnici trasy.", alt: "Mapa výpravy v Karlově Studánce s číslovanými zastaveními a vyznačeným průběhem trasy." },
     { file: "04-herni-ukol", title: "Odpověď hledej kolem sebe.", text: "Rozhlédni se a vyřeš úkol. Když si nevíš rady, můžeš otevřít nápovědu.", alt: "Nevyřešený herní úkol v aplikaci Městem hrou s otázkou, neoznačenými možnostmi odpovědi a tlačítky pro ověření a nápovědu." }
   ],
-  capture: "Ukázky rozhraní z 9. října 2026. Herní úkol pochází z místního náhledu; ostatní obrazovky z veřejné aplikace.",
   mapTitle: "Malý detail. Další dílek příběhu.",
   mapText: "Od pramene ke kapli, od jednoho zastavení k dalšímu. Ukázka z Karlovy Studánky propojuje skutečná místa, mapu a příběh.",
   before: "Před startem si v aplikaci prohlédni délku, náročnost a stav kontroly vybrané výpravy.",
@@ -41,7 +40,6 @@ const copy = cs ? {
     { file: "03-mapa-vypravy", title: "Find the trail stops on the map.", text: "The Karlova Studánka trail map shows the stops and the route connecting them.", alt: "A trail map of Karlova Studánka with numbered stops and a marked route." },
     { file: "04-herni-ukol", title: "Look around to find the answer.", text: "Look around and solve the task. Open a hint when you need a little help.", alt: "An unsolved Městem hrou task with a question, unselected answer choices and buttons to check the answer or show a hint." }
   ],
-  capture: "Interface previews captured on 9 October 2026. The task is from a local preview; the other screens are from the public app.",
   mapTitle: "A small detail. Another piece of the story.",
   mapText: "From a spring to a chapel, from one stop to the next. This Karlova Studánka preview brings real places, a map and a story together.",
   before: "Before starting, check the chosen trail’s length, difficulty and verification status in the app.",
@@ -77,7 +75,6 @@ const guide = cs ? "/navody/mestem-hrou-prvni-vyprava/" : "/en/guides/mestem-hro
         <figcaption><span class="mh-number" aria-hidden="true">0{index + 1}</span><h3>{step.title}</h3><p>{step.text}</p></figcaption>
       </figure>
     )}</div>
-    <p class="mh-capture">{copy.capture}</p>
   </section>
   <section class="mh-map" aria-labelledby="mh-map-title">
     <div><p class="kicker">Karlova Studánka</p><h2 id="mh-map-title">{copy.mapTitle}</h2><p>{copy.mapText}</p><p class="mh-before">{copy.before}</p></div>
@@ -114,7 +111,6 @@ const guide = cs ? "/navody/mestem-hrou-prvni-vyprava/" : "/en/guides/mestem-hro
   .mh-number { display:inline-grid; place-items:center; min-width:2rem; min-height:2rem; padding:.2rem; border-radius:50%; background:#edc679; color:var(--mh-forest); font-size:.8rem; font-weight:750; }
   .mh-step h3 { margin:.85rem 0 .6rem; font:750 1.05rem/1.35 "Manrope Variable",sans-serif; color:var(--mh-forest); }
   .mh-step figcaption p { font-size:.95rem; line-height:1.65; color:var(--muted); margin:0; }
-  .mh-capture { max-width:80ch; margin:1.5rem 0 0; color:var(--muted); font-size:.85rem; }
   .mh-map { display:grid; grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr); gap:clamp(1.5rem,4vw,3.5rem); align-items:center; padding:clamp(1.25rem,3vw,2.5rem); margin-top:3rem; border-radius:var(--radius); background:var(--mh-cream); border:1px solid #e1e3d8; }
   .mh-map p { color:var(--mh-muted); }
   .mh-map .kicker { color:var(--mh-forest); }

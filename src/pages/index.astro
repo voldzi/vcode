@@ -35,7 +35,7 @@ import { getPublicProducts, everydayProducts } from "../lib/products";
     <div class="product-grid">{everydayProducts.map(product => <ProductCard product={product} lang="cs" />)}</div>
     </div>
     <div data-catalog-group>
-    <div class="family-heading"><span class="section-index">PORTFOLIO</span><div><h3>Pro práci a odborné použití.</h3><p>Bezpečnost, zdraví a organizace práce. Veřejné aplikace, připravované produkty i řešení pro soukromé nasazení mají své místo.</p></div></div>
+    <div class="family-heading"><span class="section-index">PORTFOLIO</span><div><h3>Pro práci a odborné použití.</h3><p>Aplikace pro bezpečnost, zdraví a organizaci práce.</p></div></div>
     <div class="product-grid">
       {getPublicProducts().filter(product => !product.family && product.kind !== "game" && !everydayProducts.includes(product)).map((product, index) => <ProductCard product={product} lang="cs" featured={index < 2} />)}
     </div>
@@ -58,7 +58,7 @@ import { getPublicProducts, everydayProducts } from "../lib/products";
   </section>
 
   <section class="support-cta">
-    <div><span class="section-index">03</span><h2>Potřebujete poradit?</h2><p>Návody pro všechny naše aplikace vznikají na jednom místě, v češtině i angličtině.</p></div>
+    <div><span class="section-index">03</span><h2>Potřebujete poradit?</h2><p>Praktické návody a pomoc najdete na jednom místě, v češtině i angličtině.</p></div>
     <a class="button light" href="/navody/">Otevřít centrum nápovědy <span aria-hidden="true">↗</span></a>
   </section>
 </BaseLayout>
