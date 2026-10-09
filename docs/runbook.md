@@ -18,6 +18,14 @@ This public runbook defines the safe sequence without exposing the production in
 12. Keep automatic publication disabled during the initial 10-20 draft evaluation.
 13. If Telegram review is enabled, verify webhook status, an allowlisted two-step rejection on a disposable draft and that an unauthorized callback cannot change article state.
 
+## Enabled collaboration inbox
+
+Follow `docs/contact-operations.md` for the approved contact form and private inbox. Once activated, every blog redeployment must retain `deploy/contact/blog-overlay.yml` and its private environment file. Every dashboard redeployment must retain both `deploy/contact/analytics-overlay.yml` and the existing Recall downloads overlay with their private environment files. Deploying only a base Compose file removes the optional integrations.
+
+Keep the approved privacy version and file-only secrets in the operator configuration. Preserve the worker's morning schedule, daily budget and manual publication settings. Verify the public challenge, the authenticated inbox boundary and the existing Recall integration after any affected release. Use only synthetic enquiries for acceptance and remove those exact test records afterwards; never export genuine visitor or enquiry data into release evidence.
+
+For logical blog backups exclude `vcode_contacts` as described in the contact operations guide. Retention after restoring an infrastructure backup must run before the inbox or notification worker becomes available.
+
 ## Rollback
 
 1. Set `BLOG_GENERATION_ENABLED=false`.
