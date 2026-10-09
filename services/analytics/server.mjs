@@ -8,6 +8,7 @@ import { sanitizeEvent, sameOrigin } from './security.mjs';
 import {effectiveApprovedEvents} from './collector-security.mjs';
 import {canReadDownloadMetrics,readDownloadMetrics,unavailableDownloadMetrics} from './lib/download-metrics.mjs';
 import {createPublicShell} from './public-shell.mjs';
+import {createPartnershipProxy} from './lib/partnership-proxy.mjs';
 const upstream=process.env.ANALYTICS_UPSTREAM ?? 'http://umami:3000';
 const origin=process.env.PUBLIC_SITE_URL ?? 'https://vcode.zeleznalady.cz';
 const statusPath=process.env.ANALYTICS_STATUS_FILE??'/state/connections.json';
@@ -15,15 +16,16 @@ const registryPath=process.env.ANALYTICS_SITES_FILE ?? '/run/config/sites.json';
 const sessions=await createSessionStore(process.env.ANALYTICS_SESSION_DIR);
 const attempts=new Map();
 const enabled=process.env.ANALYTICS_COLLECTION_ENABLED==='true';
+const partnershipsEnabled=process.env.PARTNERSHIP_DASHBOARD_ENABLED==='true';
 const here=new URL('./',import.meta.url);
 const staticAssets=new Map();
-for(const [name,type] of [['manifest.webmanifest','application/manifest+json'],['offline.html','text/html'],['icon-192.png','image/png'],['icon-512.png','image/png'],['dashboard.css','text/css'],['dashboard.js','text/javascript'],['download-metrics-ui.js','text/javascript'],['contact-inbox-ui.js','text/javascript']])staticAssets.set('/prehled/'+name,{body:await readFile(new URL(name,here)),type});
+for(const [name,type] of [['manifest.webmanifest','application/manifest+json'],['offline.html','text/html'],['icon-192.png','image/png'],['icon-512.png','image/png'],['dashboard.css','text/css'],['dashboard.js','text/javascript'],['download-metrics-ui.js','text/javascript'],['contact-inbox-ui.js','text/javascript'],['partnership-inbox-ui.js','text/javascript']])staticAssets.set('/prehled/'+name,{body:await readFile(new URL(name,here)),type});
 const shell=createPublicShell(await readFile(new URL('dashboard.html',here)),await readFile(new URL('sw.js',here)),staticAssets);
 const page=shell.page;
 const tracker=await readFile(new URL('tracker.js',here),'utf8');
 async function sites(){return JSON.parse(await readFile(registryPath,'utf8'));}
 function send(res,status,body,type='application/json',headers={}){res.writeHead(status,{'Content-Type':type,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','X-Robots-Tag':'noindex, nofollow','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; connect-src 'self'; worker-src 'self'; manifest-src 'self'",...headers});res.end(typeof body==='object'&&!Buffer.isBuffer(body)?JSON.stringify(body):body);}
-async function body(req){let size=0,chunks=[];for await(const chunk of req){size+=chunk.length;if(size>4096)throw Object.assign(new Error('too large'),{status:413});chunks.push(chunk);}return JSON.parse(Buffer.concat(chunks).toString());}
+async function body(req,{strictUtf8=false}={}){let size=0,chunks=[];for await(const chunk of req){size+=chunk.length;if(size>4096)throw Object.assign(new Error('too large'),{status:413});chunks.push(chunk);}const bytes=Buffer.concat(chunks);let text;try{text=strictUtf8?new TextDecoder('utf-8',{fatal:true}).decode(bytes):bytes.toString();}catch{throw Object.assign(new Error('invalid input'),{status:400});}return JSON.parse(text);}
 async function api(path,token,options={}){const r=await fetch(upstream+'/api/'+path,{...options,headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{}),...options.headers},signal:AbortSignal.timeout(12000)});if(!r.ok)throw Object.assign(new Error('upstream failed'),{status:r.status===401?401:502});return r.json();}
 const CONTACT_UUID=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
 const CONTACT_STATUS=new Set(['new','read','closed']);
@@ -42,14 +44,19 @@ async function contactAuthorization(s){
  if(!canReadDownloadMetrics(rows,process.env.VCODE_ANALYTICS_WEBSITE_ID))throw Object.assign(new Error('forbidden'),{status:403});
  const key=await contactSecret(process.env.CONTACT_INBOX_TOKEN_FILE,/^[A-Za-z0-9_-]{32,256}$/);
  let service;try{service=new URL(process.env.CONTACT_SERVICE_URL);if(!['http:','https:'].includes(service.protocol)||service.username||service.password||service.search||service.hash||service.pathname!=='/')throw Error();}catch{throw Object.assign(new Error('contact unavailable'),{status:503});}
- return{key,service};
+ return{key,service,actorId:verified.id.toLowerCase()};
 }
 async function contactRequest(context,path,options={}){
- const response=await fetch(new URL(path,context.service),{...options,redirect:'error',headers:{'Content-Type':'application/json',Authorization:'Bearer '+context.key},signal:AbortSignal.timeout(12000)});
- if(!response.ok)throw Object.assign(new Error('contact failed'),{status:[400,404,409,429].includes(response.status)?response.status:502});
- const reader=response.body.getReader();let size=0,chunks=[];try{while(true){const next=await reader.read();if(next.done)break;size+=next.value.byteLength;if(size>2*1024*1024){await reader.cancel();throw Error('response too large');}chunks.push(Buffer.from(next.value));}}finally{reader.releaseLock();}
- return JSON.parse(Buffer.concat(chunks).toString());
+ const partnership=/^\/internal\/partnerships\/v1\/(?:inquiries|partners)(?:[/?]|$)/.test(path);
+ const maximum=partnership?16*1024*1024:2*1024*1024;
+ const response=await fetch(new URL(path,context.service),{...options,redirect:'error',headers:{'Content-Type':'application/json',Authorization:'Bearer '+context.key,...(CONTACT_UUID.test(context.actorId??'')?{'X-VCode-Admin-Id':context.actorId}:{})},signal:AbortSignal.timeout(12000)});
+ if(!response.ok){await response.body?.cancel();throw Object.assign(new Error('contact failed'),{status:(partnership?[400,401,403,404,405,409,410,413,415,429,503]:[400,404,409,429]).includes(response.status)?response.status:502});}
+ if(partnership&&!/^application\/json(?:\s*;\s*charset=utf-8)?$/i.test(response.headers.get('content-type')??'')){await response.body?.cancel();throw Error('invalid partnership content type');}
+ const declared=response.headers.get('content-length');if(declared!==null&&(!/^\d+$/.test(declared)||Number(declared)>maximum)){await response.body?.cancel();throw Error('response too large');}
+ const reader=response.body.getReader();let size=0,chunks=[];try{while(true){const next=await reader.read();if(next.done)break;size+=next.value.byteLength;if(size>maximum){await reader.cancel();throw Error('response too large');}chunks.push(Buffer.from(next.value));}}finally{reader.releaseLock();}
+ try{return JSON.parse(Buffer.concat(chunks).toString());}catch(error){if(partnership)throw Error('invalid partnership response');throw error;}
 }
+const handlePartnerships=createPartnershipProxy({authorize:contactAuthorization,request:contactRequest,send,body,sameOrigin,origin});
 function contactResult(result){
  const counts=value=>value&&Object.keys(value).length===4&&['new','read','closed','total'].every(key=>Number.isSafeInteger(value[key])&&value[key]>=0);
  if(!result?.notifications||Object.keys(result.notifications).length!==3||!['pending','sent','failed'].every(key=>Number.isSafeInteger(result.notifications[key])&&result.notifications[key]>=0))throw Error('invalid contact response');
@@ -67,7 +74,7 @@ const cookie=(id,age)=>`__Host-vcode-metrics=${id}; Path=/; HttpOnly; Secure; Sa
 function limited(req,limit,windowMs){const key=String(req.headers['x-real-ip']??req.socket.remoteAddress).split(',').at(-1).trim()+':'+(req.url?.includes('login')?'login':'event');const now=Date.now();const bucket=attempts.get(key)??{count:0,until:now+windowMs};if(bucket.until<now){bucket.count=0;bucket.until=now+windowMs;}bucket.count++;attempts.set(key,bucket);return bucket.count>limit;}
 setInterval(()=>{const now=Date.now();void sessions.prune().catch(()=>console.error('Session cleanup failed'));for(const[k,v]of attempts)if(v.until<now)attempts.delete(k);},60000).unref();
 createServer(async(req,res)=>{try{
- const url=new URL(req.url,origin),path=url.pathname;
+ const url=new URL(req.url,origin),path=url.pathname,partnershipRoute=/^\/prehled\/api\/(?:partnerships|partners)(?:\/|$)/.test(path);
  if(req.method==='GET'&&path==='/health'){send(res,200,{ok:true,collectionEnabled:enabled});return;}
  if(req.method==='GET'&&path==='/analytics/tracker.js'){const site=(await sites()).find(s=>s.domain===new URL(origin).hostname&&!s.testOnly&&!['vcode-public-v1','vcode-public-v2'].includes(s.integrationVersion)&&(s.collectionEnabled===undefined||s.collectionEnabled===true));send(res,200,enabled&&site?tracker.replace('__WEBSITE_ID__',site.id):'/* Collection awaits owner approval. */','text/javascript');return;}
  if(req.method==='POST'&&path==='/analytics/event'){
@@ -86,7 +93,7 @@ createServer(async(req,res)=>{try{
   if(url.searchParams.has('v')&&(url.searchParams.getAll('v').length!==1||[...url.searchParams.keys()].some(key=>key!=='v')||url.searchParams.get('v')!==shell.versions.get(path))){send(res,404,{});return;}
   const asset=staticAssets.get(path);send(res,200,asset.body,asset.type);return;
  }
- if(req.method==='POST'){
+ if(req.method==='POST'&&!partnershipRoute){
   if(!sameOrigin(req,origin)){send(res,403,{});return;}
   if(path==='/prehled/api/login'){
    if(limited(req,10,900000)){send(res,429,{error:'Příliš mnoho pokusů. Zkuste to později.'});return;}
@@ -101,6 +108,11 @@ createServer(async(req,res)=>{try{
  }
  const s=session(req);
  if(path==='/prehled/'&&req.method==='GET'){send(res,200,page,'text/html');return;}
+ if(partnershipRoute){
+  if(!s){send(res,401,{ok:false,code:'unauthorized',message:'Sign in to continue.',requestId:null});return;}
+  if(!partnershipsEnabled){send(res,503,{ok:false,code:'unavailable',message:'Partnerships are temporarily unavailable.',requestId:null},'application/json',{'Retry-After':'60'});return;}
+  if(await handlePartnerships(req,res,url,s))return;
+ }
  if(!s){send(res,401,{error:'Přihlaste se.'});return;}
  if(path==='/prehled/api/inquiries'||path.startsWith('/prehled/api/inquiries/')){
   if(!['GET','PATCH','DELETE'].includes(req.method)){send(res,405,{});return;}
@@ -143,7 +155,7 @@ createServer(async(req,res)=>{try{
     ]);
     return {...metadata,available:true,stats,pages,referrers,events:legacy?events:events.filter(event=>approvedEvents.includes(event.x)),series:dailySeries(series,window,metadata.collectionStartedAt??metadata.registeredAt)};
    } catch(error) {if(error.status===401)throw error;return {...metadata,available:false,stats:null,pages:[],referrers:[],events:[],series:[]};}
-  }));const downloads=canReadDownloadMetrics(rows,process.env.VCODE_ANALYTICS_WEBSITE_ID)?await readDownloadMetrics(process.env.DOWNLOAD_METRICS_PATH,{days}):unavailableDownloadMetrics('not-authorized');send(res,200,{...window,collectionEnabled:enabled,generatedAt:new Date().toISOString(),sessionExpiresAt:new Date(s.until).toISOString(),incomplete:data.some(site=>site&&site.available===false),sites:data.filter(Boolean),downloads});return;
+  }));const downloads=canReadDownloadMetrics(rows,process.env.VCODE_ANALYTICS_WEBSITE_ID)?await readDownloadMetrics(process.env.DOWNLOAD_METRICS_PATH,{days}):unavailableDownloadMetrics('not-authorized');send(res,200,{...window,collectionEnabled:enabled,partnershipsEnabled,generatedAt:new Date().toISOString(),sessionExpiresAt:new Date(s.until).toISOString(),incomplete:data.some(site=>site&&site.available===false),sites:data.filter(Boolean),downloads});return;
  }
  send(res,404,{});
  }catch(error){const status=error.status??(error instanceof SyntaxError?400:502);send(res,status,{error:status===401?'Nesprávné přihlašovací údaje.':'Požadavek se nepodařilo dokončit.'});}

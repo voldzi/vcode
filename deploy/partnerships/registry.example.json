@@ -1,0 +1,62 @@
+{
+  "version": "partnership-intake-v1",
+  "applications": [
+    {
+      "appId": "kaloricke-tabulky",
+      "domain": "mojeporce.cz",
+      "enabled": false,
+      "keyFile": "/run/partnerships/moje-porce-key",
+      "types": ["vyrobce", "obchod", "autor-receptu", "jine"],
+      "privacyVersion": "partnership-intake-20261009-1",
+      "approvedAt": null,
+      "publishedAt": null,
+      "noticeUrl": "https://mojeporce.cz/ochrana-soukromi",
+      "partnerPolicy": {
+        "enabled": false,
+        "version": "",
+        "retentionDays": 0,
+        "approvedAt": null,
+        "publishedAt": null,
+        "noticeUrl": "https://mojeporce.cz/ochrana-soukromi"
+      }
+    },
+    {
+      "appId": "mestem-hrou",
+      "domain": "mestemhrou.cz",
+      "enabled": false,
+      "keyFile": "/run/partnerships/mestem-hrou-key",
+      "types": ["jine"],
+      "privacyVersion": "partnership-intake-20261009-1",
+      "approvedAt": null,
+      "publishedAt": null,
+      "noticeUrl": "https://mestemhrou.cz/?zobrazit=soukromi",
+      "partnerPolicy": {
+        "enabled": false,
+        "version": "",
+        "retentionDays": 0,
+        "approvedAt": null,
+        "publishedAt": null,
+        "noticeUrl": "https://mestemhrou.cz/?zobrazit=soukromi"
+      }
+    },
+    {
+      "appId": "myslopis",
+      "domain": "myslopis.cz",
+      "enabled": false,
+      "keyFile": "/run/partnerships/myslopis-key",
+      "types": ["jine"],
+      "privacyVersion": "partnership-intake-20261009-1",
+      "approvedAt": null,
+      "publishedAt": null,
+      "noticeUrl": "https://myslopis.cz/privacy",
+      "partnerPolicy": {
+        "enabled": false,
+        "version": "",
+        "retentionDays": 0,
+        "approvedAt": null,
+        "publishedAt": null,
+        "noticeUrl": "https://myslopis.cz/privacy"
+      }
+    }
+  ]
+}

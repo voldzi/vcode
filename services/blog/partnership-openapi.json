@@ -1,0 +1,1833 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "VCode private partnership service contract",
+    "version": "1.0.0",
+    "description": "Nonpublished source contract for partnership-intake-v1. Prepared only and disabled by default. This API requires approved private server connectivity and is never routed by public Nginx."
+  },
+  "x-contract-version": "partnership-intake-v1",
+  "paths": {
+    "/internal/partnerships/v1/challenge": {
+      "x-private-interface": true,
+      "servers": [
+        {
+          "url": "/",
+          "description": "Private blog-service origin configured on servers only. These paths are NOT published on the public VCode origin."
+        }
+      ],
+      "post": {
+        "operationId": "issuePartnershipChallenge",
+        "summary": "Issue an approved app-bound challenge",
+        "description": "Private service route only; no public Nginx exposure, wildcard CORS or browser use. Credentials/internal origin stay on servers. Origin/Cookie and browser fetch context are rejected; only a lone Node-generated Sec-Fetch-Mode: cors is permitted without other browser metadata. Responses are no-store. App ID is derived from its distinct server key. Missing approval/publication or disabled intake fails closed. TTL 600000 ms; minimum delay 1500 ms.",
+        "tags": [
+          "Partnership internal"
+        ],
+        "security": [
+          {
+            "partnershipApplicationKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful private operation. No-store; no browser/analytics caching.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartnershipChallenge"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/PartnershipInvalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/PartnershipUnauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/PartnershipRejected"
+          },
+          "404": {
+            "$ref": "#/components/responses/PartnershipNotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/PartnershipMethodNotAllowed"
+          },
+          "413": {
+            "$ref": "#/components/responses/PartnershipTooLarge"
+          },
+          "415": {
+            "$ref": "#/components/responses/PartnershipInvalidContentType"
+          },
+          "429": {
+            "$ref": "#/components/responses/PartnershipRateLimit"
+          },
+          "503": {
+            "$ref": "#/components/responses/PartnershipUnavailable"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartnershipChallengeRequest"
+              }
+            }
+          }
+        },
+        "x-max-request-bytes": 16384
+      }
+    },
+    "/internal/partnerships/v1/submissions": {
+      "x-private-interface": true,
+      "servers": [
+        {
+          "url": "/",
+          "description": "Private blog-service origin configured on servers only. These paths are NOT published on the public VCode origin."
+        }
+      ],
+      "post": {
+        "operationId": "submitPartnershipOffer",
+        "summary": "Durably accept an app-specific private offer",
+        "description": "Private service route only; no public Nginx exposure, wildcard CORS or browser use. Credentials/internal origin stay on servers. Origin/Cookie and browser fetch context are rejected; only a lone Node-generated Sec-Fetch-Mode: cors is permitted without other browser metadata. Responses are no-store. Atomic enquiry/receipt/outbox commit precedes 202. Same app/requestId/normalized content with a correctly signed/bound token returns the same reference after a lost response or expired token. The original issue-hour bucket remains required; if address/key changes, obtain a fresh challenge with the same requestId and unchanged business payload. Changed content is 409; deleted enquiry is 410. Retention remains original 90 days.",
+        "tags": [
+          "Partnership internal"
+        ],
+        "security": [
+          {
+            "partnershipApplicationKey": []
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Successful private operation. No-store; no browser/analytics caching.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartnershipReceipt"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/PartnershipInvalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/PartnershipUnauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/PartnershipRejected"
+          },
+          "404": {
+            "$ref": "#/components/responses/PartnershipNotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/PartnershipMethodNotAllowed"
+          },
+          "409": {
+            "$ref": "#/components/responses/PartnershipConflict"
+          },
+          "410": {
+            "$ref": "#/components/responses/PartnershipRequestClosed"
+          },
+          "413": {
+            "$ref": "#/components/responses/PartnershipTooLarge"
+          },
+          "415": {
+            "$ref": "#/components/responses/PartnershipInvalidContentType"
+          },
+          "429": {
+            "$ref": "#/components/responses/PartnershipRateLimit"
+          },
+          "503": {
+            "$ref": "#/components/responses/PartnershipUnavailable"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartnershipSubmission"
+              }
+            }
+          }
+        },
+        "x-max-request-bytes": 16384
+      }
+    },
+    "/internal/partnerships/v1/inquiries": {
+      "x-private-interface": true,
+      "servers": [
+        {
+          "url": "/",
+          "description": "Private blog-service origin configured on servers only. These paths are NOT published on the public VCode origin."
+        }
+      ],
+      "get": {
+        "operationId": "internalListPartnershipInquiries",
+        "summary": "List retained partnership offers",
+        "description": "Private service route only; no public Nginx exposure, wildcard CORS or browser use. Credentials/internal origin stay on servers. Origin/Cookie and browser fetch context are rejected; only a lone Node-generated Sec-Fetch-Mode: cors is permitted without other browser metadata. Responses are no-store. Only the freshly verified configured inbox owner with admin role and canonical VCode website permission. Application keys cannot administer records. Private content is excluded from PWA/offline caches and logs. At most 100 items, default 50. Summary/notifications cover retained records matching filters independently of limit. Only these finite query parameters are accepted.",
+        "tags": [
+          "Partnership internal"
+        ],
+        "security": [
+          {
+            "partnershipInboxService": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful private operation. No-store; no browser/analytics caching.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartnershipInbox"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/PartnershipInvalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/PartnershipUnauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/PartnershipRejected"
+          },
+          "404": {
+            "$ref": "#/components/responses/PartnershipNotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/PartnershipMethodNotAllowed"
+          },
+          "429": {
+            "$ref": "#/components/responses/PartnershipRateLimit"
+          },
+          "503": {
+            "$ref": "#/components/responses/PartnershipUnavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            }
+          },
+          {
+            "name": "appId",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ContactApplication"
+            }
+          },
+          {
+            "name": "stage",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/PartnershipStage"
+            }
+          },
+          {
+            "name": "X-VCode-Admin-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+            },
+            "description": "Canonical lower-case UUID derived by the broker from a fresh upstream admin verification; must equal the configured inbox owner. Never accepted from the browser."
+          }
+        ]
+      }
+    },
+    "/internal/partnerships/v1/inquiries/{id}": {
+      "x-private-interface": true,
+      "servers": [
+        {
+          "url": "/",
+          "description": "Private blog-service origin configured on servers only. These paths are NOT published on the public VCode origin."
+        }
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+          }
+        }
+      ],
+      "patch": {
+        "operationId": "internalUpdatePartnershipInquiry",
+        "summary": "Update offer stage, assignment or next action",
+        "description": "Private service route only; no public Nginx exposure, wildcard CORS or browser use. Credentials/internal origin stay on servers. Origin/Cookie and browser fetch context are rejected; only a lone Node-generated Sec-Fetch-Mode: cors is permitted without other browser metadata. Responses are no-store. Only the freshly verified configured inbox owner with admin role and canonical VCode website permission. Application keys cannot administer records. Private content is excluded from PWA/offline caches and logs. Optimistic version check; due date before original expiry. No edit extends the 90-day retention.",
+        "tags": [
+          "Partnership internal"
+        ],
+        "security": [
+          {
+            "partnershipInboxService": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful private operation. No-store; no browser/analytics caching.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartnershipWorkflowReceipt"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/PartnershipInvalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/PartnershipUnauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/PartnershipRejected"
+          },
+          "404": {
+            "$ref": "#/components/responses/PartnershipNotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/PartnershipMethodNotAllowed"
+          },
+          "409": {
+            "$ref": "#/components/responses/PartnershipConflict"
+          },
+          "413": {
+            "$ref": "#/components/responses/PartnershipTooLarge"
+          },
+          "415": {
+            "$ref": "#/components/responses/PartnershipInvalidContentType"
+          },
+          "429": {
+            "$ref": "#/components/responses/PartnershipRateLimit"
+          },
+          "503": {
+            "$ref": "#/components/responses/PartnershipUnavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-VCode-Admin-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+            },
+            "description": "Canonical lower-case UUID derived by the broker from a fresh upstream admin verification; must equal the configured inbox owner. Never accepted from the browser."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartnershipWorkflowUpdate"
+              }
+            }
+          }
+        },
+        "x-max-request-bytes": 16384
+      },
+      "delete": {
+        "operationId": "internalDeletePartnershipInquiry",
+        "summary": "Delete an offer and its audit/outbox",
+        "description": "Private service route only; no public Nginx exposure, wildcard CORS or browser use. Credentials/internal origin stay on servers. Origin/Cookie and browser fetch context are rejected; only a lone Node-generated Sec-Fetch-Mode: cors is permitted without other browser metadata. Responses are no-store. Only the freshly verified configured inbox owner with admin role and canonical VCode website permission. Application keys cannot administer records. Private content is excluded from PWA/offline caches and logs. Explicit owner deletion. Minimal receipt tombstone remains only until original 90-day expiry; no enquiry resurrection on retry.",
+        "tags": [
+          "Partnership internal"
+        ],
+        "security": [
+          {
+            "partnershipInboxService": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful private operation. No-store; no browser/analytics caching.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartnershipDeletionReceipt"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/PartnershipInvalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/PartnershipUnauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/PartnershipRejected"
+          },
+          "404": {
+            "$ref": "#/components/responses/PartnershipNotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/PartnershipMethodNotAllowed"
+          },
+          "429": {
+            "$ref": "#/components/responses/PartnershipRateLimit"
+          },
+          "503": {
+            "$ref": "#/components/responses/PartnershipUnavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-VCode-Admin-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+            },
+            "description": "Canonical lower-case UUID derived by the broker from a fresh upstream admin verification; must equal the configured inbox owner. Never accepted from the browser."
+          }
+        ]
+      }
+    },
+    "/internal/partnerships/v1/inquiries/{id}/promote": {
+      "x-private-interface": true,
+      "servers": [
+        {
+          "url": "/",
+          "description": "Private blog-service origin configured on servers only. These paths are NOT published on the public VCode origin."
+        }
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "internalPromotePartnershipInquiry",
+        "summary": "Create a separately approved minimal partner record",
+        "description": "Private service route only; no public Nginx exposure, wildcard CORS or browser use. Credentials/internal origin stay on servers. Origin/Cookie and browser fetch context are rejected; only a lone Node-generated Sec-Fetch-Mode: cors is permitted without other browser metadata. Responses are no-store. Only the freshly verified configured inbox owner with admin role and canonical VCode website permission. Application keys cannot administer records. Private content is excluded from PWA/offline caches and logs. Default-disabled per-app purpose/policy/notice gate, bounded expiry 1–365 days. No copied contact/message. Original enquiry expiry is unchanged. Does not approve contracts, licences or imports.",
+        "tags": [
+          "Partnership internal"
+        ],
+        "security": [
+          {
+            "partnershipInboxService": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful private operation. No-store; no browser/analytics caching.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartnershipPromotionReceipt"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/PartnershipInvalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/PartnershipUnauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/PartnershipRejected"
+          },
+          "404": {
+            "$ref": "#/components/responses/PartnershipNotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/PartnershipMethodNotAllowed"
+          },
+          "409": {
+            "$ref": "#/components/responses/PartnershipConflict"
+          },
+          "413": {
+            "$ref": "#/components/responses/PartnershipTooLarge"
+          },
+          "415": {
+            "$ref": "#/components/responses/PartnershipInvalidContentType"
+          },
+          "429": {
+            "$ref": "#/components/responses/PartnershipRateLimit"
+          },
+          "503": {
+            "$ref": "#/components/responses/PartnershipUnavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-VCode-Admin-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+            },
+            "description": "Canonical lower-case UUID derived by the broker from a fresh upstream admin verification; must equal the configured inbox owner. Never accepted from the browser."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartnershipPromotion"
+              }
+            }
+          }
+        },
+        "x-max-request-bytes": 16384
+      }
+    },
+    "/internal/partnerships/v1/partners": {
+      "x-private-interface": true,
+      "servers": [
+        {
+          "url": "/",
+          "description": "Private blog-service origin configured on servers only. These paths are NOT published on the public VCode origin."
+        }
+      ],
+      "get": {
+        "operationId": "internalListPartners",
+        "summary": "List retained minimal partner records",
+        "description": "Private service route only; no public Nginx exposure, wildcard CORS or browser use. Credentials/internal origin stay on servers. Origin/Cookie and browser fetch context are rejected; only a lone Node-generated Sec-Fetch-Mode: cors is permitted without other browser metadata. Responses are no-store. Only the freshly verified configured inbox owner with admin role and canonical VCode website permission. Application keys cannot administer records. Private content is excluded from PWA/offline caches and logs. No contact/message copies. Only appId and limit filters are accepted; no stage filter.",
+        "tags": [
+          "Partnership internal"
+        ],
+        "security": [
+          {
+            "partnershipInboxService": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful private operation. No-store; no browser/analytics caching.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartnershipPartners"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/PartnershipInvalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/PartnershipUnauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/PartnershipRejected"
+          },
+          "404": {
+            "$ref": "#/components/responses/PartnershipNotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/PartnershipMethodNotAllowed"
+          },
+          "429": {
+            "$ref": "#/components/responses/PartnershipRateLimit"
+          },
+          "503": {
+            "$ref": "#/components/responses/PartnershipUnavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            }
+          },
+          {
+            "name": "appId",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ContactApplication"
+            }
+          },
+          {
+            "name": "X-VCode-Admin-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+            },
+            "description": "Canonical lower-case UUID derived by the broker from a fresh upstream admin verification; must equal the configured inbox owner. Never accepted from the browser."
+          }
+        ]
+      }
+    },
+    "/internal/partnerships/v1/partners/{id}": {
+      "x-private-interface": true,
+      "servers": [
+        {
+          "url": "/",
+          "description": "Private blog-service origin configured on servers only. These paths are NOT published on the public VCode origin."
+        }
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+          }
+        }
+      ],
+      "delete": {
+        "operationId": "internalDeletePartner",
+        "summary": "Delete a minimal partner record",
+        "description": "Private service route only; no public Nginx exposure, wildcard CORS or browser use. Credentials/internal origin stay on servers. Origin/Cookie and browser fetch context are rejected; only a lone Node-generated Sec-Fetch-Mode: cors is permitted without other browser metadata. Responses are no-store. Only the freshly verified configured inbox owner with admin role and canonical VCode website permission. Application keys cannot administer records. Private content is excluded from PWA/offline caches and logs. Explicit deletion; does not modify the original enquiry retention.",
+        "tags": [
+          "Partnership internal"
+        ],
+        "security": [
+          {
+            "partnershipInboxService": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful private operation. No-store; no browser/analytics caching.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartnershipDeletionReceipt"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/PartnershipInvalidInput"
+          },
+          "401": {
+            "$ref": "#/components/responses/PartnershipUnauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/PartnershipRejected"
+          },
+          "404": {
+            "$ref": "#/components/responses/PartnershipNotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/PartnershipMethodNotAllowed"
+          },
+          "429": {
+            "$ref": "#/components/responses/PartnershipRateLimit"
+          },
+          "503": {
+            "$ref": "#/components/responses/PartnershipUnavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-VCode-Admin-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+            },
+            "description": "Canonical lower-case UUID derived by the broker from a fresh upstream admin verification; must equal the configured inbox owner. Never accepted from the browser."
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ContactApplication": {
+        "type": "string",
+        "maxLength": 100,
+        "enum": [
+          "vcode-recall",
+          "myslopis",
+          "stratos-voice",
+          "event",
+          "foldlight",
+          "rinklet",
+          "millora",
+          "apsyd",
+          "apsyd-central",
+          "pas",
+          "jizda",
+          "cop-mobile",
+          "cop",
+          "nest",
+          "sibenice",
+          "mestem-hrou",
+          "masaze",
+          "studio-balance",
+          "budget-contract",
+          "executive-center",
+          "projectflow",
+          "archflow",
+          "akb",
+          "stratos",
+          "kaloricke-tabulky"
+        ],
+        "description": "Canonical published portfolio ID. A private-deployment product may be selected as an enquiry topic; no private application URL is supplied."
+      },
+      "PartnershipChallengeRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requestId",
+          "locale",
+          "clientBucket"
+        ],
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "cs",
+              "en"
+            ]
+          },
+          "clientBucket": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{43}$",
+            "description": "Relay-derived hourly purpose-scoped HMAC-SHA256; never supplied by the browser. Not persisted or logged."
+          }
+        },
+        "description": "Strict JSON/UTF-8, maximum 16384 bytes, no compression. App identity is derived only from the server key; no appId or privacyVersion field is accepted here.",
+        "examples": [
+          {
+            "requestId": "11111111-2222-4333-8444-555555555555",
+            "locale": "cs",
+            "clientBucket": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          }
+        ]
+      },
+      "PartnershipChallenge": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ok",
+          "contractVersion",
+          "appId",
+          "requestId",
+          "token",
+          "minimumDelayMs",
+          "expiresAt",
+          "privacyVersion"
+        ],
+        "properties": {
+          "ok": {
+            "const": true
+          },
+          "contractVersion": {
+            "const": "partnership-intake-v1"
+          },
+          "appId": {
+            "$ref": "#/components/schemas/ContactApplication"
+          },
+          "requestId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+          },
+          "token": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2048
+          },
+          "minimumDelayMs": {
+            "const": 1500
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "privacyVersion": {
+            "const": "partnership-intake-20261009-1"
+          }
+        },
+        "description": "App/request/bucket/locale/notice-bound token with 600000 ms TTL. Payload carries issuedAt but no bucket; relay uses the original issue hour also for retained expired-token retry (non-future, at most 90 days old). VCode verifies the signature/bindings; only a retained receipt may ignore expiry. Preparation alone does not enable challenges."
+      },
+      "PartnershipSubmission": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requestId",
+          "locale",
+          "clientBucket",
+          "token",
+          "privacyVersion",
+          "name",
+          "email",
+          "type",
+          "message",
+          "website"
+        ],
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "cs",
+              "en"
+            ]
+          },
+          "clientBucket": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{43}$",
+            "description": "Relay-derived hourly purpose-scoped HMAC-SHA256; never supplied by the browser. Not persisted or logged."
+          },
+          "token": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2048
+          },
+          "privacyVersion": {
+            "const": "partnership-intake-20261009-1"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "minLength": 3,
+            "maxLength": 254
+          },
+          "organization": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 160
+          },
+          "type": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+            "minLength": 1,
+            "maxLength": 50,
+            "description": "Exact per-app approved registry whitelist; not free text. Moje porce uses vyrobce, obchod, autor-receptu, jine."
+          },
+          "message": {
+            "type": "string",
+            "minLength": 30,
+            "maxLength": 4000
+          },
+          "website": {
+            "const": "",
+            "description": "Empty honeypot; not a website URL."
+          }
+        },
+        "description": "NFC and CRLF-normalized Unicode lengths, trim and control-character rejection. No phone, attachments, app/domain/account/source fields. The selected type and notice version must match the authenticated app registry.",
+        "examples": [
+          {
+            "requestId": "11111111-2222-4333-8444-555555555555",
+            "locale": "cs",
+            "clientBucket": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "token": "synthetic-token-use-isolated-challenge-in-tests",
+            "privacyVersion": "partnership-intake-20261009-1",
+            "name": "Synthetic Partner",
+            "email": "synthetic@example.invalid",
+            "organization": "Synthetic organisation",
+            "type": "vyrobce",
+            "message": "Synthetic partnership offer for isolated testing only.",
+            "website": ""
+          }
+        ]
+      },
+      "PartnershipReceipt": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ok",
+          "contractVersion",
+          "requestId",
+          "reference"
+        ],
+        "properties": {
+          "ok": {
+            "const": true
+          },
+          "contractVersion": {
+            "const": "partnership-intake-v1"
+          },
+          "requestId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+          },
+          "reference": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+          }
+        },
+        "description": "202 only after enquiry, idempotency receipt and Telegram outbox commit. Identical retry returns the same reference without another message or job.",
+        "examples": [
+          {
+            "ok": true,
+            "contractVersion": "partnership-intake-v1",
+            "requestId": "11111111-2222-4333-8444-555555555555",
+            "reference": "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee"
+          }
+        ]
+      },
+      "PartnershipError": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ok",
+          "code",
+          "message",
+          "requestId"
+        ],
+        "properties": {
+          "ok": {
+            "const": false
+          },
+          "code": {
+            "type": "string",
+            "enum": [
+              "invalid-input",
+              "privacy-version-mismatch",
+              "unauthorized",
+              "rejected",
+              "not-found",
+              "method-not-allowed",
+              "idempotency-conflict",
+              "request-closed",
+              "too-large",
+              "invalid-content-type",
+              "rate-limit",
+              "unavailable"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160,
+            "description": "Fixed safe text; never field values, contacts, message contents, keys, IP, internal URL or dependency errors."
+          },
+          "requestId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "description": "Validated request UUID or null when absent/invalid. No additional fields."
+      },
+      "PartnershipStage": {
+        "type": "string",
+        "enum": [
+          "new",
+          "reviewing",
+          "waiting",
+          "pilot",
+          "active",
+          "closed"
+        ]
+      },
+      "PartnershipAudit": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "actorId",
+          "action",
+          "changedFields",
+          "fromStage",
+          "toStage",
+          "createdAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "created",
+              "workflow-updated",
+              "promoted"
+            ]
+          },
+          "changedFields": {
+            "type": "array",
+            "maxItems": 4,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "stage",
+                "managerId",
+                "nextAction",
+                "nextActionDueAt"
+              ]
+            }
+          },
+          "fromStage": {
+            "$ref": "#/components/schemas/PartnershipStage"
+          },
+          "toStage": {
+            "$ref": "#/components/schemas/PartnershipStage"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "description": "No previous message, contact or next-action text values. Expires with the enquiry."
+      },
+      "PartnershipInquiry": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "appId",
+          "type",
+          "locale",
+          "name",
+          "email",
+          "organization",
+          "message",
+          "privacyVersion",
+          "stage",
+          "managerId",
+          "nextAction",
+          "nextActionDueAt",
+          "version",
+          "createdAt",
+          "updatedAt",
+          "expiresAt",
+          "audit"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+          },
+          "appId": {
+            "$ref": "#/components/schemas/ContactApplication"
+          },
+          "type": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+            "minLength": 1,
+            "maxLength": 50,
+            "description": "Exact per-app approved registry whitelist; not free text. Moje porce uses vyrobce, obchod, autor-receptu, jine."
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "cs",
+              "en"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "minLength": 3,
+            "maxLength": 254
+          },
+          "organization": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 160
+          },
+          "message": {
+            "type": "string",
+            "minLength": 30,
+            "maxLength": 4000
+          },
+          "privacyVersion": {
+            "const": "partnership-intake-20261009-1"
+          },
+          "stage": {
+            "$ref": "#/components/schemas/PartnershipStage"
+          },
+          "managerId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "nextAction": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 500,
+            "pattern": "^[^\\x00-\\x1f\\x7f]*$",
+            "description": "Single line, trimmed and NFC normalized; no control characters or line breaks."
+          },
+          "nextActionDueAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{3})?Z$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "audit": {
+            "type": "array",
+            "maxItems": 200,
+            "items": {
+              "$ref": "#/components/schemas/PartnershipAudit"
+            }
+          }
+        },
+        "description": "Private owner-only record. Expiry is exactly 90 days from original receipt; workflow/retry/promotion do not extend it. Only the most recent 200 audit entries are returned. No key/token/hash/bucket fields."
+      },
+      "PartnershipWorkflowUpdate": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "expectedVersion"
+        ],
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483646
+          },
+          "stage": {
+            "$ref": "#/components/schemas/PartnershipStage"
+          },
+          "managerId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "nextAction": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 500,
+            "pattern": "^[^\\x00-\\x1f\\x7f]*$",
+            "description": "Single line, trimmed and NFC normalized; no control characters or line breaks."
+          },
+          "nextActionDueAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{3})?Z$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "anyOf": [
+          {
+            "required": [
+              "stage"
+            ]
+          },
+          {
+            "required": [
+              "managerId"
+            ]
+          },
+          {
+            "required": [
+              "nextAction"
+            ]
+          },
+          {
+            "required": [
+              "nextActionDueAt"
+            ]
+          }
+        ],
+        "description": "At least one editable field is required. Manager must be the configured owner or null. Due date must be strictly before original expiry. A stale expectedVersion returns 409 without changing data."
+      },
+      "PartnershipWorkflowReceipt": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ok",
+          "item"
+        ],
+        "properties": {
+          "ok": {
+            "const": true
+          },
+          "item": {
+            "$ref": "#/components/schemas/PartnershipInquiry"
+          }
+        }
+      },
+      "PartnershipDeletionReceipt": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ok",
+          "reference"
+        ],
+        "properties": {
+          "ok": {
+            "const": true
+          },
+          "reference": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+          }
+        },
+        "description": "Enquiry deletion removes content/audit/outbox, leaving only a minimal non-contact idempotency tombstone until original expiry. Partner deletion removes its separate record."
+      },
+      "PartnershipInbox": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "summary",
+          "notifications",
+          "applications",
+          "promotionEnabled"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "$ref": "#/components/schemas/PartnershipInquiry"
+            }
+          },
+          "summary": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "new",
+              "reviewing",
+              "waiting",
+              "pilot",
+              "active",
+              "closed",
+              "total"
+            ],
+            "properties": {
+              "new": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "reviewing": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "waiting": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "pilot": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "active": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "closed": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "total": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            }
+          },
+          "notifications": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "pending",
+              "sent",
+              "failed"
+            ],
+            "properties": {
+              "pending": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "sent": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "failed": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            }
+          },
+          "applications": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "name",
+                "types"
+              ],
+              "properties": {
+                "id": {
+                  "$ref": "#/components/schemas/ContactApplication"
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "types": {
+                  "type": "array",
+                  "maxItems": 20,
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                    "minLength": 1,
+                    "maxLength": 50,
+                    "description": "Exact per-app approved registry whitelist; not free text. Moje porce uses vyrobce, obchod, autor-receptu, jine."
+                  }
+                }
+              }
+            }
+          },
+          "promotionEnabled": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "appId",
+                "policyVersion"
+              ],
+              "properties": {
+                "appId": {
+                  "$ref": "#/components/schemas/ContactApplication"
+                },
+                "policyVersion": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80,
+                  "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+                }
+              }
+            }
+          }
+        },
+        "description": "Counts reflect retained records matching app/stage filters, independently of item limit; deletion/expiry lower them. They are not people, lifetime totals or conversion rates. Only approved policies appear in promotionEnabled."
+      },
+      "PartnershipPromotion": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "expectedVersion",
+          "displayName",
+          "policyVersion"
+        ],
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483646
+          },
+          "displayName": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 160
+          },
+          "policyVersion": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80,
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+          }
+        },
+        "description": "Explicit owner action requiring a separately approved, published, enabled per-app partner policy. Does not copy contact/message data or authorize contracts, licences or imports."
+      },
+      "PartnershipPartner": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "appId",
+          "type",
+          "displayName",
+          "policyVersion",
+          "createdBy",
+          "createdAt",
+          "expiresAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+          },
+          "appId": {
+            "$ref": "#/components/schemas/ContactApplication"
+          },
+          "type": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+            "minLength": 1,
+            "maxLength": 50,
+            "description": "Exact per-app approved registry whitelist; not free text. Moje porce uses vyrobce, obchod, autor-receptu, jine."
+          },
+          "displayName": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 160
+          },
+          "policyVersion": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80,
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+          },
+          "createdBy": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "description": "Independent minimal partner record, default disabled. Approved expiry is bounded to 1–365 days from creation; no email/message/full enquiry, internal source ID or indefinite retention."
+      },
+      "PartnershipPromotionReceipt": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ok",
+          "partner"
+        ],
+        "properties": {
+          "ok": {
+            "const": true
+          },
+          "partner": {
+            "$ref": "#/components/schemas/PartnershipPartner"
+          }
+        }
+      },
+      "PartnershipPartners": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "$ref": "#/components/schemas/PartnershipPartner"
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "PartnershipInvalidInput": {
+        "description": "Strict input, parameter, normalization or privacy-version validation failed. Codes invalid-input or privacy-version-mismatch.",
+        "headers": {
+          "Cache-Control": {
+            "schema": {
+              "const": "no-store"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PartnershipError"
+            }
+          }
+        }
+      },
+      "PartnershipUnauthorized": {
+        "description": "Missing, invalid, disabled or revoked server credential, or no current authenticated dashboard session. Code unauthorized.",
+        "headers": {
+          "Cache-Control": {
+            "schema": {
+              "const": "no-store"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PartnershipError"
+            }
+          }
+        }
+      },
+      "PartnershipRejected": {
+        "description": "Challenge, delay, bucket/locale binding, honeypot, same-origin or owner permission failed; promotion policy is not enabled. Code rejected.",
+        "headers": {
+          "Cache-Control": {
+            "schema": {
+              "const": "no-store"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PartnershipError"
+            }
+          }
+        }
+      },
+      "PartnershipNotFound": {
+        "description": "Unknown route or missing/expired enquiry/partner; no private object details. Code not-found.",
+        "headers": {
+          "Cache-Control": {
+            "schema": {
+              "const": "no-store"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PartnershipError"
+            }
+          }
+        }
+      },
+      "PartnershipMethodNotAllowed": {
+        "description": "This route does not accept the request method. Code method-not-allowed.",
+        "headers": {
+          "Cache-Control": {
+            "schema": {
+              "const": "no-store"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PartnershipError"
+            }
+          }
+        }
+      },
+      "PartnershipConflict": {
+        "description": "Changed normalized submission under the same app/requestId, stale workflow version or duplicate promotion. Code idempotency-conflict.",
+        "headers": {
+          "Cache-Control": {
+            "schema": {
+              "const": "no-store"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PartnershipError"
+            }
+          }
+        }
+      },
+      "PartnershipRequestClosed": {
+        "description": "The original enquiry was deleted; its minimal idempotency tombstone prevents resurrection until original expiry. Code request-closed.",
+        "headers": {
+          "Cache-Control": {
+            "schema": {
+              "const": "no-store"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PartnershipError"
+            }
+          }
+        }
+      },
+      "PartnershipTooLarge": {
+        "description": "Request exceeds the 16384-byte uncompressed JSON limit. Code too-large.",
+        "headers": {
+          "Cache-Control": {
+            "schema": {
+              "const": "no-store"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PartnershipError"
+            }
+          }
+        }
+      },
+      "PartnershipInvalidContentType": {
+        "description": "Use application/json with optional charset=utf-8 and no compressed content. Code invalid-content-type.",
+        "headers": {
+          "Cache-Control": {
+            "schema": {
+              "const": "no-store"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PartnershipError"
+            }
+          }
+        }
+      },
+      "PartnershipRateLimit": {
+        "description": "Bounded challenge/submission or persistent daily capacity reached. Code rate-limit.",
+        "headers": {
+          "Cache-Control": {
+            "schema": {
+              "const": "no-store"
+            }
+          },
+          "Retry-After": {
+            "description": "Bounded retry delay in seconds.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 3600
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PartnershipError"
+            }
+          }
+        }
+      },
+      "PartnershipUnavailable": {
+        "description": "Feature, registry, notice approvals or dependency are not ready. No fallback to another app or processing version. Code unavailable.",
+        "headers": {
+          "Cache-Control": {
+            "schema": {
+              "const": "no-store"
+            }
+          },
+          "Retry-After": {
+            "description": "Bounded retry delay in seconds.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 3600,
+              "const": 60
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PartnershipError"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "partnershipApplicationKey": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Distinct revocable send-only application-server key, never a browser credential. Maps to one enabled catalogued application in the private registry. No real secret examples."
+      },
+      "partnershipInboxService": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Existing private contact inbox service credential, plus required freshly verified X-VCode-Admin-Id. Not an app key or public login. Service also verifies the configured owner ID."
+      }
+    }
+  }
+}

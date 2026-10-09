@@ -1,0 +1,11 @@
+# Preparation only. Keep the contact overlay and its existing credentials.
+# No public ports, new networks or proxy routes are added by this overlay.
+services:
+  blog:
+    environment:
+      PARTNERSHIP_INTAKE_ENABLED: ${PARTNERSHIP_INTAKE_ENABLED:-false}
+      PARTNERSHIP_REGISTRY_FILE: /run/partnerships/registry.json
+      PARTNERSHIP_CHALLENGE_SECRET_FILE: /run/partnerships/challenge-secret
+      CONTACT_INBOX_OWNER_ID_FILE: /run/contact/owner-id
+    volumes:
+      - ${VCODE_PARTNERSHIP_CONFIG:?Configure private partnership directory}:/run/partnerships:ro

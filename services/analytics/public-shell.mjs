@@ -1,7 +1,7 @@
 import {createHash} from 'node:crypto';
 
 const digest=body=>createHash('sha256').update(body).digest('hex').slice(0,20);
-const CACHEABLE=new Set(['dashboard.css','dashboard.js','download-metrics-ui.js','contact-inbox-ui.js','offline.html','icon-192.png','icon-512.png']);
+const CACHEABLE=new Set(['dashboard.css','dashboard.js','download-metrics-ui.js','contact-inbox-ui.js','partnership-inbox-ui.js','offline.html','icon-192.png','icon-512.png']);
 
 // Identity depends only on the public shell. Registry, sessions and API data never enter it.
 export function createPublicShell(html,worker,assets){

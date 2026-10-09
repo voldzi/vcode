@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { loadConfig } from "./config.mjs";
 import { createPool, migrate } from "./db.mjs";
 import { createContactService } from "./contacts.mjs";
+import { createPartnershipService } from "./partnerships.mjs";
 import { moderateComment } from "./openai.mjs";
 import { renderArticle, renderHeroSvg, renderIndex, renderReviewPage, renderReviewResult } from "./render.mjs";
 import { applyEditorialAction, findReviewByToken } from "./review.mjs";
@@ -18,6 +19,7 @@ if (!config.commentHashSecret || config.commentHashSecret.length < 32) throw new
 const pool = createPool(config.databaseUrl);
 await migrate(pool);
 const contacts = await createContactService({ pool, config });
+const partnerships = await createPartnershipService({ pool, config });
 
 const send = (response, status, type, body, headers = {}) => {
   response.writeHead(status, { "Content-Type": type, "X-Content-Type-Options": "nosniff", ...headers });
@@ -150,6 +152,9 @@ async function reviewPage(request, response, token, action = false) {
 const server = createServer(async (request, response) => {
   const started = Date.now();
   try {
+    // The private partnership boundary catches its own failures and never
+    // exposes request bodies, credentials or database errors to blog logging.
+    if (await partnerships.handle(request, response)) return;
     if (await contacts.handle(request, response)) return;
     const url = new URL(request.url ?? "/", config.siteOrigin);
     const method = request.method === "HEAD" ? "GET" : request.method;
@@ -201,8 +206,15 @@ const contactMaintenance = () => contacts.maintenance().catch(() => {
 const contactTimer = setInterval(contactMaintenance, 60_000);
 contactTimer.unref();
 void contactMaintenance();
+const partnershipMaintenance = () => partnerships.maintenance().catch(() => {
+  // Retention runs even with intake disabled. Log only this fixed event.
+  console.error(JSON.stringify({ service: "vcode-blog", event: "partnership_maintenance_unavailable" }));
+});
+const partnershipTimer = setInterval(partnershipMaintenance, 60_000);
+partnershipTimer.unref();
+void partnershipMaintenance();
 
 server.listen(config.port, "0.0.0.0", () => console.log(JSON.stringify({ time: new Date().toISOString(), service: "vcode-blog", event: "listening", port: config.port })));
-const shutdown = async () => { clearInterval(contactTimer); server.close(); await pool.end(); };
+const shutdown = async () => { clearInterval(contactTimer); clearInterval(partnershipTimer); server.close(); await pool.end(); };
 process.on("SIGTERM", shutdown);
 process.on("SIGINT", shutdown);

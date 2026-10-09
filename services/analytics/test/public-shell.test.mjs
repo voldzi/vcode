@@ -9,7 +9,7 @@ import {createPublicShell} from '../public-shell.mjs';
 
 test('offline dependencies and worker behavior are part of public shell content identity',async()=>{
  const assets=new Map();
- for(const name of ['dashboard.css','dashboard.js','download-metrics-ui.js','contact-inbox-ui.js','offline.html','icon-192.png','icon-512.png'])assets.set('/prehled/'+name,{body:await readFile(new URL('../'+name,import.meta.url))});
+ for(const name of ['dashboard.css','dashboard.js','download-metrics-ui.js','contact-inbox-ui.js','partnership-inbox-ui.js','offline.html','icon-192.png','icon-512.png'])assets.set('/prehled/'+name,{body:await readFile(new URL('../'+name,import.meta.url))});
  const html=await readFile(new URL('../dashboard.html',import.meta.url)),worker=await readFile(new URL('../sw.js',import.meta.url));
  const shell=createPublicShell(html,worker,assets),offline=assets.get('/prehled/offline.html').body.toString();
  for(const match of offline.matchAll(/(?:href|src)="(\/prehled\/(?:[^"?]+\.(?:css|png))(?:\?[^" ]*)?)"/g))assert.ok([...shell.urls.values()].includes(match[1]),'Offline dependency must have a cached content identity');
@@ -32,6 +32,9 @@ test('an installed old PWA gets current CSS identity on navigation and matching 
  const readShell=async()=>{
   const page=await fetch(base+'/prehled/');assert.equal(page.status,200);assert.equal(page.headers.get('cache-control'),'no-store');
   const html=await page.text(),css=/href="(\/prehled\/dashboard\.css\?v=[a-f0-9]{20})"/.exec(html)?.[1];assert.ok(css);
+  const partnership=/src="(\/prehled\/partnership-inbox-ui\.js\?v=[a-f0-9]{20})"/.exec(html)?.[1];assert.ok(partnership);
+  assert.ok(html.indexOf(partnership)<html.indexOf('/prehled/dashboard.js'));
+  const partnershipResponse=await fetch(base+partnership);assert.equal(partnershipResponse.status,200);assert.equal(await partnershipResponse.text(),await readFile(join(service,'partnership-inbox-ui.js'),'utf8'));
   const response=await fetch(base+css);assert.equal(response.status,200);assert.equal(await response.text(),await readFile(join(service,'dashboard.css'),'utf8'));
   const worker=await fetch(base+'/prehled/sw.js');assert.equal(worker.status,200);assert.equal(worker.headers.get('cache-control'),'no-cache');assert.equal(worker.headers.get('service-worker-allowed'),'/prehled/');
   const etag=worker.headers.get('etag');assert.match(etag,/^"[a-f0-9]{20}"$/);const source=await worker.text();assert.ok(source.includes(css));assert.ok(!source.includes('__PUBLIC_'));
@@ -41,7 +44,9 @@ test('an installed old PWA gets current CSS identity on navigation and matching 
   for(const invalid of [css+'&v=stale',css+'&extra=1'])assert.equal((await fetch(base+invalid)).status,404);
   const unchanged=await fetch(base+'/prehled/sw.js',{headers:{'If-None-Match':etag}});assert.equal(unchanged.status,304);assert.equal(unchanged.headers.get('cache-control'),'no-cache');
   assert.equal((await fetch(base+'/prehled/api/inquiries')).status,401);
-  return{css,etag,source};
+  assert.equal((await fetch(base+'/prehled/api/partnerships')).status,401);
+  assert.equal((await fetch(base+'/prehled/api/partners')).status,401);
+  return{css,partnership,etag,source};
  };
  try{
   await launch();const before=await readShell();
@@ -52,5 +57,7 @@ test('an installed old PWA gets current CSS identity on navigation and matching 
   await launch();const after=await readShell();assert.notEqual(after.css,before.css);assert.notEqual(after.etag,before.etag);assert.notEqual(/const CACHE='([^']+)'/.exec(after.source)[1],/const CACHE='([^']+)'/.exec(before.source)[1]);
   // A stale identity must not be filled with different bytes under the old cache key.
   assert.equal((await fetch(base+before.css)).status,404);assert.equal((await fetch(base+'/prehled/sw.js',{headers:{'If-None-Match':before.etag}})).status,200);
+  await stop();await writeFile(join(service,'partnership-inbox-ui.js'),(await readFile(join(service,'partnership-inbox-ui.js'),'utf8'))+'\n/* Synthetic new partnership shell release */\n');
+  await launch();const final=await readShell();assert.notEqual(final.partnership,after.partnership);assert.notEqual(final.etag,after.etag);assert.equal((await fetch(base+after.partnership)).status,404);
  }finally{await stop();await rm(directory,{recursive:true,force:true});}
 });

@@ -1,4 +1,5 @@
 import { readFile } from "node:fs/promises";
+import { readPartnershipSecret } from "./partnership-security.mjs";
 
 const integer = (name, fallback, minimum = 0) => {
   const value = Number.parseInt(process.env[name] ?? String(fallback), 10);
@@ -54,6 +55,10 @@ export async function loadConfig() {
     contactPrivacyVersion: (process.env.CONTACT_FORM_PRIVACY_VERSION ?? "").trim(),
     contactFormSecret: await contactSecret("CONTACT_FORM_SECRET_FILE"),
     contactInboxToken: await contactSecret("CONTACT_INBOX_TOKEN_FILE"),
+    contactInboxOwnerId: (await readPartnershipSecret(process.env.CONTACT_INBOX_OWNER_ID_FILE)).toLowerCase(),
+    partnershipIntakeEnabled: boolean("PARTNERSHIP_INTAKE_ENABLED", false),
+    partnershipRegistryFile: process.env.PARTNERSHIP_REGISTRY_FILE ?? "",
+    partnershipChallengeSecret: await readPartnershipSecret(process.env.PARTNERSHIP_CHALLENGE_SECRET_FILE),
     telegramEnabled: boolean("BLOG_TELEGRAM_ENABLED", false),
     telegramBotToken: await readSecret("TELEGRAM_BOT_TOKEN", "TELEGRAM_BOT_TOKEN_FILE"),
     telegramWebhookSecret: await readSecret("TELEGRAM_WEBHOOK_SECRET", "TELEGRAM_WEBHOOK_SECRET_FILE"),

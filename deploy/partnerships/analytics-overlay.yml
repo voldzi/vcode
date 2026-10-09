@@ -1,0 +1,6 @@
+# Combine with the existing contact and Recall overlays. Their inbox URL,
+# token/owner files, sessions, networks and proxy boundaries remain in place.
+services:
+  dashboard:
+    environment:
+      PARTNERSHIP_DASHBOARD_ENABLED: ${PARTNERSHIP_DASHBOARD_ENABLED:-false}
