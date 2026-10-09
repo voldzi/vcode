@@ -11,6 +11,9 @@ import {fileURLToPath} from 'node:url';
 const option = process.argv.indexOf('--image');
 const image = option >= 0 ? process.argv[option + 1] : undefined;
 if (!image || image.startsWith('-')) throw new Error('Specify --image with the tested web image.');
+// Synthetic static fixtures must be readable by the unprivileged Nginx worker,
+// even when the operator protects release evidence with a restrictive umask.
+const previousUmask = process.umask(0o022);
 const repository = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const directory = await mkdtemp(join(tmpdir(), 'vcode-nginx-boundary-'));
 const suffix = `${process.pid}-${Date.now()}`;
@@ -170,4 +173,5 @@ try {
   safeRemove('rm', '--force', upstream);
   safeRemove('network', 'rm', network);
   await rm(directory, {recursive: true, force: true});
+  process.umask(previousUmask);
 }
