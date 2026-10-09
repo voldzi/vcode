@@ -26,3 +26,20 @@ body{background:radial-gradient(ellipse at 90% 0%,#7d69ef0c,transparent 45%),rad
 @media(max-width:760px){.distribution-totals{grid-template-columns:repeat(auto-fit,minmax(min(100%,10rem),1fr))}.distribution-metric{padding:.8rem}.distribution-metric:last-child:nth-child(odd){grid-column:auto}.distribution-help summary{font-size:.78rem}.distribution-metric strong{font-size:1.7rem}.distribution-file-list{grid-template-columns:1fr}.distribution-sparkline{min-height:95px}.distribution-file-metrics>div{gap:.6rem;flex-wrap:wrap}}
 
 .app-header h1{overflow-wrap:anywhere}
+
+/* Sign-in is the first task on a phone; dashboard navigation appears after authentication. */
+body[data-authenticated=false] .app-header{margin-bottom:1.25rem}
+body[data-authenticated=false] .login-layout{min-height:50vh}
+@media(max-width:760px){
+ body[data-authenticated=false] main{padding-top:1rem}
+ body[data-authenticated=false] .app-header{padding:1rem;gap:.8rem;margin-bottom:1rem}
+ body[data-authenticated=false] .app-header h1{font-size:1.45rem;line-height:1.2}
+ body[data-authenticated=false] .app-header .eyebrow{font-size:.65rem}
+ body[data-authenticated=false] .app-header .muted{font-size:.85rem;margin-bottom:0}
+ body[data-authenticated=false] .login-layout{display:block;min-height:0}
+ body[data-authenticated=false] .login-intro{display:none}
+ body[data-authenticated=false] .login-form label{margin:.8rem 0}
+ body[data-authenticated=false] .login-form .remember-device{margin-bottom:.5rem}
+ body[data-authenticated=false] .login-form .small{font-size:.75rem}
+ body[data-authenticated=false] footer{margin-top:1.25rem}
+}

@@ -1,0 +1,23 @@
+[data-catalog] [hidden] { display:none!important; }
+.catalog-tools { margin-bottom:clamp(3rem,6vw,5rem); padding:clamp(1.3rem,3.6vw,3rem); border:1px solid #bed7e7; border-radius:var(--radius); background:radial-gradient(ellipse at top right,rgba(33,125,184,.1),transparent 65%),linear-gradient(130deg,#f4f9fc,#edf4f8); box-shadow:0 12px 32px rgba(17,48,70,.035); }
+.catalog-kicker { margin:0 0 .65rem; font:750 .74rem "Manrope Variable",sans-serif; text-transform:uppercase; letter-spacing:.12em; color:#176496; }
+.catalog-intro h2 { margin:0 0 .8rem; font:760 clamp(1.7rem,3vw,2.6rem)/1.15 "Manrope Variable",sans-serif; letter-spacing:-.04em; color:var(--navy); }
+.catalog-intro>p:last-child { max-width:42rem; margin:0; color:var(--muted); }
+.catalog-form { display:grid; grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) minmax(0,.9fr); gap:1.15rem; margin-top:1.8rem; }
+.catalog-form label>span { display:block; margin-bottom:.55rem; font:720 .82rem "Manrope Variable",sans-serif; color:var(--navy); }
+.catalog-form input,.catalog-form select { width:100%; min-width:0; min-height:3.25rem; padding:.8rem 1rem; border:1px solid #a5bfce; border-radius:.85rem; font:inherit; color:var(--ink); background:#fff; box-shadow:0 2px 4px rgba(11,45,91,.025); }
+.catalog-form select { text-overflow:ellipsis; padding-right:.7rem; }
+.catalog-form input::placeholder { color:#647783; opacity:1; }
+.catalog-form input:focus-visible,.catalog-form select:focus-visible,.catalog-form button:focus-visible { outline:3px solid #1672a7; outline-offset:3px; }
+.catalog-summary { grid-column:1/-1; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:.5rem 1rem; min-height:2.75rem; }
+.catalog-summary p { margin:0; color:#345971; font:720 .85rem "Manrope Variable",sans-serif; }
+.catalog-summary button { display:inline-flex; align-items:center; gap:.65rem; min-height:2.75rem; padding:.4rem .25rem; border:0; border-radius:.3rem; color:#165f8b; background:transparent; font:720 .85rem "Manrope Variable",sans-serif; cursor:pointer; }
+.catalog-summary button:hover { color:var(--navy); }
+.catalog-summary button:disabled { opacity:.6; cursor:default; }
+.catalog-empty { margin:1.4rem 0 0; padding:1.2rem; border:1px solid #bed7e7; border-radius:.8rem; color:var(--navy); background:#fff; }
+.catalog-filtered>.products-section { padding-bottom:2rem; }
+.catalog-filtered .catalog-tools { margin-bottom:2rem; }
+.catalog-filtered>.games-section { padding-top:2rem; }
+.catalog-filtered .family-heading { margin-top:2rem; }
+@media(max-width:1000px) { .catalog-form { grid-template-columns:repeat(2,minmax(0,1fr)); } .catalog-search { grid-column:1/-1; } }
+@media(max-width:560px) { .catalog-form { grid-template-columns:minmax(0,1fr); } .catalog-tools { padding:1.25rem; } }

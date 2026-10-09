@@ -1,0 +1,24 @@
+---
+import { getPublicProducts } from "../lib/products";
+import { getCatalogTargets, catalogPlatformLabels } from "../lib/catalog";
+import "../styles/catalog.css";
+const { lang = "cs" } = Astro.props as { lang?: "cs" | "en" };
+const cs = lang === "cs";
+const availablePlatforms = new Set(getPublicProducts().flatMap(product => getCatalogTargets(product).map(target => target.platform)));
+const platforms = Object.entries(catalogPlatformLabels).filter(([platform]) => availablePlatforms.has(platform as keyof typeof catalogPlatformLabels));
+---
+<div class="catalog-tools" data-catalog-controls hidden>
+  <div class="catalog-intro">
+    <p class="catalog-kicker">{cs ? "Najděte to své" : "Find your next app"}</p>
+    <h2>{cs ? "Celé portfolio. Pár kliknutí." : "The whole portfolio. A few clicks."}</h2>
+    <p id="catalog-help">{cs ? "Prozkoumejte aplikace i hry podle názvu, zařízení a dostupnosti." : "Explore apps and games by name, device and availability."}</p>
+  </div>
+  <form class="catalog-form" role="search" aria-label={cs ? "Hledání v portfoliu" : "Search the portfolio"} aria-describedby="catalog-help">
+    <label class="catalog-search"><span>{cs ? "Hledat aplikaci nebo téma" : "Find an app or a topic"}</span><input type="search" name="query" autocomplete="off" maxlength="100" placeholder={cs ? "Třeba jídlo, NEST nebo AI…" : "Try food, NEST or AI…"} /></label>
+    <label><span>{cs ? "Dostupnost" : "Availability"}</span><select name="availability"><option value="all">{cs ? "Všechny aplikace" : "All apps"}</option><option value="available">{cs ? "Dostupné pro veřejnost" : "Publicly available"}</option><option value="upcoming">{cs ? "Připravované verze" : "Upcoming versions"}</option><option value="private">{cs ? "Soukromé nasazení" : "Private deployment"}</option></select></label>
+    <label><span>{cs ? "Zařízení" : "Device"}</span><select name="platform"><option value="all">{cs ? "Všechna zařízení" : "All devices"}</option>{platforms.map(([platform, labels]) => <option value={platform}>{labels[lang]}</option>)}</select></label>
+    <div class="catalog-summary"><p role="status" aria-live="polite" aria-atomic="true" data-catalog-results></p><button type="reset" disabled>{cs ? "Zrušit filtry" : "Clear filters"}<span aria-hidden="true">↺</span></button></div>
+  </form>
+  <p class="catalog-empty" data-catalog-empty hidden>{cs ? "Žádná aplikace neodpovídá této kombinaci. Zkuste jiný název nebo zrušte filtry." : "No apps match this combination. Try another name or clear the filters."}</p>
+</div>
+<script is:inline type="module" src="/catalog.js"></script>

@@ -20,6 +20,6 @@ const switchHref = alternatePath ?? (cs ? toEnglish(path) : toCzech(path));
   </nav>
   <div class="header-actions">
     <a class="language" href={switchHref} hreflang={cs ? "en" : "cs"} aria-label={cs ? "English version" : "Česká verze"}>{cs ? "EN" : "CS"}</a>
-    <button class="menu-toggle" type="button" aria-controls="site-navigation" aria-expanded="false" aria-label={cs ? "Otevřít nabídku" : "Open menu"}><span></span><span></span></button>
+    <button class="menu-toggle" type="button" aria-controls="site-navigation" aria-expanded="false" aria-label={cs ? "Otevřít nabídku" : "Open menu"} data-open-label={cs ? "Otevřít nabídku" : "Open menu"} data-close-label={cs ? "Zavřít nabídku" : "Close menu"}><span></span><span></span></button>
   </div>
 </header>
