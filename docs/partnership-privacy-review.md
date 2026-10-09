@@ -1,9 +1,18 @@
 # Partnership forms: processing notice for owner review
 
-Version: `partnership-intake-20261009-1`. **Draft; not approved or published.**
-The owner's request authorizes preparation of the shared feature, not publication
-of this new processing notice or production activation. Existing VCode contact notice
+Version: `partnership-intake-20261009-1`. **Moje porce CZ approved, publication pending;
+other notices remain drafts.** The original request authorized preparation of the
+shared feature. The subsequent decision below authorizes publication and intake
+activation only for the approved Moje porce scope. Existing VCode contact notice
 `contact-20261009` and approved analytics scopes remain unchanged.
+
+Update 9 October 2026: the owner subsequently approved the exact **Czech Moje
+porce notice and intake activation**, answering “Schvaluji znění i zapnutí příjmu”
+in the VCode chat. The composed text digest remains
+`e51f75f34afd247d2ec6ed64282d7b9655865bf330736e308d4e9539c45bca1a`.
+Publication/read-back and activation remain pending and are tracked in
+`partnership-activation-2026-10-09.md`. English, other applications and the
+independent partner-record proposal remain unapproved.
 
 ## Concrete application notices
 

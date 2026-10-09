@@ -1,5 +1,11 @@
 # Shared partnership intake: adoption and operations
 
+Current production/owner decision: see
+[the 9 October activation receipt](partnership-activation-2026-10-09.md).
+Central code, private dashboard and gateway are deployed; Moje porce's approved
+Czech notice publication and client activation remain pending. Historical
+preparation evidence below describes the earlier, disabled preparation state.
+
 Status: **prepared only**. This runbook does not authorize production deployment,
 publication of processing notices, intake activation or partner promotion. The
 frozen interface is [partnership-intake-v1.md](partnership-intake-v1.md), with
@@ -135,6 +141,13 @@ navigation, visible field labels, error associations, focus and 200% text zoom.
 ## Private configuration and revocation
 
 Templates are in `deploy/partnerships/`. Do not treat examples as live secrets.
+For future production releases, preserve the installed contact/partnership/Recall
+overlays and the current protected runtime environment. Read the running service's
+Compose configuration-file labels and the activation receipt; do not recreate it
+from the base Compose file and default false flags alone. The private gateway is
+its own project and has no public port. Renewal, deployment and rollback must keep
+its certificate/CA separation and the application's existing geo trust.
+
 All top-level and per-app flags remain false initially. Copy the registry into an
 operator-owned directory, mode 0700, with files mode 0600 owned by service UID 1000.
 Create empty credential files only as a disabled preparation step; empty, missing,

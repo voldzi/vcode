@@ -1,0 +1,37 @@
+# Private server-only bridge. It publishes no host ports and creates no network.
+# App trust must preserve its existing CA certificates; mount a combined public
+# CA bundle in the app, never the CA signing key or gateway's server key.
+services:
+  gateway:
+    image: nginx@sha256:97d490c12ba55b4946b01546d1c3ed324e8d41ab1c9fcb2a616aa470620e5b46
+    restart: unless-stopped
+    user: "101:101"
+    entrypoint: ["nginx", "-g", "daemon off;"]
+    read_only: true
+    tmpfs:
+      - /tmp:uid=101,gid=101,mode=0700,size=16m
+    volumes:
+      - ./tls-gateway.conf:/etc/nginx/nginx.conf:ro
+      - ${VCODE_PARTNERSHIP_TLS:?Configure protected private TLS directory}:/run/partnership-tls:ro
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: [ALL]
+    mem_limit: 64m
+    cpus: 0.25
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "--max-time", "5", "--cacert", "/run/partnership-tls/ca.pem", "--resolve", "vcode-partnership-intake:8443:127.0.0.1", "https://vcode-partnership-intake:8443/health"]
+      interval: 30s
+      timeout: 6s
+      retries: 3
+      start_period: 5s
+    networks:
+      central:
+        aliases: [vcode-partnership-intake]
+      client:
+        aliases: [vcode-partnership-intake]
+networks:
+  central:
+    external: true
+    name: vcode-prod_default
+  client:
+    external: true
+    name: kaloricke-tabulky-production_backend
