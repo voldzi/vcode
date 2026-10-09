@@ -7,7 +7,7 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import vm from 'node:vm';
 
-const names=['portfolio-vcode-click','portfolio-moje-porce-click','portfolio-mestem-hrou-click'];
+const names=['portfolio-vcode-click','portfolio-moje-porce-click','portfolio-mestem-hrou-click','portfolio-myslopis-click'];
 const listen=server=>new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 
 test('authenticated dashboard returns only approved footer capabilities and events from a synthetic permitted website',async()=>{
@@ -71,15 +71,19 @@ test('authenticated dashboard returns only approved footer capabilities and even
   assert.deepEqual(result.capabilities.events,['outbound-click',names[0],names[2]]);
   assert.deepEqual(result.events,[events[0],events[1],events[3]]);
   assert.equal(result.portfolioMetricsCollectionStartedAt,started);
+  await save({portfolioMetricsApprovedAt:approval,portfolioMetricsCollectionStartedAt:started,allowedEvents:['outbound-click',names[0],names[1],names[3],'portfolio-arbitrary-click']});
+  result=await summary();
+  assert.deepEqual(result.capabilities.events,['outbound-click',names[0],names[1],names[3]]);
+  assert.deepEqual(result.events,[events[0],events[1],events[2],events[4]],'the three-destination Městem hrou scope includes Myslopis but never grants its own unapproved destination');
   await save({portfolioMetricsApprovedAt:approval,portfolioMetricsCollectionStartedAt:'invalid date'});
   result=await summary();
   assert.deepEqual(result.capabilities.events,['outbound-click',...names]);
-  assert.deepEqual(result.events,events.slice(0,4));
+  assert.deepEqual(result.events,events.slice(0,1+names.length));
   assert.equal(result.portfolioMetricsCollectionStartedAt,approval,'approved date is the safe fallback when collection start is absent or invalid');
   await save({portfolioMetricsApprovedAt:approval,collectionEnabled:false});
   result=await summary();
   assert.equal(result.collectionEnabled,false);
-  assert.deepEqual(result.events,events.slice(0,4),'disabled collection retains approved historical metrics');
+  assert.deepEqual(result.events,events.slice(0,1+names.length),'disabled collection retains approved historical metrics');
   await fetch(base+'/prehled/api/logout',{method:'POST',headers:{...headers,Origin:'https://dashboard.example.invalid'},body:'{}'});
   const before=requests.length;
   assert.equal((await fetch(base+'/prehled/api/summary',{headers})).status,401);
@@ -99,13 +103,14 @@ test('footer rows name all approved destinations in both locales and show zero o
  const count=script.match(/^const count=.*;$/m)?.[0];assert.ok(count);
  const context={};
  vm.runInNewContext(`${translations}\nlet language='cs';\nconst t=key=>labels[language][key]??key;\n${count}\n${eventName}\n${portfolioRows}\nthis.setLanguage=value=>language=value;this.label=t;`,context);
- const data={capabilities:{events:['outbound-click',...names]},events:[{x:names[0],y:2},{x:names[0],y:{value:3}},{x:names[1],y:4},{x:'unknown-click',y:99},{x:'outbound-click',y:40}]};
- const expected=[{x:names[0],y:5},{x:names[1],y:4},{x:names[2],y:0}];
+ const data={capabilities:{events:['outbound-click',...names,'portfolio-arbitrary-click']},events:[{x:names[0],y:2},{x:names[0],y:{value:3}},{x:names[1],y:4},{x:names[3],y:6},{x:'unknown-click',y:99},{x:'outbound-click',y:40},{x:'portfolio-arbitrary-click',y:77}]};
+ const expected=[{x:names[0],y:5},{x:names[1],y:4},{x:names[2],y:0},{x:names[3],y:6}];
  for(const language of ['cs','en']){
   context.setLanguage(language);
   assert.equal(context.label('portfolioTitle'),language==='cs'?'Odkazy v patičce':'Footer links');
-  assert.deepEqual(names.map(name=>context.eventName(name)),['VCode','Moje porce','Městem hrou']);
+  assert.deepEqual(names.map(name=>context.eventName(name)),['VCode','Moje porce','Městem hrou','Myslopis']);
   assert.deepEqual(JSON.parse(JSON.stringify(context.portfolioRows(data))),expected);
+  assert.deepEqual(JSON.parse(JSON.stringify(context.portfolioRows({...data,capabilities:{events:['outbound-click',names[0],names[1],names[3]]}}))),[expected[0],expected[1],expected[3]],'Městem hrou shows its three approved footer destinations in either locale');
   assert.deepEqual(JSON.parse(JSON.stringify(context.portfolioRows({...data,capabilities:{events:['outbound-click',names[2]]}}))),[expected[2]]);
   assert.deepEqual(JSON.parse(JSON.stringify(context.portfolioRows({...data,capabilities:{events:['outbound-click']}}))),[]);
   assert.match(context.label('portfolioNote'),language==='cs'?/Nejde o počet lidí, registrací/:/not counts of people, registrations/);

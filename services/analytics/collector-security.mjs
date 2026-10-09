@@ -14,7 +14,7 @@ export function acceptPublicEvent(input,headers,sites){
 }
 
 const sourceDomains={google:'google.com',seznam:'seznam.cz',bing:'bing.com',duckduckgo:'duckduckgo.com',facebook:'facebook.com',instagram:'instagram.com',tiktok:'tiktok.com',linkedin:'linkedin.com',openai:'chatgpt.com',claude:'claude.ai',perplexity:'perplexity.ai'};
-const portfolioEvents=new Set(['portfolio-vcode-click','portfolio-moje-porce-click','portfolio-mestem-hrou-click']);
+const portfolioEvents=new Set(['portfolio-vcode-click','portfolio-moje-porce-click','portfolio-mestem-hrou-click','portfolio-myslopis-click']);
 const supportedEvents=new Set(['app-store-click','contact-click','outbound-click',...portfolioEvents]);
 export function effectiveApprovedEvents(site){
  if(site?.integrationVersion!=='vcode-public-v2'||!site.metricsApprovedAt||!Array.isArray(site.allowedEvents))return [];

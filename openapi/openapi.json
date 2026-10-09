@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "VCode public and authenticated API",
-    "version": "1.5.0",
+    "version": "1.6.0",
     "description": "Health, moderated comments, privacy-limited public analytics, authenticated website and distribution metrics, and guarded collaboration enquiries. Enquiry content is never sent to website analytics. Internal service endpoints and credentials are not part of this contract."
   },
   "servers": [
@@ -2161,9 +2161,10 @@
                   "outbound-click",
                   "portfolio-vcode-click",
                   "portfolio-moje-porce-click",
-                  "portfolio-mestem-hrou-click"
+                  "portfolio-mestem-hrou-click",
+                  "portfolio-myslopis-click"
                 ],
-                "description": "Each name must be explicitly approved for the site. The three portfolio names additionally require reviewed site-specific footer scope."
+                "description": "Each name must be explicitly approved for the site. The portfolio names additionally require reviewed site-specific footer scope."
               }
             }
           }

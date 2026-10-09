@@ -82,3 +82,14 @@ příjem všech událostí. Historický schválený rozsah může zůstat vidite
 Nasazení a konkrétní předání pro Studio Balance jsou popsány v
 `studio-balance-footer-analytics.md`. Neveřejný registr a edge klíče zůstávají
 výhradně na serveru. Testy používají izolovaný syntetický web.
+
+Revize `services/analytics/public-v2-portfolio-2.js` přidává jediný konečný
+název `portfolio-myslopis-click`, se stejným wire kontraktem, soukromými
+výlukami a samostatným schválením konkrétního webu. `runtimeRevision` je
+`portfolio-2`; SRI je
+`sha384-X7PYkHsq/VMthl17JMrooPLPjIuIbvATaO4BTzzYARDac6rPfVlTNG1ScD/iyGD3`.
+Revize portfolio-1 zůstává byte-exact a nadále obsluhuje Studio Balance;
+Myslopis ji může použít pro stejné původní tři cíle. Dostupnost čtyř názvů v
+novém klientovi sama žádný web nerozšiřuje: každý zachová svůj přesný schválený
+allowlist. Předání dalších webů a jejich odlišné veřejné cesty jsou v
+`portfolio-footer-analytics.md`; aktivace se přebírá samostatně.
