@@ -70,5 +70,31 @@ vlastníkem. Ikony ani klient nesmí hotlinkovat neveřejné prostředky.
 6. Přehled zobrazí samostatnou sekci „Odkazy v patičce“ s počty za vybrané
    období a začátkem rozlišení. Kliknutí není počet lidí ani cílová konverze.
 
-Stav tohoto dokumentu: příprava podpory a izolované testy; produkční přijetí
-a aktivaci zaznamenat až po skutečném společném ověření.
+## Přijetí centrální podpory — 9. října 2026
+
+- Zdroj `74e5555`; `pnpm check`: 0 chyb, 0 varování, 15 původních hints.
+- `pnpm test`: 116/116 (33 blog, 51 analytika, 32 distribuce).
+- Patnáct nových a kompatibilitních testů prošlo i v přesném izolovaném
+  analytickém kandidátu Node 24 bez sítě a produkčních dat. Široký pokus
+  spustit všechny analytické testy v tomto obrazu potřeboval veřejné soubory,
+  které do jeho provozní hranice nepatří; úplná sada prošla ve zdrojovém stromu.
+- Analytický obraz `sha256:f5617560dd04646f18877fc71a2b93af7babfaf09bc3a8e950716ed32729e819`.
+- Oba předepsané web/blog obrazy sestaveny; `pnpm build` vytvořil 156 stránek.
+  Jejich bajty zůstaly stejné jako předchozí přijaté obrazy. Nginx boundary
+  prošla včetně CSP, anonymního 401, kontaktu a rozsahů stahování.
+- Nasazeny pouze collector a dashboard. Web, blog, worker, downloads, monitor,
+  Umami a databáze zachovaly identitu kontejneru, obraz a datum spuštění.
+- První předběžné ověření Compose se zastavilo kvůli chybějícím odkazům na
+  existující neveřejné konfigurační soubory. Zdroj byl vrácen, služby se
+  nezměnily. Následné nasazení použilo přesné env-file nastavení běžících služeb.
+- Veřejné health/blog health, oba jazyky, produkty/návody a oba blogy prošly.
+  Privátní summary zůstává anonymně 401; původní veřejná prezentace beze změny.
+- Všechny tři servírované v2 runtime mají přesné uvedené piny. Přehled veřejně
+  servíruje přesně nový verzovaný script. Žádné reálné návštěvy nebyly čteny
+  nebo vytvářeny pro převzetí.
+- Neveřejný registr zůstal beze změny; tři nové události jsou dosud zavřené.
+  Aktivace čeká na důkaz zveřejnění Studio Balance a ověřený bridge.
+
+Vratný soukromý release obsahuje source snapshot, manifest, původní zdroje,
+původní obrazové tagy, konfiguraci nasazení a přijetí. Tajné údaje ani soukromý
+registr nejsou součástí veřejného předání nebo tohoto repozitáře.
