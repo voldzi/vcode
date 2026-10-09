@@ -1,0 +1,127 @@
+---
+import type { Product } from "../lib/products";
+const { product, lang = "cs" } = Astro.props as { product: Product; lang?: "cs" | "en" };
+const cs = lang === "cs";
+const assets = "/showcases/mestem-hrou/2026-10-09";
+const copy = cs ? {
+  intro: "Městem hrou nabízí bezplatné výpravy po českých městech a jejich okolí. Vyber si příběh, otevři ho v telefonu a na jednotlivých zastaveních hledej odpovědi přímo kolem sebe. S orientací pomůže mapa, s úkolem nápověda. Hra běží v mobilním prohlížeči; instalace i účet jsou volitelné.",
+  tags: ["Zdarma", "V mobilním prohlížeči", "Bez povinného účtu"],
+  heroAlt: "Městem hrou: příběhové výpravy v telefonu. Tři skutečné obrazovky ukazují výběr výprav, detail výpravy a nevyřešený herní úkol.",
+  galleryTitle: "Od výběru výpravy k prvnímu úkolu",
+  galleryIntro: "Nahlédni do hry. Každou ukázku můžeš otevřít v plné velikosti.",
+  enlarge: "Zvětšit ukázku",
+  steps: [
+    { file: "01-vyber-vyprav", title: "Vyber si, kam vyrazíš.", text: "Prohlédni si nabídku výprav a najdi místo nebo příběh, který tě zajímá.", alt: "Výběr výprav v aplikaci Městem hrou s vyhledáváním a kartami míst." },
+    { file: "02-detail-vypravy", title: "Než vyrazíš, prohlédni si trasu.", text: "Zjisti, co tě čeká, kde výprava začíná a jaká je její délka a náročnost.", alt: "Detail výpravy Městem hrou v Karlově Studánce s úvodem do příběhu, praktickými údaji a možností zahájit hru." },
+    { file: "03-mapa-vypravy", title: "Zastavení najdeš na mapě.", text: "Mapa výpravy v Karlově Studánce ukazuje body zastavení a spojnici trasy.", alt: "Mapa výpravy v Karlově Studánce s číslovanými zastaveními a vyznačeným průběhem trasy." },
+    { file: "04-herni-ukol", title: "Odpověď hledej kolem sebe.", text: "Rozhlédni se a vyřeš úkol. Když si nevíš rady, můžeš otevřít nápovědu.", alt: "Nevyřešený herní úkol v aplikaci Městem hrou s otázkou, neoznačenými možnostmi odpovědi a tlačítky pro ověření a nápovědu." }
+  ],
+  capture: "Ukázky rozhraní z 9. října 2026. Herní úkol pochází z místního náhledu; ostatní obrazovky z veřejné aplikace.",
+  mapTitle: "Malý detail. Další dílek příběhu.",
+  mapText: "Od pramene ke kapli, od jednoho zastavení k dalšímu. Ukázka z Karlovy Studánky propojuje skutečná místa, mapu a příběh.",
+  before: "Před startem si v aplikaci prohlédni délku, náročnost a stav kontroly vybrané výpravy.",
+  mapAlt: "Skutečná mapa výpravy v Karlově Studánce s číslovanými zastaveními a vyznačenou spojnicí trasy. Titulek: Zastavení najdeš na mapě.",
+  mapCredit: "Mapová data:",
+  features: "Co umí",
+  availability: "Dostupnost",
+  ready: "Kam vyrazíš příště?",
+  readyText: "Vyber příběh. Vyraz ven. Rozhlédni se.",
+  action: "Vybrat výpravu"
+} : {
+  intro: "Městem hrou offers free outdoor story games in Czech towns and their surroundings. Choose a trail, open it on your phone and find answers in the places around you. A map helps you get there, and hints help with the tasks. Play in your mobile browser; an account and installation are optional. Selected games are available in English.",
+  tags: ["Free to play", "In your mobile browser", "No account required"],
+  heroAlt: "Městem hrou outdoor story games. Three real app screens show the trail catalogue, a trail detail and an unsolved task.",
+  galleryTitle: "From choosing a trail to your first task",
+  galleryIntro: "Take a look inside the game. Open any screenshot at full size. Screenshots show the Czech interface.",
+  enlarge: "View full-size screenshot",
+  steps: [
+    { file: "01-vyber-vyprav", title: "Choose a place and a story.", text: "Browse the trails and find a place or a story that interests you.", alt: "The Městem hrou trail catalogue, showing search controls and place cards." },
+    { file: "02-detail-vypravy", title: "See what to expect before you set out.", text: "Check where the trail starts, its length and difficulty before you go.", alt: "A Městem hrou trail detail in Karlova Studánka with a story introduction, practical information and the option to start." },
+    { file: "03-mapa-vypravy", title: "Find the trail stops on the map.", text: "The Karlova Studánka trail map shows the stops and the route connecting them.", alt: "A trail map of Karlova Studánka with numbered stops and a marked route." },
+    { file: "04-herni-ukol", title: "Look around to find the answer.", text: "Look around and solve the task. Open a hint when you need a little help.", alt: "An unsolved Městem hrou task with a question, unselected answer choices and buttons to check the answer or show a hint." }
+  ],
+  capture: "Interface previews captured on 9 October 2026. The task is from a local preview; the other screens are from the public app.",
+  mapTitle: "A small detail. Another piece of the story.",
+  mapText: "From a spring to a chapel, from one stop to the next. This Karlova Studánka preview brings real places, a map and a story together.",
+  before: "Before starting, check the chosen trail’s length, difficulty and verification status in the app.",
+  mapAlt: "A real trail map of Karlova Studánka with numbered stops and a marked route. Heading: Find the stops on the map.",
+  mapCredit: "Map data:",
+  features: "What it does",
+  availability: "Availability",
+  ready: "Where will you go next?",
+  readyText: "Choose a story. Head outside. Look around.",
+  action: "Choose a game"
+};
+const target = cs ? product.externalUrl : (product.externalUrlEn ?? product.externalUrl);
+---
+<div class="mh-showcase" data-static-showcase>
+  <section class="mh-intro" aria-label={cs ? "Příběhové výpravy v telefonu" : "Outdoor story games on your phone"}>
+    <p>{copy.intro}</p>
+    <ul class="mh-tags" aria-label={cs ? "Jak hrát" : "Ways to play"}>{copy.tags.map(tag => <li>{tag}</li>)}</ul>
+    <a class="button mh-button" href={target}>{copy.action} <span aria-hidden="true">↗</span></a>
+  </section>
+  <figure class="mh-hero">
+    <img src={`${assets}/01-web-hlavni-ukazka.webp`} srcset={`${assets}/01-web-hlavni-ukazka-640.webp 640w, ${assets}/01-web-hlavni-ukazka-1200.webp 1200w, ${assets}/01-web-hlavni-ukazka.webp 2400w`} sizes="(max-width: 760px) 90vw, (max-width: 1600px) 84vw, 1344px" width="2400" height="1500" loading="lazy" decoding="async" alt={copy.heroAlt} />
+  </figure>
+  <section class="mh-gallery-section" aria-labelledby="mh-gallery-title">
+    <div class="mh-heading"><p class="kicker">{cs ? "Uvnitř hry" : "Inside the game"}</p><h2 id="mh-gallery-title">{copy.galleryTitle}</h2><p>{copy.galleryIntro}</p></div>
+    <div class="mh-gallery">{copy.steps.map((step, index) =>
+      <figure class="mh-step">
+        <a class="mh-screen" href={`${assets}/${step.file}.webp`} aria-label={`${copy.enlarge}: ${step.title}`}>
+          <img src={`${assets}/${step.file}.webp`} srcset={`${assets}/${step.file}-270.webp 270w, ${assets}/${step.file}.webp 540w`} sizes="(max-width: 640px) min(11.5rem, calc(84vw - 2rem)), 12rem" width="540" height="1080" loading="lazy" decoding="async" alt={step.alt} />
+          <span class="mh-enlarge" aria-hidden="true">{copy.enlarge} <span>↗</span></span>
+        </a>
+        <figcaption><span class="mh-number" aria-hidden="true">0{index + 1}</span><h3>{step.title}</h3><p>{step.text}</p></figcaption>
+      </figure>
+    )}</div>
+    <p class="mh-capture">{copy.capture}</p>
+  </section>
+  <section class="mh-map" aria-labelledby="mh-map-title">
+    <div><p class="kicker">Karlova Studánka</p><h2 id="mh-map-title">{copy.mapTitle}</h2><p>{copy.mapText}</p><p class="mh-before">{copy.before}</p></div>
+    <figure><img src={`${assets}/02-web-mapa-vypravy.webp`} srcset={`${assets}/02-web-mapa-vypravy-640.webp 640w, ${assets}/02-web-mapa-vypravy-1200.webp 1200w, ${assets}/02-web-mapa-vypravy.webp 1600w`} sizes="(max-width: 900px) 85vw, 40vw" width="1600" height="1200" loading="lazy" decoding="async" alt={copy.mapAlt} /><figcaption>{copy.mapCredit} <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a> · <a href="https://opendatacommons.org/licenses/odbl/">ODbL 1.0</a></figcaption></figure>
+  </section>
+  <div class="detail-grid mh-details"><section><h2>{copy.features}</h2><ul>{(cs ? product.capabilitiesCs : product.capabilitiesEn).map(item => <li>{item}</li>)}</ul></section><aside><span>{copy.availability}</span><strong>{cs ? product.availabilityCs : product.availabilityEn}</strong><h2>{copy.ready}</h2><p>{copy.readyText}</p><a class="button mh-button" href={target}>{copy.action} <span aria-hidden="true">↗</span></a></aside></div>
+</div>
+<style>
+  :global(.product-detail.mestem-hrou-detail) { padding-top:clamp(2rem,5vw,4.5rem); }
+  :global(.product-detail.mestem-hrou-detail h1) { font-size:clamp(2.4rem,7vw,6rem); overflow-wrap:anywhere; }
+  :global(.mestem-hrou-detail .detail-support .text-link) { white-space:normal; overflow-wrap:anywhere; }
+  .mh-showcase { --mh-forest:#203c36; --mh-muted:#53675e; --mh-cream:#f7f4ec; margin-top:2rem; }
+  .mh-intro > p { max-width:75ch; color:var(--muted); font-size:1.1rem; }
+  .mh-tags { display:flex; flex-wrap:wrap; gap:.65rem; padding:0; margin:1.5rem 0; list-style:none; }
+  .mh-tags li { background:#e8efe9; border:1px solid #d2dfd5; border-radius:2rem; padding:.35rem .85rem; color:var(--mh-forest); font-size:.85rem; font-weight:650; }
+  .mh-button { background:var(--mh-forest); color:#fffdf8; border-color:var(--mh-forest); min-height:48px; }
+  .mh-button:hover { background:#31574b; border-color:#31574b; color:#fffdf8; }
+  .mh-hero { margin:2rem 0 4rem; overflow:hidden; border:1px solid #e1e3d8; border-radius:var(--radius); background:var(--mh-cream); }
+  .mh-hero img { width:100%; height:auto; }
+  .mh-heading { max-width:52rem; margin-bottom:2rem; }
+  .mh-heading h2, .mh-map h2 { font:750 clamp(1.6rem,3vw,2.5rem)/1.15 "Manrope Variable",sans-serif; letter-spacing:-.04em; color:var(--mh-forest); margin:.5rem 0 1rem; }
+  .mh-heading > p:last-child { color:var(--muted); }
+  .mh-gallery { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,15rem),1fr)); gap:1.1rem; }
+  .mh-step { min-width:0; margin:0; border:1px solid #dce5de; border-radius:1.3rem; background:var(--white); overflow:hidden; }
+  .mh-screen { display:flex; flex-direction:column; align-items:center; padding:1rem; background:var(--mh-cream); border-bottom:1px solid #e1e3d8; transition:background .2s ease; }
+  .mh-screen:hover { background:#e8eadf; }
+  .mh-screen:focus-visible { outline-offset:-5px; }
+  .mh-screen img { width:auto; height:auto; max-width:100%; max-height:24rem; border-radius:.8rem; box-shadow:0 8px 20px #203c3612; transition:transform .25s ease; }
+  .mh-screen:hover img { transform:translateY(-3px); }
+  .mh-enlarge { display:flex; align-items:center; gap:.5rem; margin-top:1rem; font-size:.8rem; font-weight:650; color:var(--mh-forest); min-height:24px; text-decoration:underline; text-underline-offset:.2em; }
+  .mh-step figcaption { padding:1.25rem; }
+  .mh-number { display:inline-grid; place-items:center; min-width:2rem; min-height:2rem; padding:.2rem; border-radius:50%; background:#edc679; color:var(--mh-forest); font-size:.8rem; font-weight:750; }
+  .mh-step h3 { margin:.85rem 0 .6rem; font:750 1.05rem/1.35 "Manrope Variable",sans-serif; color:var(--mh-forest); }
+  .mh-step figcaption p { font-size:.95rem; line-height:1.65; color:var(--muted); margin:0; }
+  .mh-capture { max-width:80ch; margin:1.5rem 0 0; color:var(--muted); font-size:.85rem; }
+  .mh-map { display:grid; grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr); gap:clamp(1.5rem,4vw,3.5rem); align-items:center; padding:clamp(1.25rem,3vw,2.5rem); margin-top:3rem; border-radius:var(--radius); background:var(--mh-cream); border:1px solid #e1e3d8; }
+  .mh-map p { color:var(--mh-muted); }
+  .mh-map .kicker { color:var(--mh-forest); }
+  .mh-before { padding-left:1rem; border-left:3px solid #d6a74b; font-size:.95rem; }
+  .mh-map figure { min-width:0; margin:0; }
+  .mh-map img { width:100%; height:auto; border-radius:1rem; }
+  .mh-map figcaption { margin-top:.8rem; font-size:.8rem; color:var(--mh-muted); }
+  .mh-map a { display:inline-block; padding:.3rem 0; text-decoration:underline; text-underline-offset:.2em; }
+  .mh-details { margin-top:3rem; }
+  .mh-details aside h2 { margin:1rem 0 0; }
+  .mh-details aside p { margin:0 0 .5rem; }
+  @media (max-width:900px) { .mh-map { grid-template-columns:1fr; } }
+  @media (max-width:640px) { .mh-hero { margin-bottom:2.5rem; border-radius:1rem; } .mh-screen img { max-height:23rem; } .mh-step { display:grid; grid-template-columns:minmax(0,1fr); } }
+  @media (prefers-reduced-motion:reduce) { .mh-screen, .mh-screen img { transition:none; } .mh-screen:hover img { transform:none; } }
+</style>
