@@ -1,0 +1,80 @@
+---
+import "../styles/collaboration.css";
+import { getPublicProducts } from "../lib/products";
+const applications = getPublicProducts();
+const { lang = "cs" } = Astro.props as { lang?: "cs" | "en" };
+const cs = lang === "cs";
+const email = "podpora@zeleznalady.cz";
+const subject = cs ? "Zájem o spolupráci" : "Collaboration enquiry";
+const emailHref = `mailto:${email}?subject=${encodeURIComponent(subject)}`;
+const options = cs ? [
+  { title: "Vývoj aplikace", description: "Máte záměr pro nový digitální produkt? Probereme, komu má pomáhat, jaký úkol řeší a jaký rozsah vývoje dává smysl." },
+  { title: "Partnerství", description: "Chcete propojit svůj projekt s našimi aplikacemi nebo společně rozvíjet nový nápad? Napište, jak by mohla spolupráce fungovat." },
+  { title: "Soukromé nasazení", description: "Zajímá vás některá z našich aplikací pro vaši organizaci? Probereme její vhodnost, požadavky na prostředí a možnosti nasazení po dohodě." }
+] : [
+  { title: "App development", description: "Have an idea for a digital product? We can discuss who it should help, the task it solves and a practical scope for development." },
+  { title: "Partnership", description: "Want to connect your project with our apps or develop an idea together? Tell us how you see the collaboration working." },
+  { title: "Private deployment", description: "Interested in one of our apps for your organisation? We can discuss its suitability, environment requirements and deployment options by arrangement." }
+];
+---
+<article class="collaboration-page">
+  <header class="collaboration-hero">
+    <div class="collaboration-intro">
+      <p class="kicker">{cs ? "Spolupráce s VCode" : "Work with VCode"}</p>
+      <h1>{cs ? "Pojďme tvořit něco užitečného." : "Let’s build something useful."}</h1>
+      <p class="collaboration-lead">{cs ? "Nová aplikace, společný projekt nebo řešení pro vaši organizaci. Napište nám, co máte na mysli — další postup a rozsah spolupráce domluvíme společně." : "A new app, a shared project or a solution for your organisation. Tell us what you have in mind, and we can agree on the next steps and scope together."}</p>
+      <a class="button primary" href="#poptavka" data-collaboration-interest="true">{cs ? "Napsat o spolupráci" : "Enquire about collaboration"}<span aria-hidden="true">↓</span></a>
+    </div>
+    <aside class="collaboration-contact" aria-labelledby="collaboration-contact-title">
+      <p class="collaboration-eyebrow">{cs ? "Přímý kontakt" : "Direct contact"}</p>
+      <h2 id="collaboration-contact-title">{cs ? "Kontakt e-mailem" : "Contact by email"}</h2>
+      <a class="collaboration-email" href={emailHref}>{email}</a>
+      <p>{cs ? "E-mail můžete také zkopírovat nebo opsat do svého poštovního programu." : "You can also copy the address or enter it into your email app."}</p>
+    </aside>
+  </header>
+
+  <section class="collaboration-options" aria-labelledby="collaboration-options-title">
+    <div class="collaboration-section-heading"><p class="kicker">{cs ? "Možnosti spolupráce" : "Ways to work together"}</p><h2 id="collaboration-options-title">{cs ? "Co můžeme společně probrat" : "What we can explore together"}</h2></div>
+    <ul class="collaboration-cards">
+      {options.map((option, index) => <li class={`collaboration-card collaboration-card-${index + 1}`}><span class="collaboration-number" aria-hidden="true">0{index + 1}</span><h3>{option.title}</h3><p>{option.description}</p></li>)}
+    </ul>
+    <p class="collaboration-arrangement">{cs ? "Konkrétní možnosti a podmínky spolupráce vždy závisí na záměru a vzájemné dohodě." : "The available options and terms of collaboration depend on your project and mutual agreement."}</p>
+  </section>
+
+  <section class="collaboration-brief" aria-labelledby="collaboration-brief-title">
+    <div><p class="kicker">{cs ? "První zpráva" : "Your first message"}</p><h2 id="collaboration-brief-title">{cs ? "Co nám napsat" : "What to include"}</h2><p>{cs ? "Stačí stručný popis. Podrobnosti můžeme upřesnit při další domluvě." : "A short description is enough. We can clarify the details as the conversation develops."}</p></div>
+    <ol>
+      <li><strong>{cs ? "Váš záměr" : "Your idea"}</strong><span>{cs ? "Co chcete vytvořit nebo jaký problém potřebujete řešit." : "What you want to build or the problem you need to solve."}</span></li>
+      <li><strong>{cs ? "Aplikace nebo organizace" : "App or organisation"}</strong><span>{cs ? "Pokud je to důležité, uveďte název aplikace nebo organizace. Tato informace je nepovinná." : "If relevant, include the app or organisation name. This is optional."}</span></li>
+      <li><strong>{cs ? "Rozsah a harmonogram" : "Scope and timing"}</strong><span>{cs ? "Jak velký projekt zvažujete a jakou máte představu o termínech, pokud už ji znáte." : "The size of the project you are considering and any timing you have in mind."}</span></li>
+    </ol>
+  </section>
+
+  <section id="poptavka" class="collaboration-enquiry" aria-labelledby="contact-form-title">
+    <div class="collaboration-section-heading"><p class="kicker">{cs ? "Ozvěte se nám" : "Get in touch"}</p><h2 id="contact-form-title">{cs ? "Váš nápad. Naše další domluva." : "Your idea. Our next conversation."}</h2><p>{cs ? "Napište stručně, co potřebujete. Povinné údaje jsou označené hvězdičkou." : "Briefly tell us what you need. Required fields are marked with an asterisk."}</p></div>
+    <p id="contact-fallback" class="contact-fallback">{cs ? "Můžete nám napsat přímo na" : "You can email us directly at"} <a href={emailHref}>{email}</a>.</p>
+    <form id="contact-form" class="contact-form" method="post" action="/api/contact" data-locale={lang} data-privacy-version="contact-20261009" aria-describedby="contact-privacy" hidden>
+      <div class="contact-fields">
+        <label>{cs ? "Jméno *" : "Name *"}<input name="name" autocomplete="name" required minlength="2" maxlength="100" /></label>
+        <label>{cs ? "E-mail *" : "Email *"}<input name="email" type="email" autocomplete="email" required maxlength="254" /></label>
+        <label>{cs ? "Organizace (nepovinné)" : "Organisation (optional)"}<input name="organization" autocomplete="organization" maxlength="160" /></label>
+        <label>{cs ? "Oblast spolupráce *" : "Area of collaboration *"}<select name="area" required><option value="">{cs ? "Vyberte oblast" : "Choose an area"}</option><option value="development">{cs ? "Vývoj aplikace" : "App development"}</option><option value="partnership">{cs ? "Partnerství" : "Partnership"}</option><option value="private-deployment">{cs ? "Soukromé nasazení" : "Private deployment"}</option><option value="other">{cs ? "Jiný záměr" : "Other enquiry"}</option></select></label>
+        <label class="contact-wide">{cs ? "Aplikace (nepovinné)" : "Application (optional)"}<select name="application"><option value="">{cs ? "Bez konkrétní aplikace" : "No specific application"}</option>{applications.map(application => <option value={application.id}>{application.name}</option>)}</select></label>
+        <label class="contact-wide">{cs ? "Vaše zpráva *" : "Your message *"}<textarea name="message" rows="6" required minlength="30" maxlength="4000" aria-describedby="contact-message-help"></textarea><span id="contact-message-help" class="contact-field-help">{cs ? "30–4 000 znaků. Nevkládejte hesla, zdravotní ani jiné citlivé údaje." : "30–4,000 characters. Do not include passwords, health information or other sensitive data."}</span></label>
+      </div>
+      <div class="contact-trap" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off" maxlength="200" /></label></div>
+      <p id="contact-privacy" class="contact-privacy-note">{cs ? "Údaje použijeme k vyřízení vašeho dotazu a uložíme je nejvýše 90 dní. Telegram dostane pouze obecné upozornění bez obsahu zprávy. Podrobnosti najdete v" : "We use your details to handle your enquiry and retain them for up to 90 days. Telegram receives a generic notification without the message content. Details are in our"} <a href={cs ? "/soukromi/#poptavky-soukromi" : "/en/privacy/#enquiries-privacy"}>{cs ? "informaci o soukromí" : "privacy notice"}</a>.</p>
+      <button class="button primary" type="submit" disabled>{cs ? "Odeslat zprávu" : "Send message"}<span aria-hidden="true">→</span></button>
+      <p id="contact-form-status" role="status" aria-live="polite" tabindex="-1" hidden></p>
+    </form>
+    <noscript><p>{cs ? "Formulář potřebuje JavaScript pro ochranu proti spamu. Použijte prosím e-mail uvedený výše." : "The form needs JavaScript for spam protection. Please use the email address above."}</p></noscript>
+  </section>
+
+  <section class="collaboration-support" aria-labelledby="collaboration-support-title">
+    <div><h2 id="collaboration-support-title">{cs ? "Už používáte naši aplikaci?" : "Already using one of our apps?"}</h2><p>{cs ? "Pro návody, dotazy k používání nebo hlášení problému přejděte do podpory." : "For guides, questions about using an app or reporting a problem, visit support."}</p></div>
+    <a class="button secondary" href={cs ? "/podpora/" : "/en/support/"}>{cs ? "Návody a podpora" : "Guides and support"}<span aria-hidden="true">→</span></a>
+  </section>
+  <p class="collaboration-privacy">{cs ? "Informace o práci s údaji najdete na stránce" : "Information about data handling is available in our"} <a href={cs ? "/soukromi/#poptavky-soukromi" : "/en/privacy/#enquiries-privacy"}>{cs ? "Soukromí webu" : "Website privacy notice"}</a>.</p>
+</article>
+
+<script is:inline defer src="/contact.js?v=20261009-1"></script>

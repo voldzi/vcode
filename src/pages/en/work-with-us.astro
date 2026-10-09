@@ -1,0 +1,15 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CollaborationPage from "../../components/CollaborationPage.astro";
+const pageStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  name: "Work with VCode",
+  url: "https://vcode.zeleznalady.cz/en/work-with-us/",
+  inLanguage: "en",
+  publisher: { "@id": "https://vcode.zeleznalady.cz/#organization" }
+};
+---
+<BaseLayout title="Work with us — VCode" description="App development, partnerships and private deployment by arrangement. Tell VCode about your idea at podpora@zeleznalady.cz." lang="en" path="/en/work-with-us/" alternatePath="/spoluprace/" {pageStructuredData}>
+  <CollaborationPage lang="en" />
+</BaseLayout>

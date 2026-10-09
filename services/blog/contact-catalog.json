@@ -1,0 +1,102 @@
+[
+  {
+    "id": "vcode-recall",
+    "name": "VCode Recall"
+  },
+  {
+    "id": "myslopis",
+    "name": "Myslopis"
+  },
+  {
+    "id": "stratos-voice",
+    "name": "STRATOS Voice"
+  },
+  {
+    "id": "event",
+    "name": "Event"
+  },
+  {
+    "id": "foldlight",
+    "name": "Foldlight"
+  },
+  {
+    "id": "rinklet",
+    "name": "Rinklet"
+  },
+  {
+    "id": "millora",
+    "name": "MILLORA — Mlýn"
+  },
+  {
+    "id": "apsyd",
+    "name": "APSYD"
+  },
+  {
+    "id": "apsyd-central",
+    "name": "APSYD Central"
+  },
+  {
+    "id": "pas",
+    "name": "PAS"
+  },
+  {
+    "id": "jizda",
+    "name": "Jízda"
+  },
+  {
+    "id": "cop-mobile",
+    "name": "COP Mobile"
+  },
+  {
+    "id": "cop",
+    "name": "COP"
+  },
+  {
+    "id": "nest",
+    "name": "NEST"
+  },
+  {
+    "id": "sibenice",
+    "name": "Šibenice"
+  },
+  {
+    "id": "mestem-hrou",
+    "name": "Městem hrou"
+  },
+  {
+    "id": "masaze",
+    "name": "Masáže"
+  },
+  {
+    "id": "studio-balance",
+    "name": "Studio Balance"
+  },
+  {
+    "id": "budget-contract",
+    "name": "Budget & Contract"
+  },
+  {
+    "id": "executive-center",
+    "name": "Executive Center"
+  },
+  {
+    "id": "projectflow",
+    "name": "ProjectFlow"
+  },
+  {
+    "id": "archflow",
+    "name": "ArchFlow"
+  },
+  {
+    "id": "akb",
+    "name": "AI Knowledge Base (AKB)"
+  },
+  {
+    "id": "stratos",
+    "name": "STRATOS"
+  },
+  {
+    "id": "kaloricke-tabulky",
+    "name": "Moje porce"
+  }
+]

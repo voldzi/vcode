@@ -1,0 +1,10 @@
+# Activate only after the concrete contact privacy notice has owner approval.
+services:
+  blog:
+    environment:
+      CONTACT_FORM_ENABLED: ${CONTACT_FORM_ENABLED:-false}
+      CONTACT_FORM_PRIVACY_VERSION: ${CONTACT_FORM_PRIVACY_VERSION:-}
+      CONTACT_FORM_SECRET_FILE: /run/contact/form-secret
+      CONTACT_INBOX_TOKEN_FILE: /run/contact/inbox-token
+    volumes:
+      - ${VCODE_CONTACT_CONFIG:?Configure private contact directory}:/run/contact:ro

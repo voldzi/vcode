@@ -1,0 +1,15 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CollaborationPage from "../components/CollaborationPage.astro";
+const pageStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  name: "Spolupráce s VCode",
+  url: "https://vcode.zeleznalady.cz/spoluprace/",
+  inLanguage: "cs",
+  publisher: { "@id": "https://vcode.zeleznalady.cz/#organization" }
+};
+---
+<BaseLayout title="Spolupráce — VCode" description="Vývoj aplikace, partnerství nebo soukromé nasazení po dohodě. Napište VCode o svém záměru na podpora@zeleznalady.cz." lang="cs" path="/spoluprace/" alternatePath="/en/work-with-us/" {pageStructuredData}>
+  <CollaborationPage lang="cs" />
+</BaseLayout>

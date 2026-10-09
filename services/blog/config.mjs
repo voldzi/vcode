@@ -23,6 +23,14 @@ export async function readSecret(envName, fileEnvName) {
   return process.env[envName]?.trim() ?? "";
 }
 
+// Contact delivery is independent of blog generation. An unavailable optional
+// contact secret disables this boundary instead of stopping the blog worker.
+async function contactSecret(fileEnvName) {
+  if (!process.env[fileEnvName]) return "";
+  try { return (await readFile(process.env[fileEnvName], "utf8")).trim(); }
+  catch { return ""; }
+}
+
 export async function loadConfig() {
   return {
     port: integer("BLOG_PORT", 8090, 1),
@@ -42,6 +50,10 @@ export async function loadConfig() {
     generationEnabled: boolean("BLOG_GENERATION_ENABLED", false),
     commentAutoApprove: boolean("BLOG_COMMENT_AUTO_APPROVE", false),
     commentHashSecret: await readSecret("BLOG_COMMENT_HASH_SECRET", "BLOG_COMMENT_HASH_SECRET_FILE"),
+    contactEnabled: boolean("CONTACT_FORM_ENABLED", false),
+    contactPrivacyVersion: (process.env.CONTACT_FORM_PRIVACY_VERSION ?? "").trim(),
+    contactFormSecret: await contactSecret("CONTACT_FORM_SECRET_FILE"),
+    contactInboxToken: await contactSecret("CONTACT_INBOX_TOKEN_FILE"),
     telegramEnabled: boolean("BLOG_TELEGRAM_ENABLED", false),
     telegramBotToken: await readSecret("TELEGRAM_BOT_TOKEN", "TELEGRAM_BOT_TOKEN_FILE"),
     telegramWebhookSecret: await readSecret("TELEGRAM_WEBHOOK_SECRET", "TELEGRAM_WEBHOOK_SECRET_FILE"),

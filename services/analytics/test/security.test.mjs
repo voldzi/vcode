@@ -20,3 +20,14 @@ test('state-changing dashboard requests require the exact configured origin',()=
  assert.equal(sameOrigin({headers:{}},'https://vcode.zeleznalady.cz'),false);
  assert.equal(sameOrigin({headers:{origin:'https://vcode.zeleznalady.cz'}},'https://vcode.zeleznalady.cz'),true);
 });
+test('collaboration pages allow only named counts, stripping message and destination data',()=>{
+ for(const path of ['/spoluprace/','/en/work-with-us/']) {
+  const {payload}=sanitizeEvent({website:'public-id',name:'collaboration-click',url:path+'?email=synthetic@example.test&message=synthetic#poptavka',referrer:''},sites);
+  assert.equal(payload.url,'https://vcode.zeleznalady.cz'+path);
+  assert.equal(payload.name,'collaboration-click');
+ }
+ for(const path of ['/spoluprace/private','/en/work-with-us/private','/api/contact','/internal/contacts','/prehled/api/inquiries']) {
+  assert.throws(()=>sanitizeEvent({website:'public-id',name:'collaboration-click',url:path},sites));
+ }
+ assert.throws(()=>sanitizeEvent({website:'public-id',name:'contact-submit-synthetic@example.test',url:'/spoluprace/'},sites));
+});

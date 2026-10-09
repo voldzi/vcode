@@ -14,8 +14,10 @@ export async function migrate(pool) {
   const client = await pool.connect();
   try {
     await client.query("SELECT pg_advisory_lock($1)", [726_341_902]);
-    const sql = await readFile(join(here, "migrations", "001_blog.sql"), "utf8");
-    await client.query(sql);
+    for (const migration of ["001_blog.sql", "002_contacts.sql"]) {
+      const sql = await readFile(join(here, "migrations", migration), "utf8");
+      await client.query(sql);
+    }
   } finally {
     await client.query("SELECT pg_advisory_unlock($1)", [726_341_902]).catch(() => {});
     client.release();

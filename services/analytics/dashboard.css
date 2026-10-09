@@ -74,3 +74,20 @@ body[data-authenticated=false] .login-layout{min-height:50vh}
 .application-distribution-period{font-size:.72rem}
 .application-distribution-identity h3 a{color:var(--text)}
 .application-distribution-identity h3 a:hover{text-decoration:underline}
+
+#inquiries{margin-top:2rem;scroll-margin-top:1rem}
+.inquiry-totals{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,12rem),1fr));gap:.8rem}
+.inquiry-metric{display:flex;flex-direction:column;gap:.5rem;padding:1rem 1.2rem;border:1px solid var(--line);border-top:3px solid var(--teal);border-radius:18px;background:var(--panel);min-width:0}
+.inquiry-metric strong{font-size:1.9rem;font-variant-numeric:tabular-nums;color:var(--teal);overflow-wrap:anywhere}
+.inquiry-breakdown{margin:1rem 0}.inquiry-breakdown>summary{font-weight:650}
+.inquiry-breakdown-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,15rem),1fr));gap:1.5rem;margin-top:1rem}
+.inquiry-group-list>div,.inquiry-meta>div{display:flex;justify-content:space-between;gap:1rem;padding:.5rem 0;border-bottom:1px solid var(--line)}
+.inquiry-group-list dt,.inquiry-meta dt{color:var(--muted);overflow-wrap:anywhere}.inquiry-group-list dd,.inquiry-meta dd{margin:0;overflow-wrap:anywhere;text-align:right;min-width:0}
+.inquiry-list{display:grid;gap:.8rem;margin-top:1rem}.inquiry-card{padding:1rem 1.2rem}
+.inquiry-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;list-style:none;padding:0;min-height:44px}.inquiry-heading::-webkit-details-marker{display:none}
+.inquiry-identity{display:flex;flex-direction:column;gap:.25rem;min-width:0;overflow-wrap:anywhere}.inquiry-heading .badge{flex:none}
+.inquiry-meta{font-size:.85rem}.inquiry-message{white-space:pre-wrap;overflow-wrap:anywhere;padding:1rem;background:var(--soft);border-radius:12px;font-size:.9rem}
+.inquiry-actions{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}.inquiry-actions button,.inquiry-actions a{font-size:.8rem}.inquiry-remove{color:var(--bad);margin-left:auto}
+@media(max-width:760px){.inquiry-card{padding:1rem}.inquiry-heading{flex-direction:column;gap:.6rem}.inquiry-meta>div{display:block}.inquiry-meta dd{text-align:left;margin-top:.2rem}.inquiry-remove{margin-left:0}}
+
+.inquiry-notification-error{color:var(--bad)}

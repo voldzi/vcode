@@ -5,6 +5,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadConfig } from "./config.mjs";
 import { createPool, migrate } from "./db.mjs";
+import { createContactService } from "./contacts.mjs";
 import { moderateComment } from "./openai.mjs";
 import { renderArticle, renderHeroSvg, renderIndex, renderReviewPage, renderReviewResult } from "./render.mjs";
 import { applyEditorialAction, findReviewByToken } from "./review.mjs";
@@ -16,6 +17,7 @@ const config = await loadConfig();
 if (!config.commentHashSecret || config.commentHashSecret.length < 32) throw new Error("BLOG_COMMENT_HASH_SECRET must contain at least 32 characters");
 const pool = createPool(config.databaseUrl);
 await migrate(pool);
+const contacts = await createContactService({ pool, config });
 
 const send = (response, status, type, body, headers = {}) => {
   response.writeHead(status, { "Content-Type": type, "X-Content-Type-Options": "nosniff", ...headers });
@@ -148,6 +150,7 @@ async function reviewPage(request, response, token, action = false) {
 const server = createServer(async (request, response) => {
   const started = Date.now();
   try {
+    if (await contacts.handle(request, response)) return;
     const url = new URL(request.url ?? "/", config.siteOrigin);
     const method = request.method === "HEAD" ? "GET" : request.method;
     if (method === "GET" && url.pathname === "/health/blog") {
@@ -188,7 +191,18 @@ const server = createServer(async (request, response) => {
   }
 });
 
+server.headersTimeout = 10_000;
+server.requestTimeout = 30_000;
+server.keepAliveTimeout = 5_000;
+const contactMaintenance = () => contacts.maintenance().catch(() => {
+  // Never log a message, address, token or database error from this boundary.
+  console.error(JSON.stringify({ service: "vcode-blog", event: "contact_maintenance_unavailable" }));
+});
+const contactTimer = setInterval(contactMaintenance, 60_000);
+contactTimer.unref();
+void contactMaintenance();
+
 server.listen(config.port, "0.0.0.0", () => console.log(JSON.stringify({ time: new Date().toISOString(), service: "vcode-blog", event: "listening", port: config.port })));
-const shutdown = async () => { server.close(); await pool.end(); };
+const shutdown = async () => { clearInterval(contactTimer); server.close(); await pool.end(); };
 process.on("SIGTERM", shutdown);
 process.on("SIGINT", shutdown);

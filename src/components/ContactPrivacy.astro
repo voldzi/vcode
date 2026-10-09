@@ -1,0 +1,19 @@
+---
+const { lang = "cs" } = Astro.props as { lang?: "cs" | "en" };
+const cs = lang === "cs";
+---
+{cs ? <section id="poptavky-soukromi">
+  <h2>Poptávky spolupráce</h2>
+  <p>VCode používá jméno, e-mail, nepovinný název organizace, vybranou oblast nebo aplikaci a text odeslané zprávy k vyřízení vaší poptávky a navazující komunikaci. Zpráva není veřejná. Ukládáme ji na našem serveru v soukromém Přehledu, přístupném pouze pověřenému správci. Zprávy v Přehledu automaticky mažeme nejpozději 90 dní po odeslání; správce je může odstranit i dříve.</p>
+  <p>Na Telegram odesíláme pouze upozornění s obecným tématem, případně názvem aplikace, referencí zprávy a odkazem na Přehled. Jméno, e-mail, organizace ani text poptávky se do tohoto upozornění neposílají. Obsah poptávek neodesíláme k posouzení AI a nepoužíváme jej pro reklamní rozesílky.</p>
+  <p>Pro omezení spamu používáme skryté pole, krátkodobý podepsaný požadavek a omezení četnosti odesílání. IP adresu při zpracování použijeme pro krátkodobý obměňovaný otisk v paměti služby; neukládáme ji do databáze poptávek. Formulář nevyžaduje sledovací cookies ani ověření prostřednictvím externí služby.</p>
+  <p>V analytice sledujeme také počet kliknutí na spolupráci. Počty přijatých zpráv a jejich rozdělení podle oblasti a aplikace zobrazujeme souhrnně v soukromém Přehledu. Jde o počty událostí a zpráv, nikoli unikátních lidí. Jméno, e-mail, organizace a text formuláře do analytiky nepatří. DNT a GPC potlačují analytické měření; nebrání odeslání zprávy, které sami požadujete.</p>
+  <p>O přístup ke své zprávě, její opravu nebo odstranění můžete požádat na <a href="mailto:podpora@zeleznalady.cz">podpora@zeleznalady.cz</a>. Pokud ji znáte, uveďte referenci přidělenou po odeslání. Do poptávky neposílejte hesla, přístupové klíče ani citlivé osobní údaje.</p>
+</section> : <section id="enquiries-privacy">
+  <h2>Collaboration enquiries</h2>
+  <p>VCode uses your name, email, optional organisation name, selected area or app, and message to handle your enquiry and follow-up communication. Your message is not public. It is stored on our server in the private dashboard, accessible only to the authorised administrator. Dashboard messages are automatically deleted within 90 days of submission; the administrator can remove them sooner.</p>
+  <p>Telegram receives only a notification with the general topic, optionally the app name, a message reference and a link to the dashboard. Your name, email, organisation and message are not included in that notification. Enquiry contents are not sent to AI for assessment or used for advertising mailings.</p>
+  <p>Spam protection uses a hidden field, a short-lived signed request and submission limits. During processing, the IP address is used for a temporary rotating hash held in service memory; it is not stored in the enquiry database. The form requires neither tracking cookies nor verification by an external service.</p>
+  <p>Analytics also counts clicks on collaboration links. Received message counts and their breakdown by area and app are shown as aggregates in the private dashboard. These are event and message counts, not unique people. Your name, email, organisation and message are excluded from analytics. DNT and GPC suppress analytics; they do not prevent a message you choose to submit.</p>
+  <p>You can request access to your message, correction or deletion at <a href="mailto:podpora@zeleznalady.cz">podpora@zeleznalady.cz</a>. Include the reference issued after submission if available. Never include passwords, access keys or sensitive personal information in an enquiry.</p>
+</section>}

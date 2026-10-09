@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "VCode public and authenticated API",
-    "version": "1.3.0",
-    "description": "Health, moderated comments, minimal public analytics collection and authenticated portfolio metrics. Prepared, disabled-by-default Recall distribution and private aggregate counters."
+    "version": "1.4.0",
+    "description": "Health, moderated comments, privacy-limited public analytics, authenticated website and distribution metrics, and guarded collaboration enquiries. Enquiry content is never sent to website analytics. Internal service endpoints and credentials are not part of this contract."
   },
   "servers": [
     {
@@ -791,6 +791,443 @@
           }
         }
       }
+    },
+    "/api/contact/challenge": {
+      "get": {
+        "operationId": "getContactChallenge",
+        "summary": "Check form activation and obtain a short-lived anti-spam challenge",
+        "description": "Same-origin only, without query parameters. No visitor cookie is created or required. The form stays unavailable until its concrete privacy notice is approved and published and the service is activated for the same privacy version. An enabled challenge expires after ten minutes and cannot be submitted for at least 1.5 seconds. Responses are no-store. The disabled response contains no token.",
+        "parameters": [
+          {
+            "name": "Sec-Fetch-Site",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "same-origin"
+            }
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "const": "https://vcode.zeleznalady.cz"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Enabled challenge or disabled form state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ContactChallenge"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ContactDisabled"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid, unexpected or out-of-bounds fields; query parameters are not accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Same-origin protection, the signed anti-spam challenge or the empty honeypot check failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Submission or anti-spam challenge rate limit reached.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactError"
+                }
+              }
+            },
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds before retrying.",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The form is not activated, the reviewed privacy version is not configured, or a dependency is unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/contact": {
+      "post": {
+        "operationId": "submitCollaborationEnquiry",
+        "summary": "Submit a private collaboration enquiry",
+        "description": "Same-origin JSON, at most 16 KiB, with strict field names and no query parameters. Field lengths apply to normalized Unicode text. Leave the honeypot empty. Generate a UUID requestId once for each enquiry and reuse it with identical content after an uncertain response; successful retries return the same reference. A 202 receipt means the enquiry and notification task were durably accepted; it does not promise Telegram delivery at that moment. Content is private, retained for at most 90 days, and excluded from Umami. Notification contains only a generic area, optional catalog app name, reference and dashboard link.",
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "https://vcode.zeleznalady.cz"
+            }
+          },
+          {
+            "name": "Sec-Fetch-Site",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "same-origin"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactSubmission"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Enquiry accepted, or identical request already accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactReceipt"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid, unexpected or out-of-bounds fields; query parameters are not accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Same-origin protection, the signed anti-spam challenge or the empty honeypot check failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The request ID was previously used with a different normalized enquiry. Keep the same request ID when retrying unchanged content.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactError"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "The uncompressed JSON request body exceeds 16 KiB.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactError"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Use application/json (optionally charset=utf-8) without compressed request content.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Submission or anti-spam challenge rate limit reached.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactError"
+                }
+              }
+            },
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds before retrying.",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The form is not activated, the reviewed privacy version is not configured, or a dependency is unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/prehled/api/inquiries": {
+      "get": {
+        "operationId": "getCollaborationInquiries",
+        "summary": "Read retained enquiries and aggregate enquiry counts",
+        "description": "Requires a freshly verified admin account matching the configured owner ID and permission to the canonical VCode website. Items are the most recent retained enquiries (up to limit); summary covers all retained records. Interest covers the selected period and retained records only. Counts represent accepted enquiries, not unique people, and decrease when records are deleted or expire. Personal enquiry data and content are never sent to Umami, public endpoints, URLs or offline storage.",
+        "security": [
+          {
+            "metricsSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "days",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "enum": [
+                7,
+                30,
+                90
+              ],
+              "default": 7
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized private inbox. Cache-Control: no-store.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactInbox"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameters or status update."
+          },
+          "401": {
+            "description": "A current authenticated dashboard session is required."
+          },
+          "403": {
+            "description": "The account must be the configured owner, have the admin role and permission to the canonical VCode website. Mutations also require the exact same origin."
+          },
+          "429": {
+            "description": "Rate limit reached."
+          },
+          "502": {
+            "description": "An authenticated dependency failed or returned an invalid response."
+          },
+          "503": {
+            "description": "The enquiry inbox is not configured."
+          }
+        }
+      }
+    },
+    "/prehled/api/inquiries/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+          }
+        }
+      ],
+      "patch": {
+        "operationId": "updateCollaborationInquiry",
+        "summary": "Mark an enquiry as new, read or closed",
+        "description": "Requires the same owner, admin and canonical VCode website permissions as the inbox. Exact same-origin JSON mutation. Status changes do not extend the original 90-day retention.",
+        "security": [
+          {
+            "metricsSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "https://vcode.zeleznalady.cz"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "status"
+                ],
+                "properties": {
+                  "status": {
+                    "$ref": "#/components/schemas/ContactStatus"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Status updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactStatusReceipt"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameters or status update."
+          },
+          "401": {
+            "description": "A current authenticated dashboard session is required."
+          },
+          "403": {
+            "description": "The account must be the configured owner, have the admin role and permission to the canonical VCode website. Mutations also require the exact same origin."
+          },
+          "404": {
+            "description": "The enquiry ID does not exist or has expired."
+          },
+          "413": {
+            "description": "The status update exceeds the 4 KiB dashboard request-body limit."
+          },
+          "415": {
+            "description": "The status update requires Content-Type: application/json."
+          },
+          "429": {
+            "description": "Rate limit reached."
+          },
+          "502": {
+            "description": "An authenticated dependency failed or returned an invalid response."
+          },
+          "503": {
+            "description": "The enquiry inbox is not configured."
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteCollaborationInquiry",
+        "summary": "Delete an enquiry",
+        "description": "Requires the same owner, admin and canonical VCode website permissions as the inbox. Exact same-origin mutation. The enquiry and its pending notification are deleted.",
+        "security": [
+          {
+            "metricsSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "https://vcode.zeleznalady.cz"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Enquiry deleted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactReceipt"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameters or status update."
+          },
+          "401": {
+            "description": "A current authenticated dashboard session is required."
+          },
+          "403": {
+            "description": "The account must be the configured owner, have the admin role and permission to the canonical VCode website. Mutations also require the exact same origin."
+          },
+          "404": {
+            "description": "The enquiry ID does not exist or has expired."
+          },
+          "429": {
+            "description": "Rate limit reached."
+          },
+          "502": {
+            "description": "An authenticated dependency failed or returned an invalid response."
+          },
+          "503": {
+            "description": "The enquiry inbox is not configured."
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1087,6 +1524,513 @@
             "const": true
           }
         }
+      },
+      "ContactArea": {
+        "type": "string",
+        "enum": [
+          "development",
+          "partnership",
+          "private-deployment",
+          "other"
+        ]
+      },
+      "ContactStatus": {
+        "type": "string",
+        "enum": [
+          "new",
+          "read",
+          "closed"
+        ]
+      },
+      "ContactApplication": {
+        "type": "string",
+        "maxLength": 100,
+        "enum": [
+          "vcode-recall",
+          "myslopis",
+          "stratos-voice",
+          "event",
+          "foldlight",
+          "rinklet",
+          "millora",
+          "apsyd",
+          "apsyd-central",
+          "pas",
+          "jizda",
+          "cop-mobile",
+          "cop",
+          "nest",
+          "sibenice",
+          "mestem-hrou",
+          "masaze",
+          "studio-balance",
+          "budget-contract",
+          "executive-center",
+          "projectflow",
+          "archflow",
+          "akb",
+          "stratos",
+          "kaloricke-tabulky"
+        ],
+        "description": "Canonical published portfolio ID. A private-deployment product may be selected as an enquiry topic; no private application URL is supplied."
+      },
+      "ContactChallenge": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "enabled",
+          "token",
+          "minimumDelayMs",
+          "expiresAt",
+          "privacyVersion"
+        ],
+        "properties": {
+          "enabled": {
+            "const": true
+          },
+          "token": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          },
+          "minimumDelayMs": {
+            "const": 1500
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Ten minutes after issue."
+          },
+          "privacyVersion": {
+            "const": "contact-20261009"
+          }
+        }
+      },
+      "ContactDisabled": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "enabled",
+          "privacyVersion"
+        ],
+        "properties": {
+          "enabled": {
+            "const": false
+          },
+          "privacyVersion": {
+            "const": "contact-20261009"
+          }
+        }
+      },
+      "ContactSubmission": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "token",
+          "requestId",
+          "locale",
+          "name",
+          "email",
+          "area",
+          "message",
+          "website",
+          "privacyVersion"
+        ],
+        "properties": {
+          "token": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          },
+          "requestId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "cs",
+              "en"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100
+          },
+          "email": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 254,
+            "format": "email"
+          },
+          "organization": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 160
+          },
+          "area": {
+            "$ref": "#/components/schemas/ContactArea"
+          },
+          "application": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ContactApplication"
+              },
+              {
+                "const": ""
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "message": {
+            "type": "string",
+            "minLength": 30,
+            "maxLength": 4000
+          },
+          "website": {
+            "type": "string",
+            "const": "",
+            "description": "Anti-spam honeypot; leave empty."
+          },
+          "privacyVersion": {
+            "const": "contact-20261009"
+          }
+        }
+      },
+      "ContactReceipt": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ok",
+          "reference"
+        ],
+        "properties": {
+          "ok": {
+            "const": true
+          },
+          "reference": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+          }
+        }
+      },
+      "ContactStatusReceipt": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ok",
+          "reference",
+          "status"
+        ],
+        "properties": {
+          "ok": {
+            "const": true
+          },
+          "reference": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ContactStatus"
+          }
+        }
+      },
+      "ContactError": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ok",
+          "error"
+        ],
+        "properties": {
+          "ok": {
+            "const": false
+          },
+          "error": {
+            "type": "string",
+            "enum": [
+              "invalid-input",
+              "rejected",
+              "origin-not-allowed",
+              "invalid-content-type",
+              "too-large",
+              "rate-limit",
+              "unavailable",
+              "not-found",
+              "method-not-allowed",
+              "idempotency-conflict"
+            ]
+          }
+        }
+      },
+      "ContactInquiry": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "createdAt",
+          "updatedAt",
+          "expiresAt",
+          "locale",
+          "name",
+          "email",
+          "organization",
+          "area",
+          "application",
+          "message",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "cs",
+              "en"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100
+          },
+          "email": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 254,
+            "format": "email"
+          },
+          "organization": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 160
+          },
+          "area": {
+            "$ref": "#/components/schemas/ContactArea"
+          },
+          "application": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ContactApplication"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "message": {
+            "type": "string",
+            "minLength": 30,
+            "maxLength": 4000
+          },
+          "status": {
+            "$ref": "#/components/schemas/ContactStatus"
+          }
+        }
+      },
+      "ContactInbox": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "summary",
+          "interest",
+          "catalog",
+          "notifications"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "$ref": "#/components/schemas/ContactInquiry"
+            }
+          },
+          "summary": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "new",
+              "read",
+              "closed",
+              "total"
+            ],
+            "properties": {
+              "new": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "read": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "closed": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "total": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            }
+          },
+          "interest": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "startAt",
+              "endAt",
+              "received",
+              "areas",
+              "applications"
+            ],
+            "properties": {
+              "startAt": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Inclusive start of the selected period in Unix milliseconds."
+              },
+              "endAt": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Inclusive end of the selected period in Unix milliseconds."
+              },
+              "received": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Retained enquiries received during the period; not a count of unique people."
+              },
+              "areas": {
+                "type": "array",
+                "maxItems": 4,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "id",
+                    "count"
+                  ],
+                  "properties": {
+                    "id": {
+                      "$ref": "#/components/schemas/ContactArea"
+                    },
+                    "count": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    }
+                  }
+                }
+              },
+              "applications": {
+                "type": "array",
+                "maxItems": 100,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "id",
+                    "count"
+                  ],
+                  "properties": {
+                    "id": {
+                      "$ref": "#/components/schemas/ContactApplication"
+                    },
+                    "count": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "catalog": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "$ref": "#/components/schemas/ContactCatalogEntry"
+            }
+          },
+          "notifications": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "pending",
+              "sent",
+              "failed"
+            ],
+            "properties": {
+              "pending": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "sent": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "failed": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "description": "Current retained notification jobs by delivery state, independent of the selected interest period or inbox list limit. Failed means the bounded retry sequence was exhausted. Owner deletion and 90-day expiry remove these jobs and lower these counts; counts are not unique people."
+          }
+        }
+      },
+      "ContactCatalogEntry": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ContactApplication"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          }
+        },
+        "description": "A public portfolio name; contains no service endpoints or private deployment information."
       }
     },
     "securitySchemes": {

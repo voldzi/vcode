@@ -1,0 +1,9 @@
+# Preserve the Recall downloads overlay when adding this private inbox overlay.
+services:
+  dashboard:
+    environment:
+      CONTACT_SERVICE_URL: http://blog:8090
+      CONTACT_INBOX_TOKEN_FILE: /run/contact/inbox-token
+      CONTACT_INBOX_OWNER_ID_FILE: /run/contact/owner-id
+    volumes:
+      - ${VCODE_CONTACT_CONFIG:?Configure private contact directory}:/run/contact:ro

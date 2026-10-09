@@ -1,9 +1,9 @@
 export function sanitizeEvent(input, sites) {
   const site = sites.find(s => s.id === input.website);
-  if (!site || !['pageview','app-store-click','contact-click'].includes(input.name)) throw new Error('invalid event');
+  if (!site || !['pageview','app-store-click','contact-click','collaboration-click'].includes(input.name)) throw new Error('invalid event');
   const url = new URL(input.url, `https://${site.domain}`);
   if (url.hostname !== site.domain || url.protocol !== 'https:' || url.username || url.password) throw new Error('invalid host');
-  if (!/^\/(?:en\/)?(?:$|aplikace\/|apps\/|app-store\/|blog\/|navody\/|guides\/|podpora\/|support\/|soukromi\/|privacy\/|nest\/|sibenice\/|jizda\/|cop-mobile\/)/.test(url.pathname)) throw new Error('private or unknown page');
+  if (!/^\/(?:en\/)?(?:$|aplikace\/|apps\/|app-store\/|blog\/|navody\/|guides\/|podpora\/|support\/|soukromi\/|privacy\/|nest\/|sibenice\/|jizda\/|cop-mobile\/|spoluprace\/$|work-with-us\/$)/.test(url.pathname)) throw new Error('private or unknown page');
   if (/\/(?:blog\/review|prehled|api)(?:\/|$)/.test(decodeURIComponent(url.pathname))) throw new Error('private page');
   const clean = new URL(url.pathname, `https://${site.domain}`);
   for (const key of ['utm_source','utm_medium','utm_campaign']) {

@@ -26,7 +26,7 @@ const strictCsp = (await readFile(join(repository, 'services/analytics/server.mj
 
 // Use a raw HTTP connection inside the isolated container. Unlike wget this
 // reads all headers on 401 as well, and never publishes a host-facing port.
-async function get(path, headers = []) {
+async function get(path, headers = [], method = 'GET', payload = '') {
   const result = await new Promise((resolve, reject) => {
     const child = spawn('docker', ['exec', '-i', web, 'nc', '-w', '10', '127.0.0.1', '8080']);
     const output = [], errors = [];
@@ -47,7 +47,7 @@ async function get(path, headers = []) {
     child.on('close', status => {clearTimeout(timeout); child.stdin.end(); resolve({status, stdout: Buffer.concat(output), stderr: Buffer.concat(errors)});});
     // Keep stdin open until Nginx closes the response. BusyBox nc otherwise
     // quits at stdin EOF before a proxied response arrives.
-    child.stdin.write(`GET ${path} HTTP/1.1\r\nHost: example.test\r\nConnection: close\r\n${headers.join('\r\n')}${headers.length ? '\r\n' : ''}\r\n`);
+    child.stdin.write(`${method} ${path} HTTP/1.1\r\nHost: example.test\r\nConnection: close\r\n${payload ? `Content-Length: ${Buffer.byteLength(payload)}\r\n` : ''}${headers.join('\r\n')}${headers.length ? '\r\n' : ''}\r\n${payload}`);
   });
   const boundary = result.stdout.indexOf('\r\n\r\n');
   if (boundary < 0) {
@@ -105,7 +105,7 @@ try {
   await writeFile(join(directory, 'upstream', 'analytics', 'tracker.js'), '/* Synthetic tracker */\n' + 'void 0;\n'.repeat(250));
   const artifact = Buffer.from('Synthetic immutable distribution bytes.\n'.repeat(250));
   await writeFile(join(directory, 'upstream', 'downloads', 'chromadb-status', 'fixture.zip'), artifact);
-  await writeFile(join(directory, 'upstream.conf'), `events {}\nhttp {\n include /etc/nginx/mime.types;\n server { listen 8091; root /fixture; index index.html; add_header Content-Security-Policy "${strictCsp}" always; add_header Cache-Control no-store always; location = /prehled/api/summary { return 401 '{"error":"Authentication required"}'; } location = /analytics/event { return 400 '{}'; } }\n server { listen 8096; root /fixture; gzip off; }\n server { listen 8090; return 200 'Synthetic blog health'; }\n}\n`);
+  await writeFile(join(directory, 'upstream.conf'), `events {}\nhttp {\n include /etc/nginx/mime.types;\n server { listen 8091; root /fixture; index index.html; add_header Content-Security-Policy "${strictCsp}" always; add_header Cache-Control no-store always; location = /prehled/api/summary { return 401 '{"error":"Authentication required"}'; } location = /analytics/event { return 400 '{}'; } }\n server { listen 8096; root /fixture; gzip off; }\n server { listen 8090; add_header Cache-Control no-store always; location = /api/contact/challenge { return 200 '{\"enabled\":false}'; } location = /api/contact { return 202 '{\"ip\":\"$http_x_real_ip\",\"origin\":\"$http_origin\",\"site\":\"$http_sec_fetch_site\",\"auth\":\"$http_authorization\",\"cookie\":\"$http_cookie\"}'; } location / { return 200 'Synthetic blog health'; } }\n}\n`);
   docker('network', 'create', '--internal', network);
   docker('run', '--detach', '--rm', '--name', upstream, '--network', network,
     '--network-alias', 'vcode-analytics', '--network-alias', 'downloads', '--network-alias', 'blog',
@@ -143,6 +143,17 @@ try {
     security(response, path.startsWith('/prehled/') ? strictCsp : path.startsWith('/analytics/') ? [strictCsp, publicCsp] : publicCsp);
     if (path.startsWith('/_astro/')) assert.match(response.value('cache-control'), /public, immutable/);
   }
+
+  const challenge = await get('/api/contact/challenge', ['Sec-Fetch-Site: same-origin']);
+  assert.equal(challenge.status, 200);
+  assert.equal(challenge.value('cache-control'), 'no-store');
+  const contact = await get('/api/contact', ['Content-Type: application/json', 'Origin: https://example.test', 'Sec-Fetch-Site: same-origin', 'X-Real-IP: 192.0.2.24', 'X-Forwarded-For: forged-client', 'Cookie: synthetic=private', 'Authorization: Bearer synthetic-private'], 'POST', '{}');
+  assert.equal(contact.status, 202);
+  assert.deepEqual(JSON.parse(contact.body), {ip:'192.0.2.24',origin:'https://example.test',site:'same-origin',auth:'',cookie:''});
+  assert.equal(contact.value('cache-control'), 'no-store');
+  for (const path of ['/internal/contacts','/api/contact/unknown']) assert.equal((await get(path)).status,404,path);
+  const oversized = await get('/api/contact', ['Content-Type: application/json'], 'POST', 'x'.repeat(17 * 1024));
+  assert.equal(oversized.status,413);
   const full = await get('/downloads/chromadb-status/fixture.zip', ['Accept-Encoding: gzip']);
   assert.equal(full.status, 200);
   assert.equal(full.value('content-encoding'), undefined);
@@ -153,7 +164,7 @@ try {
   assert.equal(range.value('etag'), full.value('etag'));
   assert.equal(range.value('content-range'), `bytes 0-15/${artifact.length}`);
   assert.deepEqual(range.body, artifact.subarray(0, 16));
-  console.log('PASS: strict dashboard CSP; inherited asset headers; static/proxy CSS/JS gzip; anonymous 401; untouched distribution ranges.');
+  console.log('PASS: strict dashboard CSP; inherited asset headers; static/proxy CSS/JS gzip; anonymous 401; exact contact routes/header allowlist/body bounds; untouched distribution ranges.');
 } finally {
   safeRemove('rm', '--force', web);
   safeRemove('rm', '--force', upstream);

@@ -10,7 +10,7 @@
   },
   "scripts": {
     "dev": "astro dev --host 0.0.0.0",
-    "build": "pnpm validate:content && astro check && astro build && node scripts/validate-recall-build.mjs && node scripts/validate-catalog-build.mjs",
+    "build": "pnpm validate:content && astro check && astro build && node scripts/validate-recall-build.mjs && node scripts/validate-catalog-build.mjs && node scripts/validate-contact-build.mjs",
     "preview": "astro preview --host 0.0.0.0",
     "check": "pnpm validate:public && pnpm validate:openapi && pnpm validate:content && astro check",
     "validate:public": "node scripts/validate-public-repository.mjs",
