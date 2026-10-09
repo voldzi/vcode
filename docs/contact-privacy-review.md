@@ -1,6 +1,6 @@
 # Poptávky spolupráce: kontrola znění před aktivací
 
-Verze: `contact-20261009`. Stav: připraveno ke schválení vlastníkem; nezveřejňovat ani neaktivovat před jeho souhlasem.
+Verze: `contact-20261009`. Stav: vlastník 9. 10. 2026 výslovně schválil CZ/EN znění i aktivaci v tomto vlákně. Kontrolní otisk komponentu níže zůstává shodný se schváleným textem.
 
 ## Konkrétní znění
 
