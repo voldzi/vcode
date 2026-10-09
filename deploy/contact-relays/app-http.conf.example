@@ -1,0 +1,20 @@
+# Render the verified, narrowly scoped ingress CIDR before installation.
+# Include in the existing web Nginx http block, not in a server/location.
+# realip_remote_addr is the original TCP peer even when an existing realip
+# configuration rewrites remote_addr. The pinned Nginx build includes realip.
+geo $realip_remote_addr $contact_relay_trusted_edge {
+  default 0;
+  __VERIFIED_TRUSTED_EDGE_CIDR__ 1;
+}
+
+# The trusted edge must overwrite this header, never copy a client value.
+# The central service also requires a valid IP address, not merely this shape.
+map $http_x_real_ip $contact_relay_client_ip {
+  default "";
+  "~^[0-9A-Fa-f:.]{3,45}$" $http_x_real_ip;
+}
+
+map $http_content_type $contact_relay_json {
+  default 0;
+  "~*^application/json(?:\\s*;\\s*charset=utf-8)?$" 1;
+}

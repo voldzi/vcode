@@ -3,13 +3,16 @@ import assert from 'node:assert/strict';
 import {createServer} from 'node:http';
 import {randomUUID} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
+import {mkdtemp, writeFile, rm} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
 import {createContactService, issueContactChallenge, validContactChallenge, validateContactPayload} from '../contacts.mjs';
 
 const START = Date.parse('2026-10-09T12:00:00.000Z');
 const config = {siteOrigin: 'https://example.invalid', contactEnabled: true, contactPrivacyVersion: 'contact-20261009',
   contactFormSecret: 'form-fixture-only-'.repeat(3), contactInboxToken: 'inbox-fixture-only-'.repeat(3),
   telegramEnabled: true, telegramBotToken: 'synthetic-bot', telegramChatId: 'fixture-chat', telegramApiBaseUrl: 'https://telegram.invalid'};
-const catalog = [{id: 'vcode-recall', name: 'VCode Recall'}, {id: 'kaloricke-tabulky', name: 'Moje porce'}];
+const catalog = [{id: 'vcode-recall', name: 'VCode Recall'}, {id: 'kaloricke-tabulky', name: 'Moje porce'}, {id: 'mestem-hrou', name: 'Městem hrou'}];
 const input = (token = 'fixture') => ({token, requestId: randomUUID(), locale: 'cs', name: 'Syntetická osoba', email: 'synthetic@example.invalid',
   organization: null, area: 'partnership', application: 'vcode-recall', message: 'Pouze syntetická zpráva pro izolované ověření formuláře.', website: '', privacyVersion: 'contact-20261009'});
 
@@ -178,6 +181,36 @@ test('notification success marks the durable job sent and never resends it', asy
     const inbox = await f.request('/internal/contacts', {headers: {Authorization: 'Bearer ' + config.contactInboxToken}});
     assert.deepEqual(inbox.value.notifications, {pending: 0, sent: 1, failed: 0});
   } finally {await f.close();}
+});
+
+test('app relay shares the existing contact inbox and generic outbox; expired retries only recover an active identical receipt', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'vcode-contact-relay-store-'));
+  const key = 'synthetic-relay-only-'.repeat(3), keyFile = join(directory, 'app-key'), registry = join(directory, 'registry.json');
+  await writeFile(keyFile, key, {mode: 0o600});
+  await writeFile(registry, JSON.stringify([{id:'mestem-hrou', origin:'https://game.invalid', application:'mestem-hrou', area:'partnership', enabled:true, privacyVersion:'contact-20261009', approvedAt:'2026-10-09T11:00:00Z', publishedAt:'2026-10-09T11:01:00Z', keyFile}]), {mode:0o600});
+  const f = await fixture({contactRelayEnabled:true, contactRelayRegistryFile:registry});
+  const headers = {Origin:'https://game.invalid', Authorization:'Bearer '+key};
+  try {
+    const challenge = (await f.request('/internal/contact-relays/v1/challenge', {headers})).value;
+    const {application,area,...form} = input(challenge.token);
+    f.time(START+2000);
+    const receipt = await f.request('/internal/contact-relays/v1/submissions', {method:'POST', data:form, headers});
+    assert.equal(receipt.status,202);assert.equal(f.pool.rows.size,1);assert.equal(f.pool.outbox.size,1);
+    const saved = f.pool.rows.get(receipt.value.reference);
+    assert.equal(saved.application,'mestem-hrou');assert.equal(saved.area,'partnership');
+    assert.equal((await f.request('/internal/contacts', {headers})).status,401);
+    await f.service.maintenance();assert.equal(f.sent.length,1);assert.match(f.sent[0].text,/Městem hrou/);
+    for (const forbidden of [form.name,form.email,form.message,key,'192.0.2.22','https://game.invalid']) assert.ok(!JSON.stringify(f.sent).includes(forbidden));
+    f.time(START+600001);
+    const recovered = await f.request('/internal/contact-relays/v1/submissions', {method:'POST', data:form, headers});
+    assert.equal(recovered.status,202);assert.equal(recovered.value.reference,receipt.value.reference);assert.equal(f.pool.outbox.size,1);
+    assert.equal((await f.request('/internal/contact-relays/v1/submissions', {method:'POST', data:{...form,message:form.message+' Changed.'}, headers})).status,409);
+    assert.equal((await f.request('/internal/contact-relays/v1/submissions', {method:'POST', data:{...form,requestId:randomUUID()}, headers})).status,403);
+    assert.equal((await f.request('/internal/contacts/'+receipt.value.reference, {method:'DELETE', headers:{Authorization:'Bearer '+config.contactInboxToken}})).status,200);
+    assert.equal((await f.request('/internal/contact-relays/v1/submissions', {method:'POST', data:form, headers})).status,403);
+    assert.equal(f.pool.rows.size,0);assert.equal(f.pool.outbox.size,0);
+    assert.ok(f.pool.calls.every(call=>!JSON.stringify(call.params).includes('192.0.2.22')));
+  } finally {await f.close();await rm(directory,{recursive:true,force:true});}
 });
 
 test('optional contact file secrets fail closed without breaking worker config or accepting plaintext fallback', () => {

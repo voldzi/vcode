@@ -1,0 +1,38 @@
+# Own private TLS bridge. No host ports, no new/shared application network.
+services:
+  gateway:
+    image: nginx@sha256:97d490c12ba55b4946b01546d1c3ed324e8d41ab1c9fcb2a616aa470620e5b46
+    restart: unless-stopped
+    user: "101:101"
+    entrypoint: ["nginx", "-g", "daemon off;"]
+    read_only: true
+    tmpfs:
+      - /tmp:uid=101,gid=101,mode=0700,size=16m
+    volumes:
+      - ./tls-gateway.conf:/etc/nginx/nginx.conf:ro
+      - ./api-security-headers.conf:/etc/nginx/contact-relays/api-security-headers.conf:ro
+      - ./error-pages.conf:/etc/nginx/contact-relays/error-pages.conf:ro
+      - ./error-handlers.conf:/etc/nginx/contact-relays/error-handlers.conf:ro
+      - ${VCODE_CONTACT_RELAY_TLS_DIR:?Configure protected private TLS leaf directory}:/run/contact-relay-tls:ro
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: [ALL]
+    mem_limit: 64m
+    cpus: 0.25
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "--max-time", "5", "--cacert", "/run/contact-relay-tls/ca.pem", "--resolve", "vcode-contact-relay:8443:127.0.0.1", "--header", "Host: vcode-contact-relay", "https://vcode-contact-relay:8443/health"]
+      interval: 30s
+      timeout: 6s
+      retries: 3
+      start_period: 5s
+    networks:
+      central:
+        aliases: [vcode-contact-relay]
+      app:
+        aliases: [vcode-contact-relay]
+networks:
+  central:
+    external: true
+    name: vcode-prod_default
+  app:
+    external: true
+    name: ${CONTACT_RELAY_APP_EXISTING_NETWORK:?Use only the verified existing application web network}

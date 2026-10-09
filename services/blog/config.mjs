@@ -56,6 +56,8 @@ export async function loadConfig() {
     contactFormSecret: await contactSecret("CONTACT_FORM_SECRET_FILE"),
     contactInboxToken: await contactSecret("CONTACT_INBOX_TOKEN_FILE"),
     contactInboxOwnerId: (await readPartnershipSecret(process.env.CONTACT_INBOX_OWNER_ID_FILE)).toLowerCase(),
+    contactRelayEnabled: process.env.CONTACT_RELAY_ENABLED === "true",
+    contactRelayRegistryFile: process.env.CONTACT_RELAY_REGISTRY_FILE ?? "",
     partnershipIntakeEnabled: boolean("PARTNERSHIP_INTAKE_ENABLED", false),
     partnershipRegistryFile: process.env.PARTNERSHIP_REGISTRY_FILE ?? "",
     partnershipChallengeSecret: await readPartnershipSecret(process.env.PARTNERSHIP_CHALLENGE_SECRET_FILE),

@@ -1,6 +1,7 @@
 import {createHash, createHmac, randomBytes, randomUUID, timingSafeEqual} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import {telegramCall} from './telegram.mjs';
+import {createContactRelayService} from './contact-relays.mjs';
 
 export const CONTACT_PRIVACY_VERSION = 'contact-20261009';
 const TTL = 90 * 86400000, CHALLENGE_TTL = 600000, MIN_DELAY = 1500, MAX_BODY = 16384;
@@ -107,7 +108,7 @@ export async function createContactService({pool, config, catalog, clock = () =>
   };
   const prune = now => pool.query('DELETE FROM vcode_contacts.inquiries WHERE expires_at <= $1', [new Date(now)]);
 
-  async function save(payload) {
+  async function save(payload, {lookupOnly = false} = {}) {
     const now = clock(), reference = randomUUID(), expiry = new Date(now + TTL);
     const fingerprint = createHash('sha256').update(JSON.stringify(payload)).digest('hex');
     const db = await pool.connect();
@@ -121,6 +122,8 @@ export async function createContactService({pool, config, catalog, clock = () =>
         if (!equal(existing.payload_hash, fingerprint)) throw error(409, 'idempotency-conflict');
         await db.query('COMMIT'); return existing.id;
       }
+      // An expired signed relay challenge can recover an existing receipt only.
+      if (lookupOnly) {await db.query('COMMIT'); return null;}
       const volume = (await db.query('SELECT count(*)::int AS count FROM vcode_contacts.inquiries WHERE created_at >= $1', [new Date(now - 86400000)])).rows[0];
       if (Number(volume.count) >= 100) throw error(429, 'rate-limit');
       await db.query(`INSERT INTO vcode_contacts.inquiries (id,request_id,payload_hash,locale,name,email,organization,area,application,message,privacy_version,created_at,updated_at,expires_at)
@@ -176,7 +179,9 @@ export async function createContactService({pool, config, catalog, clock = () =>
     throw error(405, 'method-not-allowed');
   }
 
+  const relays = createContactRelayService({config, catalog: applications, save, validatePayload: validateContactPayload, clock});
   async function handle(request, res) {
+    if (await relays.handle(request, res)) return true;
     const url = new URL(request.url ?? '/', config.siteOrigin);
     if (!url.pathname.startsWith('/api/contact') && !url.pathname.startsWith('/internal/contacts')) return false;
     try {

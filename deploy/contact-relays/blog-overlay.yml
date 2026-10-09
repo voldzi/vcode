@@ -1,0 +1,9 @@
+# Preserve the existing contact/partnership/Recall overlays and runtime values.
+# Each app also requires its own reviewed, published notice and enabled registry.
+services:
+  blog:
+    environment:
+      CONTACT_RELAY_ENABLED: ${CONTACT_RELAY_ENABLED:-false}
+      CONTACT_RELAY_REGISTRY_FILE: /run/contact-relays/registry.json
+    volumes:
+      - ${VCODE_CONTACT_RELAY_CONFIG_DIR:?Configure protected relay registry and keys}:/run/contact-relays:ro

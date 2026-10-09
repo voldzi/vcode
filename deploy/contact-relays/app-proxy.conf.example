@@ -1,0 +1,54 @@
+# Include in the existing canonical mestemhrou.cz server block. No SPA, game
+# API, database, public analytics, CSP on HTML, or other location is replaced.
+# Do not put error-pages.conf at server scope in a shared application vhost:
+# it would intercept unrelated game errors. The exact relay locations inherit
+# only the error_page mappings below, and the named handlers are server-only.
+location = /api/partner-contact/challenge {
+  include /etc/nginx/contact-relays/app-common.conf;
+  error_page 400 = @contact_relay_invalid_input;
+  error_page 403 = @contact_relay_origin_not_allowed;
+  error_page 405 = @contact_relay_method_not_allowed;
+  error_page 413 = @contact_relay_too_large;
+  error_page 502 504 = @contact_relay_unavailable;
+  if ($request_uri != "/api/partner-contact/challenge") { return 400; }
+  if ($request_method != GET) { return 405; }
+  set $contact_relay_browser_origin "https://mestemhrou.cz";
+  if ($http_origin != "") {
+    set $contact_relay_browser_origin $http_origin;
+  }
+  # A same-origin GET fetch commonly omits Origin; a supplied one must match.
+  if ($contact_relay_browser_origin != "https://mestemhrou.cz") { return 403; }
+  if ($content_length != "") { return 400; }
+  if ($http_transfer_encoding != "") { return 400; }
+  proxy_pass_request_body off;
+  proxy_set_header Content-Length "";
+  proxy_pass $contact_relay_upstream/internal/contact-relays/v1/challenge;
+}
+
+location = /api/partner-contact {
+  include /etc/nginx/contact-relays/app-common.conf;
+  error_page 400 = @contact_relay_invalid_input;
+  error_page 403 = @contact_relay_origin_not_allowed;
+  error_page 405 = @contact_relay_method_not_allowed;
+  error_page 413 = @contact_relay_too_large;
+  error_page 415 = @contact_relay_invalid_content_type;
+  error_page 502 504 = @contact_relay_unavailable;
+  if ($request_uri != "/api/partner-contact") { return 400; }
+  if ($request_method != POST) { return 405; }
+  if ($http_origin != "https://mestemhrou.cz") { return 403; }
+  if ($contact_relay_json != 1) { return 415; }
+  if ($http_content_encoding != "") { return 415; }
+  proxy_pass $contact_relay_upstream/internal/contact-relays/v1/submissions;
+}
+
+location ^~ /api/partner-contact {
+  access_log off;
+  error_log /dev/null crit;
+  default_type application/json;
+  include /etc/nginx/contact-relays/api-security-headers.conf;
+  return 404 '{"ok":false,"error":"not-found"}';
+}
+
+# Their paths cannot be requested directly. Only the exact relay locations
+# above refer to these named handlers; unrelated application errors are preserved.
+include /etc/nginx/contact-relays/error-handlers.conf;

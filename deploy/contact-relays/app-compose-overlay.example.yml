@@ -1,0 +1,7 @@
+# Render the application's existing web service name. This overlay changes
+# only that web service's read-only mounts; it creates no network or host port.
+services:
+  __EXISTING_APP_WEB_SERVICE__:
+    volumes:
+      - ${APP_CONTACT_RELAY_CONFIG_DIR:?Configure rendered relay snippets}:/etc/nginx/contact-relays:ro
+      - ${APP_CONTACT_RELAY_SECRET_DIR:?Configure protected credential and public CA directory}:/run/contact-relay:ro

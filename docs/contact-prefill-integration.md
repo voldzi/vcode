@@ -1,5 +1,7 @@
 # Předvolení veřejného formuláře spolupráce
 
+**Historie první verze.** Vlastník 9. října 2026 upřesnil, že formulář musí zůstat přímo ve zdrojové aplikaci a VCode zajistí pouze centrální správu. Přesměrování z Městem hrou popsané níže je tím nahrazené. Nový kontrakt je v `contact-relay-integration.md`. Obecná stránka spolupráce VCode a její bezpečné předvolby zůstávají dostupné pro samostatné návštěvníky.
+
 ## Odkazy pro Městem hrou
 
 - Česky: `https://vcode.zeleznalady.cz/spoluprace/?app=mestem-hrou&area=partnership#poptavka`

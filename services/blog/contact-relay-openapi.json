@@ -1,0 +1,503 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "VCode private application contact relay",
+    "version": "1.0.0",
+    "description": "Server-only contract; never routed by public VCode Nginx. Uses the existing contact inbox and outbox. Source app privacy approval and publication required before per-app activation."
+  },
+  "x-contract-version": "contact-relay-v1",
+  "paths": {
+    "/internal/contact-relays/v1/challenge": {
+      "x-private-interface": true,
+      "get": {
+        "operationId": "issueContactRelayChallenge",
+        "security": [
+          {
+            "contactRelayApplicationKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "Exact registered app origin, injected only after the app gateway verifies same-origin browser context."
+          },
+          {
+            "in": "header",
+            "name": "Sec-Fetch-Site",
+            "required": true,
+            "schema": {
+              "const": "same-origin"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Real-IP",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Valid IPv4/IPv6 address from the verified trusted edge; used only for temporary challenge binding and memory-only rate limits."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bounded public challenge or durable existing-inbox receipt. No contacts or credentials are returned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ContactChallenge"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ContactRelayChallengeDisabled"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Finite safe failure; never raw upstream or database text.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactRelayError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Finite safe failure; never raw upstream or database text.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactRelayError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Finite safe failure; never raw upstream or database text.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactRelayError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Finite safe failure; never raw upstream or database text.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactRelayError"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Finite safe failure; never raw upstream or database text.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactRelayError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Finite safe failure; never raw upstream or database text.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactRelayError"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Finite safe failure; never raw upstream or database text.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactRelayError"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Finite safe failure; never raw upstream or database text.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactRelayError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Finite safe failure; never raw upstream or database text.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactRelayError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Finite safe failure; never raw upstream or database text.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactRelayError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/internal/contact-relays/v1/submissions": {
+      "x-private-interface": true,
+      "post": {
+        "operationId": "submitContactRelayEnquiry",
+        "security": [
+          {
+            "contactRelayApplicationKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "Exact registered app origin, injected only after the app gateway verifies same-origin browser context."
+          },
+          {
+            "in": "header",
+            "name": "Sec-Fetch-Site",
+            "required": true,
+            "schema": {
+              "const": "same-origin"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Real-IP",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Valid IPv4/IPv6 address from the verified trusted edge; used only for temporary challenge binding and memory-only rate limits."
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Bounded public challenge or durable existing-inbox receipt. No contacts or credentials are returned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactReceipt"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Finite safe failure; never raw upstream or database text.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactRelayError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Finite safe failure; never raw upstream or database text.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactRelayError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Finite safe failure; never raw upstream or database text.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactRelayError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Finite safe failure; never raw upstream or database text.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactRelayError"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Finite safe failure; never raw upstream or database text.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactRelayError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Finite safe failure; never raw upstream or database text.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactRelayError"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Finite safe failure; never raw upstream or database text.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactRelayError"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Finite safe failure; never raw upstream or database text.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactRelayError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Finite safe failure; never raw upstream or database text.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactRelayError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Finite safe failure; never raw upstream or database text.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactRelayError"
+                }
+              }
+            }
+          }
+        },
+        "x-max-request-bytes": 16384,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactRelaySubmission"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "contactRelayApplicationKey": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Fresh independent application credential, server-only. Derives immutable application and area; cannot read or administer the inbox."
+      }
+    },
+    "schemas": {
+      "ContactChallenge": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "enabled",
+          "token",
+          "minimumDelayMs",
+          "expiresAt",
+          "privacyVersion"
+        ],
+        "properties": {
+          "enabled": {
+            "const": true
+          },
+          "token": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          },
+          "minimumDelayMs": {
+            "const": 1500
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Ten minutes after issue."
+          },
+          "privacyVersion": {
+            "const": "contact-20261009"
+          }
+        }
+      },
+      "ContactReceipt": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ok",
+          "reference"
+        ],
+        "properties": {
+          "ok": {
+            "const": true
+          },
+          "reference": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+          }
+        }
+      },
+      "ContactRelaySubmission": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "token",
+          "requestId",
+          "locale",
+          "name",
+          "email",
+          "message",
+          "website",
+          "privacyVersion"
+        ],
+        "properties": {
+          "token": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          },
+          "requestId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "cs",
+              "en"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100
+          },
+          "email": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 254,
+            "format": "email"
+          },
+          "organization": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 160
+          },
+          "message": {
+            "type": "string",
+            "minLength": 30,
+            "maxLength": 4000
+          },
+          "website": {
+            "type": "string",
+            "const": "",
+            "description": "Anti-spam honeypot; leave empty."
+          },
+          "privacyVersion": {
+            "const": "contact-20261009"
+          }
+        }
+      },
+      "ContactRelayError": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ok",
+          "error"
+        ],
+        "properties": {
+          "ok": {
+            "const": false
+          },
+          "error": {
+            "type": "string",
+            "enum": [
+              "invalid-input",
+              "unauthorized",
+              "origin-not-allowed",
+              "rejected",
+              "not-found",
+              "method-not-allowed",
+              "idempotency-conflict",
+              "too-large",
+              "invalid-content-type",
+              "rate-limit",
+              "unavailable"
+            ]
+          }
+        }
+      },
+      "ContactRelayChallengeDisabled": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "enabled",
+          "privacyVersion"
+        ],
+        "properties": {
+          "enabled": {
+            "const": false
+          },
+          "privacyVersion": {
+            "const": "contact-20261009"
+          }
+        }
+      }
+    }
+  }
+}

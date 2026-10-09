@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 
 const document = JSON.parse(await readFile(new URL("../openapi/openapi.json", import.meta.url), "utf8"));
 const internal = JSON.parse(await readFile(new URL("../services/blog/partnership-openapi.json", import.meta.url), "utf8"));
+const relay = JSON.parse(await readFile(new URL("../services/blog/contact-relay-openapi.json", import.meta.url), "utf8"));
 
 function validateDocument(contract, label) {
   assert.match(String(contract.openapi ?? ""), /^3\./, `${label}: OpenAPI 3.x required`);
@@ -32,6 +33,7 @@ function validateDocument(contract, label) {
 const httpMethods = ["get", "post", "put", "patch", "delete", "head", "options", "trace"];
 validateDocument(document, "Public API");
 validateDocument(internal, "Private partnership API");
+validateDocument(relay, "Private contact relay API");
 if (!document.paths?.["/health/blog"]?.get) throw new Error("GET /health/blog is missing from OpenAPI");
 if (!document.paths?.["/api/blog/{slug}/comments"]?.post) throw new Error("POST /api/blog/{slug}/comments is missing from OpenAPI");
 
@@ -95,4 +97,22 @@ assert.equal(submission.properties.privacyVersion.const, "partnership-intake-202
 assert.ok(!["appId", "domain", "account", "source"].some(name => name in submission.properties));
 assert.ok(!("managerId" in internal.components.schemas.PartnershipInbox.properties), "Service must not emit the browser owner context");
 assert.ok(document.components.schemas.PartnershipDashboardInbox.required.includes("managerId"));
+assert.equal(relay["x-contract-version"], "contact-relay-v1");
+checkRoutes(relay, {"/internal/contact-relays/v1/challenge": ["get"], "/internal/contact-relays/v1/submissions": ["post"]}, () => true);
+for (const item of Object.values(relay.paths)) {
+  assert.equal(item["x-private-interface"], true);
+  for (const method of httpMethods) if (item[method]) {
+    const operation = item[method];
+    assert.deepEqual(operation.security, [{contactRelayApplicationKey: []}]);
+    assert.deepEqual(operation.parameters.map(({ name }) => name).sort(), ["Origin", "Sec-Fetch-Site", "X-Real-IP"]);
+    assert.ok(operation.parameters.every(parameter => parameter.required && parameter.in === "header"));
+  }
+}
+const relaySubmission = relay.components.schemas.ContactRelaySubmission;
+assert.equal(relaySubmission.additionalProperties, false);
+assert.equal(relaySubmission.properties.privacyVersion.const, "contact-20261009");
+assert.ok(!["application", "area", "origin", "source", "clientBucket"].some(name => name in relaySubmission.properties));
+assert.deepEqual(relay.components.schemas.ContactChallenge, document.components.schemas.ContactChallenge);
+assert.deepEqual(relay.components.schemas.ContactReceipt, document.components.schemas.ContactReceipt);
+assert.equal(relay.paths["/internal/contact-relays/v1/submissions"].post["x-max-request-bytes"], 16384);
 console.log("Public and nonpublished private OpenAPI contracts validated.");
