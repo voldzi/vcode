@@ -79,3 +79,25 @@ runtime, embedding model and development tools. COP Mobile describes phone
 location instead of “native location”. Both changes were written in Czech and
 English. Specialist connection details remain in the relevant instructions and
 FAQ where they help users configure or maintain the application.
+
+### Follow-up release acceptance
+
+- Source: `67b22ff`.
+- `pnpm check`: no errors or warnings, 15 existing hints.
+- `pnpm test`: all 122 tests passed (33 blog, 57 analytics, 32 downloads).
+- Both Docker images built; the web build ran `pnpm build` and generated 156 pages.
+- Web image: `sha256:dae9620f47c4ae11908d65d1dfa5a0b2318aee66ba22731d909b83bf4a7e4d01`.
+- Exact-image Nginx checks passed for the private dashboard, public analytics,
+  contact relay, headers, compression and download ranges.
+- Production health, both locales, representative product/guide pages, both
+  blog locales, PWA resources and the updated Recall/COP Mobile wording passed.
+- Městem hrou still has no screenshot-provenance paragraph and links to both
+  published guides. Map attribution and illustration labels remain available.
+- Six public legal-text digests matched. Blog, worker, dashboard and downloads
+  retained their container identities, images and start times.
+- The first activation automatically rolled back because an acceptance check
+  expected a catalogue capability on Recall's separate presentation layout,
+  which does not render that field. The check was corrected to verify the
+  actual rendered installation benefit; the same tested image then passed.
+- Candidate source contained only the three copy/documentation changes.
+  Unrelated partnership preparation was excluded from the production artifact.
