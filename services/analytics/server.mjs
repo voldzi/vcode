@@ -6,6 +6,7 @@ import {createSessionStore} from './sessions.mjs';
 import {periodWindow,dailySeries} from './dashboard-data.mjs';
 import { sanitizeEvent, sameOrigin } from './security.mjs';
 import {canReadDownloadMetrics,readDownloadMetrics,unavailableDownloadMetrics} from './lib/download-metrics.mjs';
+import {createPublicShell} from './public-shell.mjs';
 const upstream=process.env.ANALYTICS_UPSTREAM ?? 'http://umami:3000';
 const origin=process.env.PUBLIC_SITE_URL ?? 'https://vcode.zeleznalady.cz';
 const statusPath=process.env.ANALYTICS_STATUS_FILE??'/state/connections.json';
@@ -14,11 +15,10 @@ const sessions=await createSessionStore(process.env.ANALYTICS_SESSION_DIR);
 const attempts=new Map();
 const enabled=process.env.ANALYTICS_COLLECTION_ENABLED==='true';
 const here=new URL('./',import.meta.url);
-const page=await readFile(new URL('dashboard.html',here));
-const script=await readFile(new URL('dashboard.js',here));
-const css=await readFile(new URL('dashboard.css',here));
 const staticAssets=new Map();
-for(const [name,type] of [['manifest.webmanifest','application/manifest+json'],['sw.js','text/javascript'],['offline.html','text/html'],['icon-192.png','image/png'],['icon-512.png','image/png'],['download-metrics-ui.js','text/javascript'],['contact-inbox-ui.js','text/javascript']])staticAssets.set('/prehled/'+name,{body:await readFile(new URL(name,here)),type});
+for(const [name,type] of [['manifest.webmanifest','application/manifest+json'],['offline.html','text/html'],['icon-192.png','image/png'],['icon-512.png','image/png'],['dashboard.css','text/css'],['dashboard.js','text/javascript'],['download-metrics-ui.js','text/javascript'],['contact-inbox-ui.js','text/javascript']])staticAssets.set('/prehled/'+name,{body:await readFile(new URL(name,here)),type});
+const shell=createPublicShell(await readFile(new URL('dashboard.html',here)),await readFile(new URL('sw.js',here)),staticAssets);
+const page=shell.page;
 const tracker=await readFile(new URL('tracker.js',here),'utf8');
 async function sites(){return JSON.parse(await readFile(registryPath,'utf8'));}
 function send(res,status,body,type='application/json',headers={}){res.writeHead(status,{'Content-Type':type,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','X-Robots-Tag':'noindex, nofollow','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; connect-src 'self'; worker-src 'self'; manifest-src 'self'",...headers});res.end(typeof body==='object'&&!Buffer.isBuffer(body)?JSON.stringify(body):body);}
@@ -77,9 +77,14 @@ createServer(async(req,res)=>{try{
   await api('send',null,{method:'POST',body:JSON.stringify({type:'event',payload}),headers:{'User-Agent':String(req.headers['user-agent']??'').slice(0,500),'X-Real-IP':String(req.headers['x-real-ip']??req.socket.remoteAddress).split(',').at(-1).trim()}});send(res,204,'');return;
  }
  if(!path.startsWith('/prehled/')){send(res,404,{});return;}
- if(req.method==='GET'&&staticAssets.has(path)){const asset=staticAssets.get(path);send(res,200,asset.body,asset.type,path==='/prehled/sw.js'?{'Service-Worker-Allowed':'/prehled/'}:{});return;}
- if(req.method==='GET'&&path==='/prehled/dashboard.js'){send(res,200,script,'text/javascript');return;}
- if(req.method==='GET'&&path==='/prehled/dashboard.css'){send(res,200,css,'text/css');return;}
+ if(req.method==='GET'&&path==='/prehled/sw.js'){
+  const headers={'Service-Worker-Allowed':'/prehled/','Cache-Control':'no-cache',ETag:shell.etag};
+  send(res,req.headers['if-none-match']===shell.etag?304:200,req.headers['if-none-match']===shell.etag?'':shell.serviceWorker,'text/javascript',headers);return;
+ }
+ if(req.method==='GET'&&staticAssets.has(path)){
+  if(url.searchParams.has('v')&&(url.searchParams.getAll('v').length!==1||[...url.searchParams.keys()].some(key=>key!=='v')||url.searchParams.get('v')!==shell.versions.get(path))){send(res,404,{});return;}
+  const asset=staticAssets.get(path);send(res,200,asset.body,asset.type);return;
+ }
  if(req.method==='POST'){
   if(!sameOrigin(req,origin)){send(res,403,{});return;}
   if(path==='/prehled/api/login'){

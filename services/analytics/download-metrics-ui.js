@@ -23,6 +23,7 @@
       table: 'Zobrazit denní údaje', day: 'Den (UTC)', files: 'Vydání a soubory', version: 'Vydání', file: 'Povolený soubor',
       metadata: 'Metadata a doprovodné soubory', metadataHelp: 'GET / HEAD na latest, manifest, kontrolní součty, licence nebo zdrojové archivy otevřených součástí. Počty a objem jsou oddělené od instalačních ZIP/DMG; bez rozlišení jednotlivých doprovodných souborů.',
       coverage: 'Provozní čítače od', missing: 'Bez záznamu',
+      chartCoverage: 'Dny se záznamem souborů', chartRecorded: 'Zaznamenané GET', singleDay: 'Zatím máme záznam pouze za jeden den. Vývoj v čase se zobrazí s dalšími zaznamenanými dny.', noFileRecords: 'Zatím bez denních záznamů souborů', noFileRecordsText: 'V tomto období nejsou zaznamenané požadavky na ZIP/DMG. Údaje o doprovodných souborech jsou níže; chybějící záznam neznamená naměřenou nulu.', dayDetail: 'Detail dne', chartKeyboard: 'Vyberte den v nabídce. Body grafu lze procházet také šipkami vlevo a vpravo. Tabulka obsahuje i dny bez záznamu.', chartMeasured: 'Zaznamenaný den', chartGap: 'Chybějící záznam', of: 'z', build: 'Sestavení',
       applications: 'Naše aplikace', platform: 'Aplikace pro macOS', available: 'Souhrn dostupný',
       appScope: 'Sledujeme distribuci souborů. Používání nativní aplikace ani instalace se neměří.',
       summaryFull: 'Celé soubory do proxy', summaryBytes: 'Objem do proxy',
@@ -51,6 +52,7 @@
       table: 'Show daily values', day: 'Day (UTC)', files: 'Releases and files', version: 'Release', file: 'Allowed file',
       metadata: 'Metadata and supplementary files', metadataHelp: 'GET / HEAD for latest, a manifest, checksums, licences or open-source archives. Counts and volume are separate from installer ZIP/DMG transfers; individual supplementary files are not distinguished.',
       coverage: 'Operational counters since', missing: 'No record',
+      chartCoverage: 'Days with file records', chartRecorded: 'Recorded GET requests', singleDay: 'Only one day has a record so far. A trend will appear when more days are recorded.', noFileRecords: 'No daily file records yet', noFileRecordsText: 'No ZIP/DMG requests have a record for this period. Supplementary file data is below; a missing record does not mean a measured zero.', dayDetail: 'Day detail', chartKeyboard: 'Select a day from the menu. Chart points also support the left and right arrows. The table includes days without a record.', chartMeasured: 'Recorded day', chartGap: 'Missing record', of: 'of', build: 'Build',
       applications: 'Our applications', platform: 'macOS application', available: 'Summary available',
       appScope: 'We track file distribution. Native app usage and installations are not measured.',
       summaryFull: 'Complete files to proxy', summaryBytes: 'Volume to proxy',
@@ -113,6 +115,20 @@
     files.append(make('h3', '', c.files));
     if (!metrics.artifacts.length) files.append(make('p', 'muted', c.empty));
     else {
+      const overview = make('div', 'distribution-file-overview');
+      for (const artifact of metrics.artifacts) {
+        const file = make('article', 'distribution-file-card'), heading = make('div', 'distribution-file-heading');
+        const release = metrics.releases?.find(item => item.id === artifact.release);
+        heading.append(make('span', 'distribution-file-type', artifact.artifact.endsWith('.dmg') ? 'DMG' : 'ZIP'), make('h4', '', `${c.version} ${release?.version ?? artifact.release}`));
+        file.append(heading);
+        if (release) file.append(make('p', 'small muted distribution-file-build', `${c.build} ${release.buildNumber}`));
+        const values = make('dl', 'distribution-file-highlights');
+        for (const [key, label] of [['getRequests', 'get'], ['fullResponses', 'summaryFull'], ['rangeResponses', 'range'], ['bytesWritten', 'summaryBytes']]) {
+          const pair = make('div'); pair.append(make('dt', '', c[label]), make('dd', '', key === 'bytesWritten' ? bytes(artifact[key], language) : format(artifact[key], language))); values.append(pair);
+        }
+        file.append(values); overview.append(file);
+      }
+      files.append(overview);
       const details = make('details', 'distribution-file-details'); details.append(make('summary', '', c.fileDetails));
       const list = make('div', 'distribution-file-list');
       for (const artifact of metrics.artifacts) {
@@ -168,24 +184,74 @@
     for (let time = Date.parse(metrics.startDate + 'T00:00:00Z'); time <= Date.parse(metrics.endDate + 'T00:00:00Z'); time += 86400000) {
       const date = new Date(time).toISOString().slice(0, 10); points.push({ date, value: observed.get(date)?.getRequests ?? null });
     }
-    const ns = 'http://www.w3.org/2000/svg', svg = document.createElementNS(ns, 'svg');
-    svg.setAttribute('viewBox', '0 0 720 190'); svg.setAttribute('role', 'group'); svg.setAttribute('aria-label', c.trajectory); svg.classList.add('distribution-sparkline');
-    const max = Math.max(1, ...points.map(point => point.value ?? 0)), x = index => 22 + index * 676 / Math.max(1, points.length - 1), y = value => 157 - value / max * 130;
-    let path = '';
-    points.forEach((point, index) => { if (point.value !== null) path += `${index === 0 || points[index - 1].value === null ? 'M' : 'L'}${x(index)} ${y(point.value)} `; });
-    const line = document.createElementNS(ns, 'path'); line.setAttribute('d', path); line.classList.add('chart-line'); svg.append(line);
-    const readout = make('p', 'chart-readout');
-    const display = point => { readout.textContent = `${day(point.date, language)} · GET: ${point.value === null ? c.missing : format(point.value, language)}`; };
-    for (const [index, point] of points.entries()) {
-      if (point.value === null) continue;
-      const circle = document.createElementNS(ns, 'circle'); circle.setAttribute('cx', String(x(index))); circle.setAttribute('cy', String(y(point.value))); circle.setAttribute('r', '5'); circle.setAttribute('tabindex', '0'); circle.setAttribute('aria-label', `${day(point.date, language)}: ${format(point.value, language)} GET`); circle.classList.add('chart-point');
-      circle.addEventListener('mouseenter', () => display(point)); circle.addEventListener('focus', () => display(point));
-      circle.addEventListener('keydown', event => {
-        if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
-        event.preventDefault(); const dots = [...svg.querySelectorAll('circle')], current = dots.indexOf(circle); dots[Math.max(0, Math.min(dots.length - 1, current + (event.key === 'ArrowLeft' ? -1 : 1)))].focus();
-      }); svg.append(circle);
+    const recorded = points.filter(point => point.value !== null);
+    const context = make('div', 'distribution-chart-context');
+    context.append(make('span', 'distribution-chart-coverage', `${c.chartCoverage}: ${format(recorded.length, language)} ${c.of} ${format(points.length, language)}`), make('span', 'small muted', `${day(metrics.startDate, language)} – ${day(metrics.endDate, language)} · UTC`));
+    host.append(context);
+    if (recorded.length <= 1) {
+      const snapshot = make('div', 'distribution-snapshot');
+      if (!recorded.length) snapshot.append(make('h4', '', c.noFileRecords), make('p', 'small muted', c.noFileRecordsText));
+      else {
+        const point = recorded[0], row = observed.get(point.date), identity = make('div', 'distribution-snapshot-main');
+        identity.append(make('span', 'small muted', `${day(point.date, language)} · UTC`), make('strong', 'distribution-snapshot-value', format(point.value, language)), make('span', '', c.chartRecorded));
+        const values = make('dl', 'distribution-snapshot-values');
+        for (const [key, label] of [['fullResponses', 'summaryFull'], ['rangeResponses', 'range'], ['bytesWritten', 'summaryBytes']]) {
+          const pair = make('div'); pair.append(make('dt', '', c[label]), make('dd', '', key === 'bytesWritten' ? bytes(row[key], language) : format(row[key], language))); values.append(pair);
+        }
+        snapshot.append(identity, values, make('p', 'small muted distribution-snapshot-hint', c.singleDay));
+      }
+      host.append(snapshot);
+    } else {
+      const ns = 'http://www.w3.org/2000/svg', svg = document.createElementNS(ns, 'svg');
+      const part = (tag, attributes, className, text) => {
+        const element = document.createElementNS(ns, tag);
+        for (const [key, value] of Object.entries(attributes ?? {})) element.setAttribute(key, String(value));
+        if (className) element.setAttribute('class', className);
+        if (text !== undefined) element.textContent = text;
+        return element;
+      };
+      svg.setAttribute('viewBox', '0 0 720 260'); svg.setAttribute('role', 'group'); svg.setAttribute('aria-label', c.trajectory); svg.classList.add('distribution-sparkline');
+      const rawMax = Math.max(1, ...recorded.map(point => point.value)), rawStep = rawMax / 4;
+      const magnitude = 10 ** Math.floor(Math.log10(rawStep)), fraction = rawStep / magnitude;
+      const step = rawMax <= 4 ? 1 : (fraction <= 1 ? 1 : fraction <= 2 ? 2 : fraction <= 5 ? 5 : 10) * magnitude;
+      const max = Math.ceil(rawMax / step) * step, plotBottom = 190, x = index => 54 + index * 642 / Math.max(1, points.length - 1), y = value => plotBottom - value / max * 156;
+      const axis = part('g', {}, 'distribution-chart-axis');
+      for (let value = 0; value <= max; value += step) {
+        axis.append(part('line', { x1: 54, x2: 696, y1: y(value), y2: y(value) }, 'chart-gridline'), part('text', { x: 42, y: y(value) + 4, 'text-anchor': 'end' }, '', format(value, language)));
+      }
+      const tickIndexes = [...new Set([0, Math.floor((points.length - 1) / 2), points.length - 1])];
+      const shortDay = value => new Intl.DateTimeFormat(language === 'en' ? 'en-GB' : 'cs-CZ', { timeZone: 'UTC', day: 'numeric', month: 'short' }).format(new Date(value + 'T12:00:00Z'));
+      for (const index of tickIndexes) axis.append(part('text', { x: x(index), y: 232, 'text-anchor': index === 0 ? 'start' : index === points.length - 1 ? 'end' : 'middle' }, '', shortDay(points[index].date)));
+      svg.append(axis);
+      let path = '';
+      points.forEach((point, index) => { if (point.value !== null) path += `${index === 0 || points[index - 1].value === null ? 'M' : 'L'}${x(index)} ${y(point.value)} `; });
+      svg.append(part('path', { d: path }, 'chart-line'));
+      const readout = make('p', 'chart-readout distribution-chart-readout'); readout.setAttribute('aria-live', 'polite'); readout.setAttribute('aria-atomic', 'true');
+      const picker = make('label', 'distribution-day-picker'), select = make('select');
+      picker.append(make('span', '', c.dayDetail), select);
+      for (const point of points) {
+        const option = make('option', '', `${day(point.date, language)} · GET: ${point.value === null ? c.missing : format(point.value, language)}`); option.value = point.date; select.append(option);
+      }
+      const display = point => { select.value = point.date; readout.textContent = `${day(point.date, language)} · GET: ${point.value === null ? c.missing : format(point.value, language)}`; };
+      select.addEventListener('change', () => { const point = points.find(item => item.date === select.value); if (point) display(point); });
+      const markers = [];
+      for (const [index, point] of points.entries()) {
+        const marker = part('g', { tabindex: '0', role: 'button', 'aria-label': `${day(point.date, language)} · GET: ${point.value === null ? c.missing : format(point.value, language)}` }, 'distribution-chart-day');
+        if (point.value === null) marker.append(part('line', { x1: x(index) - 4, x2: x(index) + 4, y1: 208, y2: 208 }, 'distribution-missing-mark'));
+        else marker.append(part('circle', { cx: x(index), cy: y(point.value), r: 5 }, 'chart-point'));
+        // A transparent hit area also makes sparse points easy to select by touch.
+        marker.append(part('rect', { x: x(index) - 10, y: point.value === null ? 197 : y(point.value) - 11, width: 20, height: 22, rx: 8 }, 'distribution-chart-hit'), part('title', {}, '', marker.getAttribute('aria-label')));
+        marker.addEventListener('mouseenter', () => display(point)); marker.addEventListener('focus', () => display(point)); marker.addEventListener('click', () => display(point));
+        marker.addEventListener('keydown', event => {
+          if (['Enter', ' '].includes(event.key)) { event.preventDefault(); display(point); return; }
+          if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+          event.preventDefault(); const current = markers.indexOf(marker), next = event.key === 'Home' ? 0 : event.key === 'End' ? markers.length - 1 : Math.max(0, Math.min(markers.length - 1, current + (event.key === 'ArrowLeft' ? -1 : 1))); markers[next].focus();
+        }); markers.push(marker); svg.append(marker);
+      }
+      display(recorded.at(-1));
+      const legend = make('div', 'distribution-chart-legend'); legend.append(make('span', 'distribution-chart-legend-recorded', c.chartMeasured), make('span', 'distribution-chart-legend-gap', c.chartGap));
+      host.append(svg, legend, picker, readout, make('p', 'small muted', c.chartKeyboard));
     }
-    if (rows.length) display({ date: rows.at(-1).date, value: rows.at(-1).getRequests });
     const table = make('table'), caption = make('caption', 'sr-only', c.trajectory), head = make('thead'), heading = make('tr');
     for (const label of [c.day, c.get, c.full, c.range, c.bytes]) { const cell = make('th', '', label); cell.scope = 'col'; heading.append(cell); }
     head.append(heading); table.append(caption, head); const body = make('tbody');
@@ -195,7 +261,7 @@
       body.append(row);
     }
     table.append(body); const details = make('details', 'chart-values'), wrap = make('div', 'table-scroll'); wrap.append(table); details.append(make('summary', '', c.table), wrap);
-    host.append(svg, readout, details);
+    host.append(details);
   }
   window.VCodeDownloadMetrics = Object.freeze({ render, renderSummary, clear: host => { if (host) { host.replaceChildren(); host.hidden = true; } } });
 })();

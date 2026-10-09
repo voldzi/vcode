@@ -24,6 +24,19 @@ const fixture = () => ({
   ],
 });
 
+  class Element {
+    constructor(tag) { this.tagName = tag; this.children = []; this.attributes = {}; this.value = ''; this.hidden = false; this.events = new Map(); this.focused = false; this.classList = { add: name => { this.className = name; } }; }
+    append(...children) { this.children.push(...children); }
+    replaceChildren(...children) { this.children = children; this._text = '';  }
+    setAttribute(name, value) { this.attributes[name] = value; if (name === 'class') this.className = value; }
+    set textContent(value) { this._text = String(value); this.children = []; }
+    get textContent() { return (this._text ?? '') + this.children.map(child => child.textContent ?? '').join(' '); }
+    getAttribute(name) { return this.attributes[name]; }
+    addEventListener(name, listener) { this.events.set(name, listener); }
+    focus() { this.focused = true; this.events.get('focus')?.(); }
+    querySelectorAll(tag) { return this.children.flatMap(child => [child, ...child.querySelectorAll(tag)]).filter(child => child.tagName === tag); }
+  }
+
 test('file transfers, metadata requests and click intents remain distinct; gaps do not become zeroes', () => {
   const parsed = validateDownloadMetrics(fixture(), { now: NOW, days: 90 });
   assert.equal(parsed.availability, 'available');
@@ -105,16 +118,6 @@ test('only an account permitted to the canonical VCode website can read download
 });
 
 test('distribution UI explains ranges and proxy writes; missing data is never rendered as zero or retained after clear', async () => {
-  class Element {
-    constructor(tag) { this.tagName = tag; this.children = []; this.attributes = {}; this.value = ''; this.hidden = false; this.classList = { add: name => { this.className = name; } }; }
-    append(...children) { this.children.push(...children); }
-    replaceChildren(...children) { this.children = children; this.value = ''; }
-    setAttribute(name, value) { this.attributes[name] = value; }
-    set textContent(value) { this.value = String(value); this.children = []; }
-    get textContent() { return this.value + this.children.map(child => child.textContent ?? '').join(' '); }
-    addEventListener() {}
-    querySelectorAll(tag) { return this.children.flatMap(child => [child, ...child.querySelectorAll(tag)]).filter(child => child.tagName === tag); }
-  }
   const context = { Intl, Date, Map, Math, Object, window: {}, document: { createElement: tag => new Element(tag), createElementNS: (_, tag) => new Element(tag) } };
   vm.runInNewContext(await readFile(new URL('../download-metrics-ui.js', import.meta.url), 'utf8'), context);
   const host = new Element('section'), ui = context.window.VCodeDownloadMetrics;
@@ -128,7 +131,10 @@ test('distribution UI explains ranges and proxy writes; missing data is never re
   assert.ok(host.querySelectorAll('details').some(element => element.className === 'panel distribution-counter-details'));
   assert.ok(host.querySelectorAll('details').some(element => element.className === 'distribution-file-details'));
   assert.ok(host.querySelectorAll('table').length > 0);
-  const circles = host.querySelectorAll('circle'); assert.ok(circles.length); assert.equal(circles[0].attributes.tabindex, '0');
+  assert.equal(host.querySelectorAll('svg').length, 0);
+  assert.match(host.textContent, /Only one day has a record/);
+  assert.ok(host.querySelectorAll('div').some(node => node.className === 'distribution-snapshot'));
+  assert.match(host.textContent, /Days with file records: 1 of 7/);
   ui.clear(host); assert.equal(host.hidden, true); assert.equal(host.textContent, '');
   ui.render(host, { availability: 'unavailable', reason: 'not-authorized' }, 'cs'); assert.equal(host.hidden, true); assert.equal(host.textContent, '');
 
@@ -175,6 +181,76 @@ test('distribution UI explains ranges and proxy writes; missing data is never re
   for (const surface of [summary, host]) { assert.equal(surface.hidden, true); assert.equal(surface.textContent, ''); }
   assert.equal(authenticated, false); assert.equal(context.data, null);
   assert.equal(elements.get('dashboard').hidden, true); assert.equal(elements.get('login').hidden, false);
+});
+
+test('daily file plot labels dates and count grid, breaks at missing records and supports keyboard and touch selection', async () => {
+  const context = { Intl, Date, Map, Math, Object, Set, window: {}, document: { createElement: tag => new Element(tag), createElementNS: (_, tag) => new Element(tag) } };
+  vm.runInNewContext(await readFile(new URL('../download-metrics-ui.js', import.meta.url), 'utf8'), context);
+  const document = fixture();
+  document.days = [
+    { ...document.days[0], date: '2026-10-03', getRequests: 2 },
+    { ...document.days[0], date: '2026-10-05', getRequests: 0 },
+    { ...document.days[0], date: '2026-10-06', getRequests: 4 },
+  ];
+  const parsed = validateDownloadMetrics(document, { now: NOW });
+  for (const language of ['cs', 'en']) {
+    const host = new Element('section'); context.window.VCodeDownloadMetrics.render(host, parsed, language);
+    const svg = host.querySelectorAll('svg')[0];
+    assert.equal(svg.attributes.viewBox, '0 0 720 260');
+    const axis = svg.querySelectorAll('g').find(node => node.className === 'distribution-chart-axis');
+    const labels = axis.querySelectorAll('text').map(node => node.textContent);
+    assert.deepEqual(labels.slice(0, 5), ['0', '1', '2', '3', '4']);
+    assert.match(labels.at(-1), /8/); assert.match(labels.at(-3), /2/);
+    const line = svg.querySelectorAll('path')[0].attributes.d;
+    assert.equal((line.match(/M/g) ?? []).length, 2, 'a missing day breaks the measured path');
+    assert.equal((line.match(/L/g) ?? []).length, 1, 'only adjacent recorded days connect');
+    const markers = svg.querySelectorAll('g').filter(node => node.className === 'distribution-chart-day');
+    assert.equal(markers.length, 7);
+    assert.equal(markers[2].attributes.role, 'button'); assert.equal(markers[2].attributes.tabindex, '0');
+    assert.match(markers[2].attributes['aria-label'], language === 'cs' ? /Bez záznamu/ : /No record/);
+    assert.match(markers[3].attributes['aria-label'], /GET: 0$/, 'a recorded zero is distinguishable from an absent record');
+    const readout = host.querySelectorAll('p').find(node => node.className === 'chart-readout distribution-chart-readout');
+    assert.equal(readout.attributes['aria-live'], 'polite');
+    const picker = host.querySelectorAll('label').find(node => node.className === 'distribution-day-picker');
+    assert.match(picker.textContent, language === 'cs' ? /Detail dne/ : /Day detail/);
+    const select = picker.querySelectorAll('select')[0];
+    assert.equal(select.children.length, 7);
+    assert.equal(select.value, '2026-10-06');
+    select.value = '2026-10-04'; select.events.get('change')();
+    assert.match(readout.textContent, language === 'cs' ? /Bez záznamu/ : /No record/);
+    select.value = '2026-10-05'; select.events.get('change')(); assert.match(readout.textContent, /GET: 0$/);
+    assert.match(select.children[3].textContent, /GET: 0$/);
+    markers[2].events.get('click')(); assert.match(readout.textContent, language === 'cs' ? /Bez záznamu/ : /No record/);
+    assert.equal(select.value, '2026-10-04', 'chart selection and native picker stay synchronized');
+    markers[2].events.get('keydown')({ key: 'ArrowRight', preventDefault() {} });
+    assert.equal(markers[3].focused, true); assert.match(readout.textContent, /GET: 0$/);
+    markers[3].events.get('keydown')({ key: 'End', preventDefault() {} }); assert.equal(markers.at(-1).focused, true);
+    markers.at(-1).events.get('keydown')({ key: 'Home', preventDefault() {} }); assert.equal(markers[0].focused, true);
+    const body = host.querySelectorAll('tbody')[0]; assert.equal(body.children.length, 7);
+    assert.match(body.children[2].textContent, language === 'cs' ? /Bez záznamu/ : /No record/);
+    assert.equal(body.children[3].children[1].textContent, '0');
+    assert.match(host.textContent, language === 'cs' ? /Dny se záznamem souborů: 3 z 7/ : /Days with file records: 3 of 7/);
+  }
+});
+
+test('single recorded zero is compact; metadata-only coverage never fabricates a daily file plot', async () => {
+  const context = { Intl, Date, Map, Math, Object, Set, window: {}, document: { createElement: tag => new Element(tag), createElementNS: (_, tag) => new Element(tag) } };
+  vm.runInNewContext(await readFile(new URL('../download-metrics-ui.js', import.meta.url), 'utf8'), context);
+  const zero = fixture(); zero.days = [{ ...zero.days[0], ...Object.fromEntries(Object.keys(counters).map(key => [key, 0])) }];
+  const metadataOnly = fixture(); metadataOnly.days = [metadataOnly.days[1]];
+  for (const language of ['cs', 'en']) {
+    const host = new Element('section');
+    context.window.VCodeDownloadMetrics.render(host, validateDownloadMetrics(zero, { now: NOW }), language);
+    assert.equal(host.querySelectorAll('svg').length, 0);
+    assert.equal(host.querySelectorAll('strong').find(node => node.className === 'distribution-snapshot-value').textContent, '0');
+    assert.match(host.textContent, language === 'cs' ? /Zatím máme záznam pouze za jeden den/ : /Only one day has a record/);
+    context.window.VCodeDownloadMetrics.render(host, validateDownloadMetrics(metadataOnly, { now: NOW }), language);
+    assert.equal(host.querySelectorAll('svg').length, 0);
+    assert.ok(!host.querySelectorAll('strong').some(node => node.className === 'distribution-snapshot-value'));
+    assert.match(host.textContent, language === 'cs' ? /Zatím bez denních záznamů souborů/ : /No daily file records yet/);
+    assert.match(host.textContent, language === 'cs' ? /Dny se záznamem souborů: 0 z 7/ : /Days with file records: 0 of 7/);
+    assert.match(host.querySelectorAll('tbody')[0].textContent, language === 'cs' ? /Bez záznamu/ : /No record/);
+  }
 });
 
 test('summary protects file aggregates with both session authentication and current VCode permission', async () => {
