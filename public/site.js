@@ -42,8 +42,8 @@ document.addEventListener('pointerdown', event => {
   if (mobileNavigation.matches && menu?.getAttribute('aria-expanded') === 'true' && event.target instanceof Node && !header?.contains(event.target)) closeMenu();
 });
 
-// Long showcases can exceed the observer threshold on a phone at text zoom.
-const reveal = document.querySelectorAll('.hero > :not(.hero-signal), .principles > *, .section-heading > *, .product-card, .trust-band > *, .support-cta > *, .product-detail > :not([data-static-showcase]), .support-page > *, .guide > *');
+// Long showcases and guide bodies can exceed the observer threshold at text zoom.
+const reveal = document.querySelectorAll('.hero > :not(.hero-signal), .principles > *, .section-heading > *, .product-card, .trust-band > *, .support-cta > *, .product-detail > :not([data-static-showcase]), .support-page > *, .guide > :not(.guide-body)');
 if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
   reveal.forEach((element, index) => {
     element.classList.add('reveal');

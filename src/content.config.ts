@@ -1,13 +1,16 @@
 import { defineCollection } from "astro:content";
 import { z } from "astro/zod";
 import { glob } from "astro/loaders";
+import { getPublicProducts } from "./lib/products";
+
+const applicationIds = getPublicProducts().map(product => product.id) as [string, ...string[]];
 
 const guides = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./content/guides" }),
   schema: z.object({
     title: z.string(),
     summary: z.string(),
-    application_id: z.enum(["apsyd", "jizda", "cop", "cop-mobile", "masaze", "studio-balance", "stratos", "kaloricke-tabulky", "vcode-recall"]),
+    application_id: z.enum(applicationIds),
     external_ref: z.string(),
     translation_key: z.string(),
     language: z.enum(["cs", "en"]),

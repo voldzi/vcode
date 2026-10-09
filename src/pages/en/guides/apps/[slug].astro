@@ -29,7 +29,7 @@ const pageStructuredData = {
 };
 ---
 <BaseLayout title={`${name} guides — VCode`} description={`Essential user guides and verified instructions for ${name}.`} lang="en" {path} {alternatePath} {pageStructuredData}>
-  <article class:list={["app-guide-hub", `tone-${product.tone}`]}>
+  <article class:list={["app-guide-hub", `tone-${product.tone}`, {"mestem-hrou-guide-hub": product.id === "mestem-hrou"}]}>
     <a class="back-link" href="/en/guides/">← All apps</a>
     <header class="app-guide-heading">
       <ProductIcon id={product.id} size={72} />

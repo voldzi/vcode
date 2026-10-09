@@ -170,6 +170,11 @@ img, svg { display: block; max-width: 100%; }
 .guide-body h2 { margin-top:3rem; }
 .guide-body li { margin:.65rem 0; }
 .guide-body strong { color:var(--navy); }
+.mestem-hrou-guide, .mestem-hrou-guide-hub { min-width:0; overflow-wrap:anywhere; }
+.mestem-hrou-guide .guide-meta { flex-wrap:wrap; }
+.mestem-hrou-guide .guide-body a { text-decoration:underline; text-underline-offset:.18em; }
+.mestem-hrou-guide-hub .app-guide-heading h1 { font-size:clamp(2.4rem,7vw,6rem); }
+.mestem-hrou-guide-hub .button { max-width:100%; white-space:normal; }
 .empty-state { padding:2rem; border:1px dashed var(--line); border-radius:1rem; color:var(--muted); }
 
 .support-page { min-height:70vh; }

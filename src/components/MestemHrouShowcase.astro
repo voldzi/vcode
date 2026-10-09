@@ -26,7 +26,8 @@ const copy = cs ? {
   availability: "Dostupnost",
   ready: "Kam vyrazíš příště?",
   readyText: "Vyber příběh. Vyraz ven. Rozhlédni se.",
-  action: "Vybrat výpravu"
+  action: "Vybrat výpravu",
+  guideLabel: "Jak se hraje"
 } : {
   intro: "Městem hrou offers free outdoor story games in Czech towns and their surroundings. Choose a trail, open it on your phone and find answers in the places around you. A map helps you get there, and hints help with the tasks. Play in your mobile browser; an account and installation are optional. Selected games are available in English.",
   tags: ["Free to play", "In your mobile browser", "No account required"],
@@ -50,15 +51,17 @@ const copy = cs ? {
   availability: "Availability",
   ready: "Where will you go next?",
   readyText: "Choose a story. Head outside. Look around.",
-  action: "Choose a game"
+  action: "Choose a game",
+  guideLabel: "How to play"
 };
 const target = cs ? product.externalUrl : (product.externalUrlEn ?? product.externalUrl);
+const guide = cs ? "/navody/mestem-hrou-prvni-vyprava/" : "/en/guides/mestem-hrou-first-trail/";
 ---
 <div class="mh-showcase" data-static-showcase>
   <section class="mh-intro" aria-label={cs ? "Příběhové výpravy v telefonu" : "Outdoor story games on your phone"}>
     <p>{copy.intro}</p>
     <ul class="mh-tags" aria-label={cs ? "Jak hrát" : "Ways to play"}>{copy.tags.map(tag => <li>{tag}</li>)}</ul>
-    <a class="button mh-button" href={target}>{copy.action} <span aria-hidden="true">↗</span></a>
+    <div class="mh-actions"><a class="button mh-button" href={target}>{copy.action} <span aria-hidden="true">↗</span></a><a class="mh-guide-link" href={guide}>{copy.guideLabel} <span aria-hidden="true">→</span></a></div>
   </section>
   <figure class="mh-hero">
     <img src={`${assets}/01-web-hlavni-ukazka.webp`} srcset={`${assets}/01-web-hlavni-ukazka-640.webp 640w, ${assets}/01-web-hlavni-ukazka-1200.webp 1200w, ${assets}/01-web-hlavni-ukazka.webp 2400w`} sizes="(max-width: 760px) 90vw, (max-width: 1600px) 84vw, 1344px" width="2400" height="1500" loading="lazy" decoding="async" alt={copy.heroAlt} />
@@ -92,6 +95,8 @@ const target = cs ? product.externalUrl : (product.externalUrlEn ?? product.exte
   .mh-tags li { background:#e8efe9; border:1px solid #d2dfd5; border-radius:2rem; padding:.35rem .85rem; color:var(--mh-forest); font-size:.85rem; font-weight:650; }
   .mh-button { background:var(--mh-forest); color:#fffdf8; border-color:var(--mh-forest); min-height:48px; }
   .mh-button:hover { background:#31574b; border-color:#31574b; color:#fffdf8; }
+  .mh-actions { display:flex; flex-wrap:wrap; gap:.75rem 1.25rem; align-items:center; }
+  .mh-guide-link { max-width:100%; padding:.75rem 0; color:var(--mh-forest); font-weight:650; text-decoration:underline; text-underline-offset:.2em; }
   .mh-hero { margin:2rem 0 4rem; overflow:hidden; border:1px solid #e1e3d8; border-radius:var(--radius); background:var(--mh-cream); }
   .mh-hero img { width:100%; height:auto; }
   .mh-heading { max-width:52rem; margin-bottom:2rem; }

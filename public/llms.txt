@@ -43,6 +43,8 @@ Support: mailto:podpora@zeleznalady.cz
 - [Published blog article sitemap](https://vcode.zeleznalady.cz/blog-sitemap.xml)
 - [Czech guides](https://vcode.zeleznalady.cz/navody/)
 - [English guides](https://vcode.zeleznalady.cz/en/guides/)
+- [Městem hrou first trail guide](https://vcode.zeleznalady.cz/navody/mestem-hrou-prvni-vyprava/): Czech instructions for choosing a story, navigation, tasks, continuation and optional offline preparation.
+- [Play the City first trail guide](https://vcode.zeleznalady.cz/en/guides/mestem-hrou-first-trail/): instructions for the selected English games and their actual controls.
 - [NEST support](https://vcode.zeleznalady.cz/podpora/nest/)
 - [NEST privacy](https://vcode.zeleznalady.cz/nest/privacy/)
 - [Privacy](https://vcode.zeleznalady.cz/soukromi/)
