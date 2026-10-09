@@ -33,8 +33,8 @@ export const products: Product[] = [
     headlineEn: "Your project. Its context. On your Mac.",
     summaryCs: "macOS aplikace pro místní vyhledávání v dokumentaci a zdrojových souborech vybraných projektů. Připravuje kontext pro Codex a Claude Code přes MCP a ukazuje, zda jsou indexy aktuální a vyhledávání připravené.",
     summaryEn: "A macOS app for local retrieval across the documentation and source files of selected projects. It supplies context to Codex and Claude Code through MCP and shows whether indexes are current and retrieval is ready.",
-    capabilitiesCs: ["Vyhledávání v místních projektech přes MCP", "Přibalené prostředí a offline embeddingový model", "Výběr složek a přírůstková indexace", "Přehled připravenosti, odezvy a stavu indexů", "České a anglické rozhraní"],
-    capabilitiesEn: ["Local project retrieval through MCP", "Bundled runtime and offline embedding model", "Folder selection and incremental indexing", "Retrieval readiness, latency and index status", "Czech and English interface"],
+    capabilitiesCs: ["Vyhledávání v místních projektech přes MCP", "Místní vyhledávání bez dalších instalací", "Výběr složek a přírůstková indexace", "Přehled připravenosti, odezvy a stavu indexů", "České a anglické rozhraní"],
+    capabilitiesEn: ["Local project retrieval through MCP", "Local search without extra installations", "Folder selection and incremental indexing", "Retrieval readiness, latency and index status", "Czech and English interface"],
     availabilityCs: "Zdarma pro Apple Silicon · macOS 26+",
     availabilityEn: "Free for Apple Silicon · macOS 26+",
     publication: "published"
@@ -172,8 +172,8 @@ export const products: Product[] = [
     headlineEn: "Situational awareness you can carry.",
     summaryCs: "Mobilní přístup k mapě COP, hlášením, poloze, upozorněním a šifrované komunikaci.",
     summaryEn: "Mobile access to the COP map, reports, location, alerts and encrypted communication.",
-    capabilitiesCs: ["Živá situační mapa", "Hlášení z terénu", "Nativní poloha a upozornění", "Bezpečný chat a hovory"],
-    capabilitiesEn: ["Live situation map", "Field reporting", "Native location and alerts", "Secure chat and calls"],
+    capabilitiesCs: ["Živá situační mapa", "Hlášení z terénu", "Poloha z telefonu a upozornění", "Bezpečný chat a hovory"],
+    capabilitiesEn: ["Live situation map", "Field reporting", "Phone location and alerts", "Secure chat and calls"],
     externalUrl: "https://cop.zeleznalady.cz/",
     availabilityCs: "Web je dostupný, aplikaci připravujeme",
     availabilityEn: "Web available, mobile app in preparation"

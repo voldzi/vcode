@@ -65,3 +65,17 @@ animations were allowed to settle before accepting screenshots.
 
 Final screenshots in the audit folder: 05-mestem-after.png,
 06-recall-after.png, 07-moje-porce-after.png and 08-home-after.png.
+
+## Follow-up review
+
+The current production Czech and English Městem hrou pages were fetched again
+on 9 October. Neither includes the capture date or local/public provenance
+paragraph, and both link to the published first-trail guide.
+
+A second independent source review found two further opportunities to simplify
+marketing copy. Recall's installation benefit and matching catalogue capability
+now explain local search without extra setup, rather than list its bundled
+runtime, embedding model and development tools. COP Mobile describes phone
+location instead of “native location”. Both changes were written in Czech and
+English. Specialist connection details remain in the relevant instructions and
+FAQ where they help users configure or maintain the application.
