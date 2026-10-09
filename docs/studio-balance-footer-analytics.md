@@ -92,9 +92,37 @@ vlastníkem. Ikony ani klient nesmí hotlinkovat neveřejné prostředky.
 - Všechny tři servírované v2 runtime mají přesné uvedené piny. Přehled veřejně
   servíruje přesně nový verzovaný script. Žádné reálné návštěvy nebyly čteny
   nebo vytvářeny pro převzetí.
-- Neveřejný registr zůstal beze změny; tři nové události jsou dosud zavřené.
-  Aktivace čeká na důkaz zveřejnění Studio Balance a ověřený bridge.
+- V této fázi podpory zůstal neveřejný registr beze změny; následná konkrétní
+  aktivace po převzetí Studio Balance je zaznamenaná níže.
 
 Vratný soukromý release obsahuje source snapshot, manifest, původní zdroje,
 původní obrazové tagy, konfiguraci nasazení a přijetí. Tajné údaje ani soukromý
 registr nejsou součástí veřejného předání nebo tohoto repozitáře.
+
+## Aktivace Studio Balance — 9. října 2026
+
+Studio Balance nasadilo `27b6e11e7833f836ba7fc6edb56f48db89c49c77` a předalo
+finální receipt. VCode nezávisle ověřilo hlavní stránku a `/o-studiu`: všech
+pět přesných odstavců CZ i EN odpovídá vydanému zdroji, každý ze tří kanonických
+odkazů je přítomen právě jednou, veřejný runtime má byte-exact portfolio-1
+bajty/SRI a živé aplikační balíčky obsahují správný pin, revizi a tři události.
+
+Aktivace proběhla **2026-10-09T13:03:50.827715Z** (15:03 Europe/Prague).
+Změnila pouze položku Studio Balance: přidala tři schválené názvy,
+`portfolioMetricsApprovedAt`, `portfolioMetricsCollectionStartedAt` a cestu/pin
+nového runtime. Osm veřejných cest, původní `outbound-click`, zdroje, ostatní
+nastavení a všechny ostatní weby zůstaly stejné. Privátní registr byl před
+aktualizací v místě zálohován; žádný kontejner se při aktivaci neměnil.
+
+Skutečný běžící Přehled načetl přesně tři schválené patičkové schopnosti plus
+původní odchozí kliknutí; anonymní API zůstává 401. Přesný nasazený kolektor
+ověřil všechny tři názvy a odmítl neschválené cíle, soukromé cesty a raw údaje
+čistě v paměti na izolovaném identifikátoru. Nic neodešlo do Umami.
+Kontrola z provozního prostředí monitoru se standardními monitorovacími
+hlavičkami ověřila nový přesný runtime a 400 pro prázdný collector payload.
+
+Předání Studio Balance zahrnuje izolované testy jedné události za kliknutí,
+bez odchozí duplicity, DNT/GPC/offline a obou přihlašovacích cookies. Skutečná
+soukromá relace neobsahovala analytický script; přihlášení zůstalo zachované.
+VCode nepoužilo skutečné návštěvnické záznamy ani testovací události na reálné ID.
+Tato aktivace portfolio-1 je samostatná a nezávisí na pozdější revizi pro jiné weby.
