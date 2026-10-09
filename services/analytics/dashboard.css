@@ -78,6 +78,8 @@ body[data-authenticated=false] .login-layout{min-height:50vh}
 #inquiries{margin-top:2rem;scroll-margin-top:1rem}
 #inquiries .section-row{flex-wrap:wrap}
 #inquiries .section-row button{max-width:100%;overflow-wrap:anywhere}
+#details label{min-width:0;max-width:100%}
+#details select{min-width:0;width:100%}
 .inquiry-totals{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,12rem),1fr));gap:.8rem}
 .inquiry-metric{display:flex;flex-direction:column;gap:.5rem;padding:1rem 1.2rem;border:1px solid var(--line);border-top:3px solid var(--teal);border-radius:18px;background:var(--panel);min-width:0}
 .inquiry-metric strong{font-size:1.9rem;font-variant-numeric:tabular-nums;color:var(--teal);overflow-wrap:anywhere}
