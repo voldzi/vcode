@@ -85,7 +85,7 @@ const target = cs ? product.externalUrl : (product.externalUrlEn ?? product.exte
 <style>
   :global(.product-detail.mestem-hrou-detail) { padding-top:clamp(2rem,5vw,4.5rem); }
   :global(.product-detail.mestem-hrou-detail h1) { font-size:clamp(2.4rem,7vw,6rem); overflow-wrap:anywhere; }
-  :global(.mestem-hrou-detail .detail-support .text-link) { white-space:normal; overflow-wrap:anywhere; }
+  :global(.mestem-hrou-detail .detail-support .text-link) { display:block; width:auto; max-width:100%; white-space:normal; overflow-wrap:anywhere; }
   .mh-showcase { --mh-forest:#203c36; --mh-muted:#53675e; --mh-cream:#f7f4ec; margin-top:2rem; }
   .mh-intro > p { max-width:75ch; color:var(--muted); font-size:1.1rem; }
   .mh-tags { display:flex; flex-wrap:wrap; gap:.65rem; padding:0; margin:1.5rem 0; list-style:none; }
