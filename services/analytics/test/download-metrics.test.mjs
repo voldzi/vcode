@@ -119,16 +119,62 @@ test('distribution UI explains ranges and proxy writes; missing data is never re
   vm.runInNewContext(await readFile(new URL('../download-metrics-ui.js', import.meta.url), 'utf8'), context);
   const host = new Element('section'), ui = context.window.VCodeDownloadMetrics;
   ui.render(host, { availability: 'unavailable', reason: 'not-configured' }, 'en');
-  assert.match(host.textContent, /Distribution is being prepared/); assert.match(host.textContent, /does not mean zero downloads/);
+  assert.match(host.textContent, /Summary not connected yet/); assert.match(host.textContent, /does not mean zero transfers/);
   assert.equal(host.querySelectorAll('strong').length, 0);
   ui.render(host, validateDownloadMetrics(fixture(), { now: NOW }), 'en');
   assert.match(host.textContent, /Completed 206 ranges/); assert.match(host.textContent, /not installations or unique people/);
   assert.match(host.textContent, /service to the web proxy/); assert.match(host.textContent, /VCodeRecall-0\.6\.0-/);
   assert.match(host.textContent, /Metadata and supplementary files/);
-  assert.ok(host.querySelectorAll('details').length >= 9); assert.ok(host.querySelectorAll('table').length > 0);
+  assert.ok(host.querySelectorAll('details').some(element => element.className === 'panel distribution-counter-details'));
+  assert.ok(host.querySelectorAll('details').some(element => element.className === 'distribution-file-details'));
+  assert.ok(host.querySelectorAll('table').length > 0);
   const circles = host.querySelectorAll('circle'); assert.ok(circles.length); assert.equal(circles[0].attributes.tabindex, '0');
   ui.clear(host); assert.equal(host.hidden, true); assert.equal(host.textContent, '');
   ui.render(host, { availability: 'unavailable', reason: 'not-authorized' }, 'cs'); assert.equal(host.hidden, true); assert.equal(host.textContent, '');
+
+  const summary = new Element('section'), populated = validateDownloadMetrics(fixture(), { now: NOW });
+  const zeroDocument = fixture(); zeroDocument.days = zeroDocument.days.map(row => ({ ...row, ...Object.fromEntries(Object.keys(counters).map(key => [key, 0])) }));
+  const measuredZero = validateDownloadMetrics(zeroDocument, { now: NOW });
+  const emptyDocument = fixture(); emptyDocument.days = [];
+  const empty = validateDownloadMetrics(emptyDocument, { now: NOW });
+  for (const language of ['cs', 'en']) {
+    ui.renderSummary(summary, populated, language);
+    assert.equal(summary.querySelectorAll('h2')[0].id, 'application-distribution-title');
+    assert.ok(summary.querySelectorAll('a').some(link => link.href === (language === 'cs' ? '/aplikace/vcode-recall/' : '/en/apps/vcode-recall/')));
+    assert.deepEqual(summary.querySelectorAll('dd').map(node => node.textContent), ['6', '1', '2 KiB']);
+    assert.match(summary.textContent, language === 'cs' ? /Souhrn dostupný/ : /Summary available/);
+    assert.match(summary.textContent, language === 'cs' ? /Používání nativní aplikace ani instalace se neměří/ : /Native app usage and installations are not measured/);
+    assert.match(summary.textContent, language === 'cs' ? /filtr webu se na distribuci nevztahuje/ : /website filter does not apply to distribution/);
+    assert.match(summary.textContent, language === 'cs' ? /proxy ≠ potvrzení doručení/ : /proxy ≠ confirmed delivery/);
+    assert.ok(!summary.querySelectorAll('dt').some(node => /instal|install|uživatel|user/i.test(node.textContent)));
+    ui.renderSummary(summary, measuredZero, language);
+    assert.deepEqual(summary.querySelectorAll('dd').map(node => node.textContent), ['0', '0', '0 B']);
+    ui.renderSummary(summary, empty, language);
+    assert.deepEqual(summary.querySelectorAll('dd').map(node => node.textContent), ['—', '—', '—']);
+    assert.match(summary.textContent, language === 'cs' ? /Zatím bez záznamů/ : /No records yet/);
+    for (const reason of ['not-configured', 'not-ready', 'invalid']) {
+      ui.renderSummary(summary, { availability: 'unavailable', reason }, language);
+      assert.deepEqual(summary.querySelectorAll('dd').map(node => node.textContent), ['—', '—', '—']);
+      if (reason !== 'invalid') assert.match(summary.textContent, language === 'cs' ? /neprokazují dostupnost aplikace/ : /establish whether the app is available/);
+    }
+    ui.renderSummary(summary, populated, language); ui.render(host, populated, language);
+    const unauthorized = { availability: 'unavailable', reason: 'not-authorized' };
+    ui.renderSummary(summary, unauthorized, language); ui.render(host, unauthorized, language);
+    for (const surface of [summary, host]) { assert.equal(surface.hidden, true); assert.equal(surface.textContent, ''); }
+  }
+
+  // Execute the actual dashboard clear path used by logout, offline and expiry.
+  ui.renderSummary(summary, populated, 'cs'); ui.render(host, populated, 'cs');
+  const elements = new Map([['application-distribution', summary], ['distribution', host]]);
+  context.$ = id => { if (!elements.has(id)) elements.set(id, new Element('div')); return elements.get(id); };
+  context.revision = 0; context.data = populated; context.expiry = 1; context.navigator = { onLine: true };
+  context.clearTimeout = () => {}; let authenticated = true; context.authenticated = value => { authenticated = value; };
+  const dashboard = await readFile(new URL('../dashboard.js', import.meta.url), 'utf8');
+  vm.runInNewContext(dashboard.slice(dashboard.indexOf('function clear(){'), dashboard.indexOf('function scheduleExpiry(')), context);
+  context.clear();
+  for (const surface of [summary, host]) { assert.equal(surface.hidden, true); assert.equal(surface.textContent, ''); }
+  assert.equal(authenticated, false); assert.equal(context.data, null);
+  assert.equal(elements.get('dashboard').hidden, true); assert.equal(elements.get('login').hidden, false);
 });
 
 test('summary protects file aggregates with both session authentication and current VCode permission', async () => {

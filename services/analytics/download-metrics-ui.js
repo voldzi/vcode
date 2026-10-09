@@ -3,8 +3,8 @@
   const copy = {
     cs: {
       heading: 'Distribuce aplikací', subtitle: 'VCode Recall · vydání a přenos souborů',
-      preparation: 'Distribuce se připravuje', unavailable: 'Provozní souhrn není dostupný',
-      preparationText: 'Ověřený veřejný balíček a měření zatím nejsou aktivní. Nedostupné údaje neznamenají nulu stažení.',
+      preparation: 'Souhrn zatím není připojený', unavailable: 'Provozní souhrn není dostupný',
+      preparationText: 'Souhrn distribuce zatím není k dispozici. Chybějící údaje neznamenají nulu přenosů a neprokazují dostupnost aplikace.',
       unavailableText: 'Agregované údaje se nepodařilo bezpečně načíst. Není možné z nich určit počet požadavků ani přenosů.',
       empty: 'Zatím bez záznamů', emptyText: 'V tomto období nejsou uložené provozní záznamy. Chybějící dny nedoplňujeme nulami.',
       interpretation: 'Jde o kliknutí a provozní požadavky, ne počet instalací nebo unikátních lidí. Roboty, opakované pokusy a obnovené přenosy nelze považovat za nové uživatele.',
@@ -23,11 +23,16 @@
       table: 'Zobrazit denní údaje', day: 'Den (UTC)', files: 'Vydání a soubory', version: 'Vydání', file: 'Povolený soubor',
       metadata: 'Metadata a doprovodné soubory', metadataHelp: 'GET / HEAD na latest, manifest, kontrolní součty, licence nebo zdrojové archivy otevřených součástí. Počty a objem jsou oddělené od instalačních ZIP/DMG; bez rozlišení jednotlivých doprovodných souborů.',
       coverage: 'Provozní čítače od', missing: 'Bez záznamu',
+      applications: 'Naše aplikace', platform: 'Aplikace pro macOS', available: 'Souhrn dostupný',
+      appScope: 'Sledujeme distribuci souborů. Používání nativní aplikace ani instalace se neměří.',
+      summaryFull: 'Celé soubory do proxy', summaryBytes: 'Objem do proxy',
+      compactBoundary: 'Celý soubor do proxy ≠ potvrzení doručení do zařízení.',
+      detailLink: 'Podrobnosti distribuce', summaryHelp: 'Co čísla znamenají', summaryPeriod: 'Nejvýše 30 dní · UTC · filtr webu se na distribuci nevztahuje', technical: 'Provozní čítače a jejich význam', fileDetails: 'Zobrazit čítače souborů',
     },
     en: {
       heading: 'Application distribution', subtitle: 'VCode Recall · releases and file transfers',
-      preparation: 'Distribution is being prepared', unavailable: 'Operational summary unavailable',
-      preparationText: 'A verified public package and measurement are not active yet. Unavailable data does not mean zero downloads.',
+      preparation: 'Summary not connected yet', unavailable: 'Operational summary unavailable',
+      preparationText: 'The distribution summary is not available yet. Missing data does not mean zero transfers or establish whether the app is available.',
       unavailableText: 'The aggregates could not be read safely. Request and transfer counts cannot be established from unavailable data.',
       empty: 'No records yet', emptyText: 'No operational records are stored for this period. Missing days are not filled with zeroes.',
       interpretation: 'These are clicks and operational requests, not installations or unique people. Robots, retries and resumed transfers do not represent new users.',
@@ -46,6 +51,11 @@
       table: 'Show daily values', day: 'Day (UTC)', files: 'Releases and files', version: 'Release', file: 'Allowed file',
       metadata: 'Metadata and supplementary files', metadataHelp: 'GET / HEAD for latest, a manifest, checksums, licences or open-source archives. Counts and volume are separate from installer ZIP/DMG transfers; individual supplementary files are not distinguished.',
       coverage: 'Operational counters since', missing: 'No record',
+      applications: 'Our applications', platform: 'macOS application', available: 'Summary available',
+      appScope: 'We track file distribution. Native app usage and installations are not measured.',
+      summaryFull: 'Complete files to proxy', summaryBytes: 'Volume to proxy',
+      compactBoundary: 'A complete file to the proxy ≠ confirmed delivery to a device.',
+      detailLink: 'Distribution details', summaryHelp: 'What the numbers mean', summaryPeriod: 'Up to 30 days · UTC · the website filter does not apply to distribution', technical: 'Operational counters and definitions', fileDetails: 'Show file counters',
     },
   };
   const counters = [['clickIntents', 'clicks'], ['getRequests', 'get'], ['headRequests', 'head'], ['fullResponses', 'full'], ['rangeResponses', 'range'], ['errorResponses', 'errors'], ['abortedResponses', 'aborted'], ['bytesWritten', 'bytes']];
@@ -86,18 +96,16 @@
       const empty = make('div', 'panel distribution-preparation');
       empty.append(make('h3', '', c.empty), make('p', 'muted', c.emptyText)); host.append(empty); return;
     }
-    const grid = make('div', 'totals distribution-totals');
+    const technical = make('details', 'panel distribution-counter-details');
+    technical.append(make('summary', '', c.technical));
+    const values = make('dl', 'distribution-counter-list');
     for (const [key, label] of counters) {
-      const tile = make('article', 'metric distribution-metric');
-      const help = make('details', 'distribution-help'), summary = make('summary', 'metric-label');
-      const question = make('span', 'distribution-question', '?'); question.setAttribute('aria-hidden', 'true');
-      summary.append(make('span', '', c[label]), question);
-      help.append(summary, make('p', 'small muted', c[label + 'Help']));
-      tile.append(help, make('strong', '', key === 'bytesWritten' ? bytes(metrics.totals[key], language) : format(metrics.totals[key], language)));
-      if (key === 'bytesWritten') tile.append(make('small', '', `${format(metrics.totals[key], language)} B`));
-      grid.append(tile);
+      const row = make('div', 'distribution-counter-row');
+      row.append(make('dt', '', c[label]), make('dd', '', key === 'bytesWritten' ? bytes(metrics.totals[key], language) : format(metrics.totals[key], language)), make('dd', 'small muted distribution-counter-help', c[label + 'Help']));
+      if (key === 'bytesWritten') row.append(make('dd', 'small muted distribution-counter-help', `${format(metrics.totals[key], language)} B`));
+      values.append(row);
     }
-    host.append(grid, make('p', 'note', c.interpretation), make('p', 'note', c.boundary));
+    technical.append(values, make('p', 'note', c.interpretation), make('p', 'note', c.boundary)); host.append(technical);
     const chart = make('section', 'panel distribution-chart');
     chart.append(make('h3', '', c.trajectory), make('p', 'small muted', c.chartHint));
     renderChart(chart, metrics, c, language); host.append(chart);
@@ -105,6 +113,7 @@
     files.append(make('h3', '', c.files));
     if (!metrics.artifacts.length) files.append(make('p', 'muted', c.empty));
     else {
+      const details = make('details', 'distribution-file-details'); details.append(make('summary', '', c.fileDetails));
       const list = make('div', 'distribution-file-list');
       for (const artifact of metrics.artifacts) {
         const file = make('article', 'distribution-file');
@@ -115,12 +124,43 @@
         }
         file.append(values); list.append(file);
       }
-      files.append(list);
+      details.append(list); files.append(details);
     }
     const metadata = make('details', 'distribution-metadata'), summary = make('summary', '', c.metadata);
     metadata.append(summary, make('p', 'small muted', c.metadataHelp), make('p', '', `GET: ${format(metrics.metadata.getRequests, language)} · HEAD: ${format(metrics.metadata.headRequests, language)} · ${c.bytes}: ${bytes(metrics.metadata.bytesWritten, language)}`));
     files.append(metadata, make('p', 'small muted', `${c.coverage}: ${timestamp(metrics.coverageStart, language)}`));
     host.append(files);
+  }
+
+  function renderSummary(host, metrics, language = 'cs') {
+    if (!host) return;
+    host.replaceChildren();
+    host.hidden = metrics?.reason === 'not-authorized';
+    if (host.hidden) return;
+    const c = copy[language] ?? copy.cs, available = metrics?.availability === 'available', hasRecords = available && Boolean(metrics.totals);
+    const preparing = !metrics || ['not-configured', 'not-ready'].includes(metrics.reason);
+    const heading = make('h2', 'section-title', c.applications); heading.id = 'application-distribution-title'; host.append(heading);
+    const card = make('article', 'panel application-distribution-card');
+    const header = make('div', 'application-distribution-heading'), identity = make('div', 'application-distribution-identity');
+    const icon = make('img'); icon.src = '/images/products/recall-icon.webp'; icon.alt = ''; icon.width = 48; icon.height = 48;
+    const name = make('div'), productTitle = make('h3'), productLink = make('a', '', 'VCode Recall'); productLink.href = language === 'en' ? '/en/apps/vcode-recall/' : '/aplikace/vcode-recall/'; productTitle.append(productLink); name.append(productTitle, make('p', 'small muted', c.platform)); identity.append(icon, name);
+    header.append(identity, make('span', 'badge ' + (hasRecords ? 'good' : 'warn'), hasRecords ? c.available : available ? c.empty : preparing ? c.preparation : c.unavailable)); card.append(header);
+    card.append(make('p', 'small muted', c.appScope), make('p', 'small muted application-distribution-period', c.summaryPeriod));
+    const grid = make('dl', 'application-distribution-values');
+    for (const [key, label] of [['clickIntents', 'clicks'], ['fullResponses', 'summaryFull'], ['bytesWritten', 'summaryBytes']]) {
+      const pair = make('div'); pair.append(make('dt', '', c[label]), make('dd', '', !hasRecords ? '—' : key === 'bytesWritten' ? bytes(metrics.totals[key], language) : format(metrics.totals[key], language))); grid.append(pair);
+    }
+    card.append(grid);
+    if (available) {
+      const freshness = make('div', 'freshness application-distribution-freshness');
+      freshness.append(make('span', '', `${c.period}: ${day(metrics.startDate, language)} – ${day(metrics.endDate, language)}`), make('span', '', `${c.loaded}: ${timestamp(metrics.updatedAt, language)}`)); card.append(freshness);
+      if (!hasRecords) card.append(make('p', 'small muted', c.emptyText));
+    } else card.append(make('p', 'small muted', preparing ? c.preparationText : c.unavailableText));
+    card.append(make('p', 'small application-distribution-boundary', c.compactBoundary));
+    const footer = make('div', 'application-distribution-footer'), help = make('details', 'application-distribution-help');
+    help.append(make('summary', '', c.summaryHelp));
+    for (const label of ['clicks', 'full', 'bytes']) help.append(make('p', 'small muted', c[label + 'Help']));
+    const link = make('a', 'application-distribution-link', c.detailLink); link.href = '#distribution'; footer.append(help, link); card.append(footer); host.append(card);
   }
 
   function renderChart(host, metrics, c, language) {
@@ -157,5 +197,5 @@
     table.append(body); const details = make('details', 'chart-values'), wrap = make('div', 'table-scroll'); wrap.append(table); details.append(make('summary', '', c.table), wrap);
     host.append(svg, readout, details);
   }
-  window.VCodeDownloadMetrics = Object.freeze({ render, clear: host => { if (host) { host.replaceChildren(); host.hidden = true; } } });
+  window.VCodeDownloadMetrics = Object.freeze({ render, renderSummary, clear: host => { if (host) { host.replaceChildren(); host.hidden = true; } } });
 })();
