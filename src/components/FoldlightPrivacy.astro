@@ -1,0 +1,34 @@
+---
+const { lang = "cs" } = Astro.props as { lang?: "cs" | "en" };
+const cs = lang === "cs";
+---
+<section id="foldlight" class="foldlight-policy">
+  <h2>{cs ? "Foldlight — soukromí ve hře" : "Foldlight — privacy in the game"}</h2>
+  <p>{cs ? "Provozovatel:" : "Operator:"} <strong>VCode</strong><br />{cs ? "Kontakt:" : "Contact:"} <a href="mailto:podpora@zeleznalady.cz">podpora@zeleznalady.cz</a></p>
+  <p>{cs ? "Účinnost od: 9. října 2026" : "Effective from: 9 October 2026"}</p>
+  {cs ? <>
+    <p>Foldlight je logická hra pro iPhone a iPad. Všech dvanáct hlavolamů funguje bez účtu a bez připojení k internetu. Hra neobsahuje reklamy, nákupy v aplikaci, vlastní analytiku ani sledování. Nepoužívá Game Center, cloudovou AI ani vlastní herní server a nezískává přístup ke kontaktům, poloze, kameře nebo mikrofonu.</p>
+    <h3>Data na zařízení</h3>
+    <p>Hra v úložišti aplikace uchovává vybranou kapitolu, nastavení rozehraného hlavolamu, dokončené kapitoly a volbu zvuku. Při změně nebo obnově formátu uložení může zachovat místní záložní kopii původního záznamu. Tato data neodesílá vývojáři. iOS je může zahrnout do systémové zálohy podle vašeho nastavení.</p>
+    <h3>Přehyb a náklon</h3>
+    <p>Na podporovaném iPhonu Duo hra používá aktuální přehyb a náklon pro ovládání světla, lampy a zrcadel v otevřeném režimu na šířku. Pohybové vzorky zpracovává pouze v zařízení; nezapisuje jejich průběh do souborů ani jej nepřenáší po síti. Výsledné nastavení hlavolamu se může uložit jako součást místního postupu. Čtení náklonu se zastaví mimo aktivní vnitřní hraní a při přechodu aplikace do pozadí. Na běžném iPhonu, iPadu a vnější obrazovce Duo se používá dotykové ovládání.</p>
+    <h3>Uchování a odstranění</h3>
+    <p>Místní postup a nastavení zůstávají v úložišti aplikace pro další hraní. Odstranění aplikace odstraní její místní data; pouhé odložení aplikace je zachová. Odstranění aplikace automaticky nemaže dřívější systémové zálohy. Zálohy spravujete v nastavení Apple. Vývojář nemůže obnovit váš postup z vlastního serveru, protože takový server hra nemá.</p>
+    <h3>Dobrovolné odkazy a podpora</h3>
+    <p>Odkazy na web VCode se otevřou v systémovém prohlížeči až po vašem zvolení. Hra k nim nepřidává postup, pohybové údaje ani sledovací parametry. Webová analytika a případné údaje, které odešlete na webu nebo v e-mailu, jsou oddělené od běžící hry a řídí se zásadami webu VCode.</p>
+    <p>Pokud napíšete na <a href="mailto:podpora@zeleznalady.cz">podpora@zeleznalady.cz</a>, použijeme údaje, které nám sami pošlete, k vyřízení dotazu. Na stejné adrese můžete požádat o přístup ke své zprávě, její opravu nebo odstranění. Neposílejte hesla ani citlivé osobní údaje.</p>
+  </> : <>
+    <p>Foldlight is a puzzle game for iPhone and iPad. All twelve puzzles work without an account or internet connection. The game has no ads, in-app purchases, developer analytics or tracking. It does not use Game Center, cloud AI or a developer-operated game server, and does not access your contacts, location, camera or microphone.</p>
+    <h3>On-device data</h3>
+    <p>The game stores your selected chapter, current puzzle settings, completed chapters and sound preference in the app&#x27;s storage. When a saved-data format changes or needs recovery, it may preserve a local backup of the original record. These data are not sent to the developer. iOS may include them in system backups according to your settings.</p>
+    <h3>Fold and tilt</h3>
+    <p>On supported iPhone Duo devices, the game uses the current fold angle and tilt to control light, lamps and mirrors in the open landscape view. Motion samples are processed only on your device; the game does not write a sensor history to files or send it over the network. The resulting puzzle settings may be saved as part of local progress. Tilt updates stop outside active inner-display gameplay and when the app moves to the background. Ordinary iPhones, iPads and the outer Duo display use touch controls.</p>
+    <h3>Retention and deletion</h3>
+    <p>Local progress and preferences remain in the app&#x27;s storage for future play. Deleting the app removes its local data; offloading the app retains them. Deleting the app does not automatically delete earlier system backups. You manage backups through Apple&#x27;s settings. The developer cannot recover your progress from a developer server, because the game has no such server.</p>
+    <h3>Optional links and support</h3>
+    <p>Links to the VCode website open the system browser only when you choose to activate them. The game does not attach progress, motion data or tracking parameters to these links. Website analytics and information you submit on the website or by email are separate from the running game and are governed by the VCode website policy.</p>
+    <p>If you contact <a href="mailto:podpora@zeleznalady.cz">podpora@zeleznalady.cz</a>, we use information you choose to send us to respond to your request. You may use the same address to request access to, correction or deletion of your message. Never include passwords or sensitive personal information.</p>
+  </>}
+  <p><a href={cs ? "/soukromi/" : "/en/privacy/"}>{cs ? "Zásady webu VCode" : "VCode website privacy"}</a> · <a href={cs ? "/podpora/" : "/en/support/"}>{cs ? "Podpora" : "Support"}</a></p>
+</section>
+<style>.foldlight-policy{scroll-margin-top:7rem;min-width:0;overflow-wrap:anywhere}h3{margin-top:2rem}</style>
