@@ -53,3 +53,34 @@ tracking is introduced. No iframe, remote font or extra runtime library is added
 | `03-mapa-vypravy.webp` | 291,644 | `58d86775a4b84b21b19464f51c3d5954ab921876e64ef1a712afbd33bbf9a5c0` |
 | `04-herni-ukol-270.webp` | 11,850 | `5eddfe96f0a6c7510b4a673adb024be7d1ffa8c02b37c789b7a1bebfb4e340d2` |
 | `04-herni-ukol.webp` | 120,782 | `cbc4ec440b6538723ffacb4abcc99e34c185853fea69ffba2269cf7c1e6490d1` |
+
+## Acceptance — 9 October 2026
+
+Released functional source: `822414a` (presentation in `bd3c0e9`).
+
+- `pnpm check`: no errors or warnings; 15 existing hints.
+- `pnpm test`: 107 passed (33 blog, 42 analytics, 32 downloads).
+- `pnpm build` in the exact web image: 154 static pages; signed Recall build
+  proof remained required and verified. Both web and blog images built.
+- Isolated Nginx boundary validation passed: dashboard CSP, gzip, anonymous 401,
+  contact boundary and distribution ranges preserved.
+- Browser: desktop and 390px phone; gallery opens with Enter without JavaScript
+  enhancement. At 200% text, the final English candidate had no product content
+  extending beyond the viewport. The long gallery remained visible; the Czech
+  title was also checked at enlarged text. All temporary overrides were reset.
+- Public acceptance passed for health/blog health, both main/game/product/guide/
+  blog locales, analytics tracker, public PWA resources and both game targets.
+  All 14 served image hashes matched the exact release source.
+- Production gallery visually verified: all four images loaded, no horizontal
+  overflow, visible captions, accessible full-size links and map attribution.
+- Only the static web runtime changed. Blog, scheduled worker, dashboard and
+  download service container identities and start times were preserved.
+- The first deployment automatically rolled back when the acceptance script
+  incorrectly classified the relative RSS alternate as a language link. After
+  correcting the check to inspect hreflang links, the same candidate passed
+  acceptance and was released. Rollback evidence is retained privately.
+
+Runtime web image:
+`sha256:cf15f55f311e9dc2c828b621c839e26c6342a13af7a6d662911d1469f70e46b6`.
+Runtime blog image (unchanged):
+`sha256:fe6ddbca464b0a8859953bd3ef7385feb0cbc66ed09d37f75befb7568587ea7d`.
