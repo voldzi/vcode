@@ -13,6 +13,22 @@
   const uuid = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
   const value = name => form.elements[name].value.trim().normalize('NFC');
   const length = text => Array.from(text).length;
+  // Public links may suggest existing choices, never supply contact details.
+  // Apply once and leave defaults intact so a successful reset clears the choices.
+  function preselect() {
+    const search = location.search;
+    if (!search || search.length > 512) return;
+    const parameters = new URLSearchParams(search), choices = [];
+    for (const [key, suggested] of parameters) {
+      const name = key === 'app' ? 'application' : key === 'area' ? 'area' : null;
+      if (!name || parameters.getAll(key).length !== 1 || !suggested) return;
+      const field = form.elements[name];
+      if (!Array.from(field.options).some(option => option.value === suggested && !option.disabled)) return;
+      choices.push([field, suggested]);
+    }
+    for (const [field, suggested] of choices) if (!field.value) field.value = suggested;
+  }
+  preselect();
   function announce(text, tone = '') { status.textContent = text; status.hidden = !text; status.dataset.tone = tone; status.setAttribute('role', tone === 'error' ? 'alert' : 'status'); }
   function lock(locked) {
     for (const name of ['name', 'email', 'organization', 'message']) form.elements[name].readOnly = locked;

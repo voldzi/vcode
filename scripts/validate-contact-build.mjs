@@ -29,7 +29,7 @@ for (const page of [
   for (const [language, route] of [[page.lang, page.route], [page.lang === 'cs' ? 'en' : 'cs', page.other]]) {
     assert.ok(links.some(link => link.get('rel') === 'alternate' && link.get('hreflang') === language && link.get('href') === base + route), `${page.route}: correct ${language} alternate`);
   }
-  assert.ok(tags(html, 'script').some(script => script.get('src') === '/analytics/tracker.js'), `${page.route}: preserve the standard approved tracker path`);
+  assert.ok(tags(html, 'script').some(script => script.get('src') === '/analytics/tracker.js' && script.get('referrerpolicy') === 'no-referrer'), `${page.route}: preserve the approved tracker without sending the contact URL as its referrer`);
   const anchorHrefs = tags(html, 'a').map(anchor => anchor.get('href')).filter(Boolean);
   assert.ok(anchorHrefs.includes(page.privacy), `${page.route}: direct link to the concrete privacy notice`);
   assert.ok(anchorHrefs.includes(page.lang === 'cs' ? '/podpora/' : '/en/support/'), `${page.route}: existing-user support`);

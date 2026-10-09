@@ -102,7 +102,7 @@ health passed from the actual client network using only the public combined CA.
 No genuine visitor records, live application key or live intake were used.
 
 Protected production evidence is under
-`/srv/vcode/releases/partnership-activation-20261009/`:
+the private release directory `partnership-activation-20261009`:
 `runtime-preflight.json`, `central-deployment.json`, `live-verification.json`,
 `private-config-evidence.json` and the per-gate logs. Local isolated relay evidence
 is `/private/tmp/vcode-partnership-relay-20261009.json`.
@@ -124,7 +124,7 @@ After coordination is authorized, the source maintainer must:
    legal text, and return the exact composed text digest. Keep English unavailable.
 3. Preserve its existing geo CA and mount the prepared combined **public** CA file
    read-only. Protected inputs are server-only in
-   `/srv/vcode/secrets/partnership-operator/moje-porce-runtime.env` and
+   the private operator directory, as `moje-porce-runtime.env` and
    `moje-porce-ca-bundle.pem`; never print the token or put it in source/browser data.
    The initial env file deliberately leaves local intake, publication and trusted
    ingress flags false.
