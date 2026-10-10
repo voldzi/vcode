@@ -29,6 +29,6 @@ Account verification records, legal business identifiers and webmaster credentia
 
 ## Build and live regression gates
 
-`pnpm build` runs `pnpm validate:discovery` for static metadata, sitemap coverage, reciprocal language links, public-link destinations, structured facts and generated AI-reference coverage. `pnpm verify:discovery -- /private/tmp/vcode-discovery-report.json` reads the live static/blog sitemaps and public pages without executing analytics; it checks provider user-agent probes and private boundaries. The optional report contains public page metadata only. User-agent probes do not prove access from a provider's verified IP or inclusion in its index.
+`pnpm build` runs `pnpm validate:discovery` for static metadata, sitemap coverage, reciprocal language links, public-link destinations, structured facts and generated AI-reference coverage. `pnpm verify:discovery /private/tmp/vcode-discovery-report.json` reads the live static/blog sitemaps and public pages without executing analytics; it checks provider user-agent probes and private boundaries. The optional report contains public page metadata only. User-agent probes do not prove access from a provider's verified IP or inclusion in its index.
 
 `/llms.txt` is generated from reviewed bilingual product data and public/published guides. It is an optional reference, not an indexing requirement. Keep actual Search Console/Bing account coverage and impressions separate from build health, IndexNow acceptance and Umami visits.
