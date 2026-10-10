@@ -2,9 +2,11 @@
 
 ## Aktuální stav 10. října 2026
 
-Místní příprava a izolovaná akceptace; **produkční registrace, klíče, brána ani aktivace nejsou provedené**. Automatická kontrola odmítla operátorské předání druhému chatu i kontrolu produkčního serveru. Nepřijala lidský souhlas ověřený přes `read_thread` v chatu Moje porce jako přímé pověření pro toto vlákno. Před serverovými kroky a předáním pokynů je proto potřebné přímé potvrzení vlastníka zde. Odmítnutí se neobchází jiným agentem, přenosem nebo souborem pro nepřímé předání.
+**Moje porce je nasazená a její centrální příjem je aktivní.** Závěrečný skutečný veřejný GET 10. října v 11:44:19 UTC vrátil 200 a `enabled=true`. Před zapnutím prošel přesný veřejný text soukromí v obou jazycích, vlastní zdrojové vydání, skutečná DMZ i oddělená brána. Původní centrální služby a záznam Městem hrou jsou zachované. Zprávy míří do existující soukromé schránky VCode se stávajícím obecným Telegram outboxem; při akceptaci nebyl proveden skutečný POST ani odeslán skutečný Telegram.
 
-Konkrétní rozhodnutí vlastníka v chatu Moje porce bylo přečtené: zpráva `01a1255d-6310-7233-8f57-804c9672defc`, otázka `call_57816e1e4c3341dbb7d2991ca5c57214`, odpověď „Schválit tento konkrétní rozsah“. Zahrnuje vlastní registraci ve VCode, samostatné serverové klíče a omezenou zabezpečenou bránu, pouze dvě kontaktní cesty a aktivaci po izolovaném testu a publikaci schváleného textu. Výše uvedená automatická kontrola toto pověření zatím pro serverové akce v tomto vlákně nepřijala.
+Po počátečním odmítnutí automatickou kontrolou vlastník udělil přímé operátorské potvrzení v tomto vlákně: zpráva `01a12568-10e4-7581-8aca-2776d8bcd2a0`, otázka `call_5cf4615d13174fd1b665bff0983d4cfa`, odpověď „Schvaluji napojení a nasazení Moje porce“. Tím byly povolené konkrétní serverové kroky a předání pokynů zdrojovému chatu. Předchozí odmítnutí se neobcházelo; serverové akce pokračovaly až po tomto přímém potvrzení.
+
+Konkrétní rozhodnutí vlastníka v chatu Moje porce bylo rovněž přečtené: zpráva `01a1255d-6310-7233-8f57-804c9672defc`, otázka `call_57816e1e4c3341dbb7d2991ca5c57214`, odpověď „Schválit tento konkrétní rozsah“. Zahrnuje vlastní registraci ve VCode, samostatné serverové klíče a omezenou zabezpečenou bránu, pouze dvě kontaktní cesty a aktivaci po izolovaném testu a publikaci schváleného textu.
 
 ## Přesná hranice
 
@@ -21,7 +23,7 @@ Konkrétní rozhodnutí vlastníka v chatu Moje porce bylo přečtené: zpráva 
 
 Zpráva skončí pouze v existující soukromé kontaktní schránce VCode a jeho stávajícím outboxu. Platí současná 90denní retence a obecný Telegram bez kontaktů nebo obsahu zprávy. Kontaktní formulář se neposílá do analytiky. Účet, jídelníček, zdravotní údaje a další soukromý obsah aplikace se k poptávce nepřipojují. Nezavádí se druhá databáze, tabulka, inbox, analytická událost ani tombstone.
 
-Vlastník také schválil konkrétní CS/EN návrh v lidské zprávě `01a12546-823e-7202-9a42-e059c11a6253`. Zdrojový tým uvádí budoucí publikaci na `https://mojeporce.cz/spoluprace/soukromi`; skutečný veřejný readback se dosud v této přípravě neeviduje. Původní schválení jiného partnerského rozhraní ani Městem hrou se nepřebírá.
+Vlastník také schválil konkrétní CS/EN návrh v lidské zprávě `01a12546-823e-7202-9a42-e059c11a6253`. Nezávislý skutečný veřejný readback na `https://mojeporce.cz/spoluprace/soukromi` 10. října v 11:43:31 UTC potvrdil všech šest českých a šest anglických odstavců a přesný schválený digest výše. Anglické znění je úmyslně dostupné v rozbalovací části téže české stránky. Původní schválení jiného partnerského rozhraní ani Městem hrou se nepřebírá.
 
 ## Připravené konkrétní soubory
 
@@ -31,7 +33,7 @@ Vlastník také schválil konkrétní CS/EN návrh v lidské zprávě `01a12546-
 
 Ostatní proxy lokace musí vždy odstranit `X-Mojeporce-Contact-Ingress`; serverová direktiva se nedědí do lokace, která má vlastní `proxy_set_header`. DMZ získá jen vlastní guard. Node získá jen nový centrální credential, odlišný guard a veřejnou CA. CA signing key zůstává pouze operátorovi, mimo runtime. Žádný browser Authorization, cookie, forwarding chain, referrer nebo správcovské oprávnění se nepředává.
 
-Statický Dockerfile Moje porce uvádí UID/GID `1001:1001` a návrhový read-only mount `/etc/mojeporce-contact`. Skutečný uživatel, mounty, topologie, container ID, síťové členství a network ID musí být před instalací ověřené. Nepoužije se odhad jména sítě, náhradní HTTP, vypnuté TLS ověřování nebo přístup k jiné databázové síti.
+Statický Dockerfile Moje porce původně naznačoval UID/GID `1001:1001`; živý readback potvrdil **UID 1001 / GID 65533**. Nové Node materiály jsou připravené přesně pro tuto identitu a zdrojový read-only mount `/etc/mojeporce-contact`; skutečné mounty v novém vydání zůstávají zdrojovou bránou. Síťové názvy a ID byly ověřené před instalací vlastní brány. Nepoužil se odhad jména sítě, náhradní HTTP, vypnuté TLS ověřování nebo přístup k jiné databázové síti.
 
 ## Zdrojové opravy a ověření
 
@@ -55,6 +57,16 @@ Ověřené hranice zahrnují nezávislé dvě registrace a vypnutí jen Moje por
 
 Projektové kontroly 10. října 2026: `pnpm check` (0 chyb, 0 varování, 15 existujících hints), `pnpm test`, syntaxe nového akceptačního skriptu a veřejná repository hranice prošly. Samostatné `pnpm build` nejprve správně odmítlo chybějící soukromý Recall build proof. Opakování s existujícím podepsaným dokladem a jeho public trust key jako místními vstupy prošlo včetně katalogu a kontaktních stránek obou jazyků; žádný doklad se nekopíroval do webu. Finální build log je `/private/tmp/vcode-mojeporce-preparation-build-20261010.log`. Docker obrazy pro tento krok ani produkční změny provedené nebyly.
 
+### Finální produkční obraz a vlastní instalace
+
+Následný přenositelný balíček prošel skutečnou izolovanou zkouškou proti **přesnému běžícímu obrazu** `sha256:5e175b0ced4cc817c7ab10e5146b5b5810189fb9a3d9e1fedda1f66cb1e004ed`: PASS, všechny jednotlivé výsledky true, nula skutečných Telegram volání a všechny jednorázové zdroje odstraněné. Místní kopie dokladu je `/private/tmp/vcode-mojeporce-contact-20261010/exact-image-evidence.json`, SHA-256 `692b0670ed99562cfa77200d2f847273352703e36117a0d336c2413985a618fe`. Balíček má SHA-256 `aaedb9c1a7847d6b036d509dfaedb52e57ea398ee7f9360fd6775a25a009617c` a obsahuje pouze deset předem povolených souborů.
+
+Na serveru je adaptér ověřený povinnými externími SHA-256 (`f0f2130a04ca0462d246955e236417195877009cf5a770dc7577afe92fdb8934`, metadata `018f2468840b6e3f670e7259448517f20afc66beec5ac544a6435d7a1c4243b3`). Zdrojové soubory byly znovu ověřené při přípravě balíčku; na serveru není zdrojový checkout ani node_modules a doklad správně uvádí `clientSourceReverifiedAtRuntime=false`. Host Node 22.23.3 řídil izolaci po konkrétní syntax/import kontrole; skutečný adaptér a služba běžely v obrazu Node 24.20.0. Systémový Node nebyl měněný.
+
+Provisioning nejprve skončil ještě před prvním zápisem kvůli nezahrnutému plnému SGID režimu existujících rodičů. Čtecí diagnostika prokázala, že do oprávněné skupiny patří pouze operátor UID 1000. Finální vlastní helper ověřil přesná plná oprávnění a členství, normalizoval pouze čerstvé adresáře přes jejich NOFOLLOW FD a atomicky přidal OFF/null/null položku. Existující rodiče ani jejich oprávnění se nezměnily. Výsledný registry SHA-256 je `eddc8663349d78f4222f1fd9abb33e1d5dc24d0853fe9e42e725a0298aacdfd6`; původní záznam Městem hrou je kanonicky totožný. Chráněné doklady a vlastní rollback jsou na serveru.
+
+Předepsaná obě Docker sestavení ze stávajících produkčních zdrojů prošla pod oddělenými kontrolními tagy: web `sha256:427817c562b42ad38fc12a8d7702822943a7bfb7a2c869ab9fce4e2ad80f9792`, blog `sha256:19a356b0c405f220e70269ed48bc647242f003de2b727ab926a32b00d113852a`. Kontrolní blog obraz nebyl nasazen; finální izolace používá skutečný běžící obraz výše. Veřejné health, obě hlavní jazykové verze, Městem hrou produkt i návod a obě blogové verze vrátily 200.
+
 ## Připravený rollout a návrat
 
 1. Po přímém potvrzení v tomto vlákně ověřit aktuální serverové identity a existující síť; uložit soukromé baseline/rollback doklady bez vypisování tajných hodnot.
@@ -65,6 +77,14 @@ Projektové kontroly 10. října 2026: `pnpm check` (0 chyb, 0 varování, 15 ex
 6. Před aktivací přečíst schválený přesný text ve skutečné veřejné aplikaci, zaznamenat publikaci a schválení a ověřit zdrojový web/runtime i překládané zkušenosti v zamýšleném rozsahu. Aktivovat pouze vlastní položku a následně ověřit veřejnou GET dostupnost bez živého POST.
 7. Při selhání obnovit pouze vlastní změnu registru nebo zastavit/odstranit prokazatelně vlastní novou bránu a vrátit vlastněné zdrojové soubory podle otisků. Neobnovovat starší celý registry přes novější nezávislou změnu. Kontaktní databáze, jiné aplikace a jejich původní klíče se nemažou ani nerestartují.
 
-## Zbývající brány
+## Výsledek nasazení
 
-Přímé operátorské potvrzení v tomto vlákně; živá read-only inventura a bezpečný provisioning; exact-image izolace; vlastní produkční DMZ/app instalace; veřejný readback přesného textu a chráněných vstupů. Připravený kód, místní PASS nebo zdrojové schválení samo o sobě nejsou potvrzením produkční aktivace. Fyzický iPhone a skutečné doručení Telegramu se tímto rozsahem netestují.
+- Vlastní app release `88c246150b1157de242cac237e540ff6f120b57b`, image `sha256:894bb6440de239aff0aed8a1fcd97d382d15828b0772edb9f0cb8099bb4e5018`, healthy CID `3955e6e7220df5872a5cdb127bd2e44e7cf0791bebd7daf82e281954e73aa924`. Skutečný read-only mount, UID 1001 / GID 65533, shoda vlastního credential a veřejné CA, odlišný guard i nepřítomnost operátorské složky v runtime byly ověřené. Vlastní app opt-in použil stejný immutable obraz, bez sestavení či migrace.
+- Skutečná DMZ měla právě jeden vlastní include v kanonickém HTTPS vhostu; zmrazené veřejné soubory souhlasily a skutečný app guard odpovídal skutečnému DMZ guardu. Všech 77 běžných vlastních proxy kontextů a všechny čtyři vlastní analytické proxy kontexty explicitně odstranily kontaktní hlavičku. `nginx -t` prošlo; žádný guard ani jeho otisk se nevypisoval. Doklad zdrojového týmu je `/private/tmp/mojeporce-contact-live-dmz-proof.json`.
+- Pět funkčních zdrojových vstupů adaptéru v přesném vydání odpovídá bajtově exact-image testu. Jediný rozdíl v šestém, `public-site.ts`, je obecné `publicSite.privacyVersion` (`2026-10-08` ve vydání, `2026-10-09` ve fixture). Kontaktní rozhraní tento údaj nepoužívá; kontaktní verze a skutečně zveřejněné znění byly nezávisle ověřené přesným digestem.
+- Před central ON prošel skutečný veřejný GET 200 / `enabled=false` přes plně zapnutý vlastní app adaptér. Poté se atomicky změnil pouze vlastní strict záznam Moje porce. Výsledný registry SHA-256 je `762ea0860734bbd5317b383db5bd44f1f0ada9d901106173a82ac32ed81bbda4`; ostatní záznamy jsou zachované. Čerstvý soukromý gate má SHA-256 `437da94eed7487cfca76e61695925fc7de08b4fb3507bee3d8cacafc586e086c`. Vlastní immutable intent a doklad obsahují bezpečný návrat pouze tohoto záznamu do OFF.
+- Závěrečný veřejný GET 200 / `enabled=true` ověřil pevnou aplikaci, origin, oblast a verzi v odpovědi, minimální prodlevu a platnou expiraci. Token nebyl vypsán ani uložen. Odpověď má jednu bezpečnostní politiku, `no-store`, žádné CORS ani cookies. Následný runtime readback znovu potvrdil zdravé vlastní propojení, nezměněné původní centrální container IDs/images a shodný záznam Městem hrou. Původní `PARTNERSHIP_*` příjem zůstává vypnutý.
+- Trvalý analytický generátor a standard jsou uložené i v produkčních provozních podkladech. Aktualizovaly se pouze tyto dva konkrétní soubory s původními otisky a chráněnými zálohami; nedošlo k regenerování ostatních webů, klíčů nebo collectorů.
+- Finální `pnpm check` (0 chyb, 0 varování), `pnpm test` (60 blog + 79 analytika + 32 downloads, vše PASS) a `pnpm build` prošly. Obě předepsaná Docker sestavení a veřejný smoke jsou doložené výše.
+
+Místní kopie aktivace a bezpečných veřejných/runtime dokladů jsou v `/private/tmp/vcode-mojeporce-contact-20261010/`. V odsouhlaseném rozsahu nezůstává neprovedená brána. Fyzický iPhone a skutečné doručení Telegramu se tímto rozsahem netestují; síťové odeslání, inbox a obecný Telegram byly ověřené izolovaně na syntetických datech proti přesnému centrálnímu obrazu. Běžná další vydání musí zachovat mount, explicitní opt-in, kontaktní verzi/digest a oddělení všech proxy kontextů.

@@ -4,6 +4,11 @@
 // No host ports, production connections, genuine records or real Telegram.
 // node scripts/verify-mojeporce-contact-relay.mjs --client-root <absolute-checkout>
 //   --image <tested-blog-image> [--output /absolute/evidence.json]
+// --client-root <absolute-checkout> --prepare-bundle <new-absolute-directory>
+// exports the same adapter once; server acceptance needs no source/node_modules.
+// --adapter-bundle <absolute-esm> --adapter-metadata <absolute-json>
+//   --adapter-sha256 <approved-hash> --metadata-sha256 <approved-hash>
+//   --image <existing-exact-blog-image> [--output /absolute/evidence.json]
 import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
 import {createHash, randomBytes} from 'node:crypto';
@@ -15,14 +20,93 @@ import {fileURLToPath, pathToFileURL} from 'node:url';
 
 const option = name => {const index = process.argv.indexOf(name); return index < 0 ? undefined : process.argv[index + 1];};
 const clientInput = option('--client-root'), image = option('--image'), output = option('--output');
+const prepareInput = option('--prepare-bundle');
+const adapterInput = option('--adapter-bundle'), metadataInput = option('--adapter-metadata');
+const adapterExpected = option('--adapter-sha256'), metadataExpected = option('--metadata-sha256');
 const postgresImage = option('--postgres-image') ?? 'postgres:17-alpine';
 const nginxImage = option('--nginx-image') ?? 'nginx@sha256:97d490c12ba55b4946b01546d1c3ed324e8d41ab1c9fcb2a616aa470620e5b46';
-if (!clientInput || !isAbsolute(clientInput) || !image || image.startsWith('-') || postgresImage.startsWith('-') || nginxImage.startsWith('-') || output && !isAbsolute(output)) throw new Error('Provide an absolute --client-root, existing --image and optional absolute --output.');
-const clientRoot = await realpath(clientInput);
-const requireClient = createRequire(join(clientRoot,'package.json'));
-const esbuildPath = createRequire(requireClient.resolve('tsx')).resolve('esbuild');
-const {build} = await import(pathToFileURL(esbuildPath).href);
+const sha256 = value => createHash('sha256').update(value).digest('hex');
+const shaPattern = /^[a-f0-9]{64}$/;
+const templates = ['api-security-headers.conf','error-pages.conf','error-handlers.conf','tls-gateway.conf','mojeporce-node-ingress.conf.example'];
+const requiredSources = ['src/lib/partner-contact-server.ts','src/lib/partner-contact-privacy.ts','src/app/api/partner-contact/route.ts','src/app/api/partner-contact/challenge/route.ts'];
+const prebundled = Boolean(adapterInput || metadataInput || adapterExpected || metadataExpected);
+if (Boolean(clientInput) === prebundled || clientInput && !isAbsolute(clientInput)
+  || prebundled && (!adapterInput || !isAbsolute(adapterInput) || !metadataInput || !isAbsolute(metadataInput) || !shaPattern.test(adapterExpected ?? '') || !shaPattern.test(metadataExpected ?? ''))
+  || prepareInput && (!isAbsolute(prepareInput) || !clientInput || image || output)
+  || !prepareInput && (!image || image.startsWith('-')) || postgresImage.startsWith('-') || nginxImage.startsWith('-') || output && !isAbsolute(output)) {
+  throw new Error('Use either absolute --client-root or both absolute adapter files and their approved SHA256 values; acceptance requires an existing --image. --prepare-bundle requires --client-root and a new absolute directory.');
+}
+const clientRoot = clientInput ? await realpath(clientInput) : undefined;
 const templateRoot = fileURLToPath(new URL('../deploy/contact-relays/', import.meta.url));
+async function prepareAdapter(destination) {
+  let metadata;
+  if (clientRoot) {
+    const requireClient = createRequire(join(clientRoot,'package.json'));
+    const esbuildPath = createRequire(requireClient.resolve('tsx')).resolve('esbuild');
+    const {build,version} = await import(pathToFileURL(esbuildPath).href);
+    const bundle = await build({absWorkingDir:clientRoot,stdin:{contents:`export * as challenge from './src/app/api/partner-contact/challenge/route.ts';\nexport * as submission from './src/app/api/partner-contact/route.ts';\nexport {createPartnerContactTransport,partnerContactAvailable,partnerContactPrivacyDigest} from './src/lib/partner-contact-server.ts';`,loader:'ts',resolveDir:clientRoot,sourcefile:'isolated-contact-routes.ts'},tsconfig:join(clientRoot,'tsconfig.json'),bundle:true,platform:'node',format:'esm',target:'node24',outfile:destination,metafile:true,logLevel:'silent'});
+    await chmod(destination,0o600);
+    const sources = {};
+    for (const input of Object.keys(bundle.metafile.inputs)) {
+      const path = isAbsolute(input) ? input : join(clientRoot,input);
+      if (path.startsWith(clientRoot+'/src/')) sources[path.slice(clientRoot.length+1)] = sha256(await readFile(path));
+    }
+    for (const file of requiredSources) assert.ok(Object.hasOwn(sources,file));
+    // A portable adapter may depend only on built-in Node modules at runtime.
+    for (const item of Object.values(bundle.metafile.outputs)) for (const dependency of item.imports) {
+      if (dependency.external) assert.match(dependency.path,/^node:/,'Adapter has an external package dependency');
+    }
+    metadata = {schemaVersion:1,format:'esm',nodeTarget:24,bundler:{name:'esbuild',version},bundleSha256:sha256(await readFile(destination)),sourceSha256:sources,
+      privacyDigest:(await import(pathToFileURL(destination).href)).partnerContactPrivacyDigest};
+  } else {
+    const bytes = await readFile(adapterInput), metadataBytes = await readFile(metadataInput);
+    assert.ok(bytes.length > 0 && bytes.length <= 2*1024*1024,'Adapter exceeds the bounded portable bundle size');
+    assert.ok(metadataBytes.length > 0 && metadataBytes.length <= 32*1024,'Adapter metadata exceeds its limit');
+    assert.equal(sha256(bytes),adapterExpected,'Portable adapter differs from the approved SHA256');
+    assert.equal(sha256(metadataBytes),metadataExpected,'Portable metadata differs from the approved SHA256');
+    metadata = JSON.parse(metadataBytes.toString('utf8'));
+    assert.deepEqual(Object.keys(metadata).sort(),['schemaVersion','format','nodeTarget','bundler','bundleSha256','sourceSha256','privacyDigest'].sort());
+    assert.equal(metadata.schemaVersion,1);assert.equal(metadata.format,'esm');assert.equal(metadata.nodeTarget,24);
+    assert.deepEqual(Object.keys(metadata.bundler).sort(),['name','version']);assert.equal(metadata.bundler.name,'esbuild');assert.match(metadata.bundler.version,/^\d+\.\d+\.\d+$/);
+    assert.equal(metadata.bundleSha256,adapterExpected);assert.match(metadata.privacyDigest,shaPattern);
+    assert.ok(metadata.sourceSha256 && typeof metadata.sourceSha256 === 'object' && !Array.isArray(metadata.sourceSha256));
+    assert.ok(Object.keys(metadata.sourceSha256).length <= 32);
+    for (const [file,hash] of Object.entries(metadata.sourceSha256)) {assert.match(file,/^src\/(?:[A-Za-z0-9_-]+\/)*[A-Za-z0-9_-]+\.tsx?$/);assert.match(hash,shaPattern);}
+    for (const file of requiredSources) assert.ok(Object.hasOwn(metadata.sourceSha256,file));
+    await writeFile(destination,bytes,{mode:0o600});
+    assert.equal((await import(pathToFileURL(destination).href)).partnerContactPrivacyDigest,metadata.privacyDigest,'Bundle privacy digest differs from its approved source receipt');
+  }
+  assert.match(metadata.privacyDigest,shaPattern);
+  return metadata;
+}
+async function recheckAdapter(metadata) {
+  if (clientRoot) {
+    for (const [file,hash] of Object.entries(metadata.sourceSha256)) assert.equal(sha256(await readFile(join(clientRoot,file))),hash,'Source changed during acceptance');
+  } else {
+    assert.equal(sha256(await readFile(adapterInput)),adapterExpected,'Portable adapter changed during acceptance');
+    assert.equal(sha256(await readFile(metadataInput)),metadataExpected,'Portable metadata changed during acceptance');
+  }
+}
+if (prepareInput) {
+  // A preparation run creates no Docker resources, credentials or runtime files.
+  await mkdir(prepareInput,{mode:0o700});
+  await mkdir(join(prepareInput,'adapter'),{mode:0o700});await mkdir(join(prepareInput,'scripts'),{mode:0o700});
+  await mkdir(join(prepareInput,'deploy'),{mode:0o700});await mkdir(join(prepareInput,'deploy/contact-relays'),{mode:0o700});
+  const metadata = await prepareAdapter(join(prepareInput,'adapter/client-bundle.mjs'));
+  const metadataBytes = JSON.stringify(metadata,null,2)+'\n';
+  await writeFile(join(prepareInput,'adapter/client-bundle.json'),metadataBytes,{mode:0o600});
+  await writeFile(join(prepareInput,'scripts/verify-mojeporce-contact-relay.mjs'),await readFile(fileURLToPath(import.meta.url)),{mode:0o600});
+  for (const file of templates) await writeFile(join(prepareInput,'deploy/contact-relays',file),await readFile(join(templateRoot,file)),{mode:0o600});
+  await recheckAdapter(metadata);
+  const note = `Disposable acceptance bundle. Contains no credentials, runtime environment, database records or node_modules.\nRequires host Node 24+, OpenSSL and Docker, with existing blog, Nginx and PostgreSQL images. No pulls/builds, host ports, real Telegram or production network access occur. The blog image must be the independently verified exact production image ID.\n\nRun from this extracted directory after checking the externally supplied archive/manifest SHA256:\n\nnode scripts/verify-mojeporce-contact-relay.mjs \\\n  --adapter-bundle "$PWD/adapter/client-bundle.mjs" \\\n  --adapter-metadata "$PWD/adapter/client-bundle.json" \\\n  --adapter-sha256 ${metadata.bundleSha256} \\\n  --metadata-sha256 ${sha256(metadataBytes)} \\\n  --image "$BLOG_IMAGE" \\\n  --output "$PWD/evidence.json"\n\nBLOG_IMAGE must name the approved sha256 image ID, never a movable tag. Existing image overrides are --postgres-image and --nginx-image.\nPASS proves this adapter/frozen ingress/private TLS gateway/central contact service in isolation only. It does not prove a Next framework build, installed production DMZ, or production activation. Source hashes are the packaging-time receipt; the server verifies adapter and metadata bytes, not a source checkout. All fixture credentials are generated afresh and removed with the disposable resources.\n`;
+  await writeFile(join(prepareInput,'README.txt'),note,{mode:0o600});
+  const files = ['README.txt','scripts/verify-mojeporce-contact-relay.mjs','adapter/client-bundle.mjs','adapter/client-bundle.json',...templates.map(file=>'deploy/contact-relays/'+file)];
+  const fileHashes = {};for (const file of files) fileHashes[file] = sha256(await readFile(join(prepareInput,file)));
+  const manifest = {schemaVersion:1,scope:'Isolated Moje porce contact relay acceptance',adapterMode:'prebundled',sourceReverifiedAtPackaging:true,requiresProductionImageIdentity:true,files:fileHashes};
+  const manifestBytes = JSON.stringify(manifest,null,2)+'\n';await writeFile(join(prepareInput,'manifest.json'),manifestBytes,{mode:0o600});
+  process.stdout.write(JSON.stringify({result:'PREPARED',directory:prepareInput,manifestSha256:sha256(manifestBytes),adapterSha256:metadata.bundleSha256,metadataSha256:sha256(metadataBytes),clientSourceSha256:metadata.sourceSha256,clientPrivacyDigest:metadata.privacyDigest,files:files.length+1,noDockerResourcesCreated:true})+'\n');
+  process.exit(0);
+}
 const directory = await mkdtemp(join(tmpdir(), 'vcode-mojeporce-relay-'));
 await chmod(directory, 0o700);
 const prefix = `vcode-mojeporce-relay-${process.pid}-${Date.now()}`;
@@ -323,20 +407,18 @@ try{
 }finally{await database.end();}
 `;
 
-let identities,runFailure;
+let identities,runFailure,adapterMetadata;
 try {
+  adapterMetadata = await prepareAdapter(join(directory,'client-bundle.mjs'));
+  Object.assign(clientHashes,adapterMetadata.sourceSha256);
+  synthetic.privacyDigest=adapterMetadata.privacyDigest;
   identities={blog:docker('image','inspect',image,'--format','{{.Id}}').trim(),nginx:docker('image','inspect',nginxImage,'--format','{{.Id}}').trim(),postgres:docker('image','inspect',postgresImage,'--format','{{.Id}}').trim()};
-  const bundle=await build({absWorkingDir:clientRoot,stdin:{contents:`export * as challenge from './src/app/api/partner-contact/challenge/route.ts';\nexport * as submission from './src/app/api/partner-contact/route.ts';\nexport {createPartnerContactTransport,partnerContactAvailable,partnerContactPrivacyDigest} from './src/lib/partner-contact-server.ts';`,loader:'ts',resolveDir:clientRoot,sourcefile:'isolated-contact-routes.ts'},tsconfig:join(clientRoot,'tsconfig.json'),bundle:true,platform:'node',format:'esm',target:'node24',outfile:join(directory,'client-bundle.mjs'),metafile:true,logLevel:'silent'});
-  await chmod(join(directory,'client-bundle.mjs'),0o600);
-  for(const input of Object.keys(bundle.metafile.inputs)){const path=isAbsolute(input)?input:join(clientRoot,input);if(path.startsWith(clientRoot+'/src/'))clientHashes[path.slice(clientRoot.length+1)]=createHash('sha256').update(await readFile(path)).digest('hex');}
-  for(const file of ['src/lib/partner-contact-server.ts','src/lib/partner-contact-privacy.ts','src/app/api/partner-contact/route.ts','src/app/api/partner-contact/challenge/route.ts'])assert.ok(Object.hasOwn(clientHashes,file));
-  synthetic.privacyDigest=(await import(pathToFileURL(join(directory,'client-bundle.mjs')).href)).partnerContactPrivacyDigest;
   await put('fixture.json',JSON.stringify(synthetic));await put('clock',String(base));
   await put('common.mjs',common);await put('backend.mjs',backend);await put('control.mjs',control);await put('probe.mjs',probe);await put('adapter.mjs',adapter);await put('adapter-probe.mjs',adapterProbe);
   for(const file of ['state.json','first-proof.json','deleted-proof.json','revocation-proof.json'])await put(file,'');
   await put('database.env',`POSTGRES_USER=contact_test\nPOSTGRES_DB=contact_test\nPOSTGRES_PASSWORD=${synthetic.password}\n`);
   await mkdir(join(directory,'config'),{mode:0o700});
-  for(const file of ['api-security-headers.conf','error-pages.conf','error-handlers.conf','tls-gateway.conf','mojeporce-node-ingress.conf.example']){const source=await readFile(join(templateRoot,file),'utf8');hashes[file]=createHash('sha256').update(source).digest('hex');await put('config/'+file,source);}
+  for(const file of templates){const source=await readFile(join(templateRoot,file),'utf8');hashes[file]=sha256(source);await put('config/'+file,source);}
   const openssl=(...args)=>execFileSync('openssl',args,{cwd:directory,timeout:30000,stdio:['ignore','pipe','pipe']});
   openssl('req','-x509','-newkey','rsa:2048','-nodes','-keyout','ca.key','-out','ca.pem','-days','2','-subj','/CN=VCode isolated Moje porce fixture CA','-addext','basicConstraints=critical,CA:TRUE','-addext','keyUsage=critical,keyCertSign,cRLSign');
   openssl('req','-x509','-newkey','rsa:2048','-nodes','-keyout','untrusted-ca.key','-out','untrusted-ca.pem','-days','2','-subj','/CN=Isolated untrusted fixture CA');
@@ -392,15 +474,16 @@ try {
   const observed=JSON.parse(await readFile(join(directory,'observations.json'),'utf8'));assert.equal(observed.canonicalAppContextSeen,true);assert.equal(observed.rawBrowserHeadersForwarded,false);
   const adapterObserved=JSON.parse(await readFile(join(directory,'adapter-observations.json'),'utf8'));assert.equal(adapterObserved.privateBrowserHeadersForwarded,false);assert.equal(adapterObserved.actualEdgeAddressSeen,true);assert.equal(adapterObserved.configuredGuardSeen,true);
   for(const [file,hash]of Object.entries(hashes))assert.equal(createHash('sha256').update(await readFile(join(templateRoot,file))).digest('hex'),hash);
-  for(const [file,hash]of Object.entries(clientHashes))assert.equal(createHash('sha256').update(await readFile(join(clientRoot,file))).digest('hex'),hash,'Source changed during acceptance');
-  evidence={result:'PASS',scope:'Actual Moje porce Node route exports and verified native HTTPS transport through frozen Moje porce DMZ template and frozen private TLS gateway to createContactService and disposable PostgreSQL',nextFrameworkBuildVerified:false,productionDmzInstallationVerified:false,actualIngressTemplateVerified:true,images:identities,templateSha256:hashes,clientSourceSha256:clientHashes,clientPrivacyDigest:synthetic.privacyDigest,syntheticDataOnly:true,noHostPorts:true,noProductionConnections:true,realTelegramCalls:0,systemTrustChanged:false,outcomes:{...outcomes,unrelatedStaticAndApiRoutesPreserved:true,rejectedQueryExcludedFromAppLogs:true,browserReferralAdminCookieHeadersSuppressed:true,nginxUid101ReadOnly:true,exactGatewayHealthPassed:true}};completed=true;
+  await recheckAdapter(adapterMetadata);
+  assert.equal(sha256(await readFile(join(directory,'client-bundle.mjs'))),adapterMetadata.bundleSha256,'Executed adapter bytes changed during acceptance');
+  evidence={result:'PASS',scope:'Actual Moje porce Node route exports and verified native HTTPS transport through frozen Moje porce DMZ template and frozen private TLS gateway to createContactService and disposable PostgreSQL',adapterInputMode:prebundled?'prebundled':'source',adapterSha256:adapterMetadata.bundleSha256,adapterMetadataSha256:prebundled?metadataExpected:null,clientSourceReverifiedAtRuntime:Boolean(clientRoot),nextFrameworkBuildVerified:false,productionDmzInstallationVerified:false,actualIngressTemplateVerified:true,images:identities,templateSha256:hashes,clientSourceSha256:clientHashes,clientPrivacyDigest:synthetic.privacyDigest,syntheticDataOnly:true,noHostPorts:true,noProductionConnections:true,realTelegramCalls:0,systemTrustChanged:false,outcomes:{...outcomes,unrelatedStaticAndApiRoutesPreserved:true,rejectedQueryExcludedFromAppLogs:true,browserReferralAdminCookieHeadersSuppressed:true,nginxUid101ReadOnly:true,exactGatewayHealthPassed:true}};completed=true;
 }catch(error){
   runFailure=error;const partial={};
   let diagnostic=String(error.stderr??error.message??'Synthetic fixture failed').slice(-3500);
   for(const secret of [synthetic.key,synthetic.secondKey,synthetic.guard,synthetic.inbox,synthetic.form,synthetic.password])diagnostic=diagnostic.replaceAll(secret,'[synthetic-secret-redacted]');
   process.stderr.write(diagnostic+'\n');
   for(const file of ['registry-proof.json','guards-proof.json','ingress-proof.json','invalid-ca-proof.json','hostname-proof.json','runtime-proof.json','source-blocker.json']){try{Object.assign(partial,JSON.parse(await readFile(join(directory,file),'utf8')));}catch{}}
-  evidence={result:partial.actualNodeTransportRejectedByFrozenHostGate?'BLOCKED':'FAIL',scope:'Isolated source adapter acceptance; production untouched',images:identities,templateSha256:hashes,clientSourceSha256:clientHashes,syntheticDataOnly:true,noHostPorts:true,noProductionConnections:true,realTelegramCalls:0,outcomes:partial};
+  evidence={result:partial.actualNodeTransportRejectedByFrozenHostGate?'BLOCKED':'FAIL',scope:'Isolated adapter acceptance; production untouched',adapterInputMode:prebundled?'prebundled':'source',adapterSha256:adapterMetadata?.bundleSha256,adapterMetadataSha256:prebundled?metadataExpected:null,clientSourceReverifiedAtRuntime:Boolean(clientRoot),images:identities,templateSha256:hashes,clientSourceSha256:clientHashes,syntheticDataOnly:true,noHostPorts:true,noProductionConnections:true,realTelegramCalls:0,outcomes:partial};
   for(const name of [names.backend,names.app,names.dmz,names.gateway]){try{process.stderr.write(docker('logs','--tail','12',name));}catch{}}
 }finally{
   for(const name of Object.values(names))clean('rm','--force',name);for(const network of Object.values(networks))clean('network','rm',network);for(const volume of Object.values(volumes))clean('volume','rm',volume);

@@ -18,13 +18,17 @@ for site in json.loads(registry.read_text()):
     assert re.fullmatch(r'[a-z0-9]+(?:[.-][a-z0-9]+)*', domain)
     assert re.fullmatch(r'[a-f0-9]{64}', key)
     assert all(re.fullmatch(r'/[a-zA-Z0-9_./-]+', p) and '..' not in p for p in (script, events))
+    # Analytics website IDs may be Umami UUIDs; keep Moje's known domain aliases explicit.
+    contact_guard = ('    proxy_set_header X-Mojeporce-Contact-Ingress "";\n'
+                     if site.get('id') == 'kaloricke-tabulky'
+                     or domain in ('mojeporce.cz', 'kaloricketabulky.zeleznalady.cz') else '')
     content = f'''# Managed exact public analytics routes; private edge key, mode 0600.
 location = {script} {{
     if ($request_method != GET) {{ return 405; }}
     access_log off;
     set $args "";
     proxy_pass_request_headers off;
-    proxy_pass {upstream}/v1/tracker.js;
+{contact_guard}    proxy_pass {upstream}/v1/tracker.js;
     add_header Referrer-Policy no-referrer always;
 }}
 location = {events} {{
@@ -33,7 +37,7 @@ location = {events} {{
     access_log off;
     set $args "";
     proxy_pass_request_headers off;
-    proxy_set_header Content-Type $http_content_type;
+{contact_guard}    proxy_set_header Content-Type $http_content_type;
     proxy_set_header Origin $http_origin;
     proxy_set_header Sec-Fetch-Site $http_sec_fetch_site;
     proxy_set_header DNT $http_dnt;

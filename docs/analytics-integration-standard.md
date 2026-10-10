@@ -8,6 +8,16 @@ VCode spravuje jeden server Umami, neveřejnou databázi, přihlašování, dobu
 
 Oddělený přijímač vcode-public-v2 používá schválený origin a přesné veřejné cesty každého webu. Soukromý přehled zůstává v jiném procesu. Runtime je verzovaný a integrační bridge jej ověřuje pomocí SRI. Při změně jeho bajtů aktualizujte každou aplikaci i její runtimeIntegrity v neveřejném registru; jednostranná výměna souboru může zastavit měření. Původní VCode tracker je samostatná starší integrace. V2 přidává pouze schválenou obecnou kategorii zdroje a výslovně napojené události `app-store-click`, `contact-click` nebo `outbound-click`; konkrétní události musí odpovídat skutečným veřejným odkazům aplikace. Původní URL zdroje, cílová URL, adresa kontaktu a text odkazu se nepřenášejí. Podrobnosti a konkrétní schválení jsou v `analytics-expanded-metrics-integration.md` a `analytics-expanded-metrics-review.md`. V1 zůstává zachována pro kompatibilitu při postupné migraci.
 
+### Oddělení kontaktního vstupu Moje porce od analytiky
+
+Každá proxy lokace Moje porce mimo přesné kontaktní cesty musí výslovně obsahovat `proxy_set_header X-Mojeporce-Contact-Ingress "";`. Platí to pro generované analytické lokace v1 i v2, tracker i přijímač událostí, současnou doménu `mojeporce.cz` i známou historickou doménu `kaloricketabulky.zeleznalady.cz`. Zachovejte `proxy_pass_request_headers off` a dosavadní přesný seznam analytických hlaviček. Toto odstranění kontaktní hlavičky nemění měřené cesty, události, klíče, runtime ani schválení soukromí.
+
+Pravidlo musí být uvnitř každé proxy lokace. Nginx nedědí serverové `proxy_set_header`, pokud lokace definuje vlastní hlavičky. Kontaktní guard smí vložit pouze chráněný include ve dvou přesných kontaktních lokacích `GET /api/partner-contact/challenge` a `POST /api/partner-contact`; analytika nesmí tento guard, centrální kontaktní credential ani jiná přístupová pověření přijímat či předávat.
+
+Kanonický `deploy/analytics/build-edge-config.py` přidává odstranění do obou lokací v1 pouze pro identitu `kaloricke-tabulky` nebo obě přesně uvedené domény. `site.id` může být identifikátor webu Umami, proto musí být zachovaná i přesná kontrola domény bez wildcardů. Neveřejné generátory v2 a zdrojový DMZ installer musí stejné pravidlo zachovat v každém svém analytickém proxy kontextu; tato úprava generátoru v1 sama nedokládá změnu již nasazených v2 include souborů.
+
+Před instalací musí zdrojový installer bezpečně ověřit všechny vlastní proxy kontexty včetně generovaných include souborů a při chybějícím odstranění hlavičky skončit před změnou konfigurace. Ověření nesmí vypisovat neveřejné klíče, seznamy povolených hlaviček ani interní upstream adresy. Nepoužívejte `nginx -T`; syntaxi ověřte pomocí `nginx -t` a změnu doložte omezenými kontrolami, počty a otisky. Testujte syntetický registr a izolovanou proxy, bez skutečných záznamů návštěvníků nebo kontaktních zpráv. Generování ostatních webů musí zůstat beze změny.
+
 ## Pokyn pro repozitář každé veřejné webové aplikace
 
 Do místního AGENTS.md se při připojení vloží následující pravidlo:
