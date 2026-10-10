@@ -1,4 +1,4 @@
-import urllib.request,urllib.error,urllib.robotparser,xml.etree.ElementTree as ET,json,concurrent.futures,sys,datetime
+import urllib.request,urllib.error,xml.etree.ElementTree as ET,json,concurrent.futures,sys,datetime
 from html.parser import HTMLParser
 O='https://vcode.zeleznalady.cz'
 def get(url,ua='VCode-Discovery-Audit/1.0'):
@@ -46,9 +46,27 @@ def audit(u):
  except Exception as e:return {'url':u,'issues':[str(e)]}
 with concurrent.futures.ThreadPoolExecutor(max_workers=4) as e:rows=list(e.map(audit,sorted(urls)))
 report={'verifiedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'urls':len(rows),'findings':[r for r in rows if r['issues']],'rows':rows,'crawlerProbes':[]}
-robots=urllib.robotparser.RobotFileParser();robots.parse(get(O+'/robots.txt')[2].splitlines())
+# RFC 9309: the longest matching path wins, regardless of directive order.
+# urllib.robotparser uses first-match semantics and cannot verify this policy.
+robot_groups=[]
+for block in get(O+'/robots.txt')[2].split('\n\n'):
+ agents=[];rules=[]
+ for line in block.splitlines():
+  key,sep,value=line.partition(':');key=key.strip().lower();value=value.split('#',1)[0].strip()
+  if key=='user-agent':agents.append(value.lower())
+  if key in ['allow','disallow'] and value:
+   assert '*' not in value and '$' not in value,'Audit requires explicit prefix crawler rules'
+   rules.append((value,key=='allow'))
+ if agents:robot_groups.append((agents,rules))
+def can_fetch(agent,path):
+ matches=[(max(len(a) for a in agents if a!='*' and a in agent.lower()),rules) for agents,rules in robot_groups if any(a!='*' and a in agent.lower() for a in agents)]
+ if matches:
+  longest=max(length for length,rules in matches);rules=[rule for length,group in matches if length==longest for rule in group]
+ else:rules=[rule for agents,group in robot_groups if '*' in agents for rule in group]
+ matching=[(len(prefix),allowed) for prefix,allowed in rules if path.startswith(prefix)]
+ return max(matching,default=(0,True))[1]
 for ua in ['Googlebot','bingbot','SeznamBot','OAI-SearchBot','Claude-SearchBot','PerplexityBot']:
- try:s,h,b=get(O+'/aplikace/studio-balance/',ua);report['crawlerProbes'].append({'agent':ua,'status':s,'containsPublicText':'Studio Balance' in b,'robotsAllowsPublic':robots.can_fetch(ua,O+'/aplikace/studio-balance/'),'robotsExcludesPrivate':not robots.can_fetch(ua,O+'/prehled/')})
+ try:s,h,b=get(O+'/aplikace/studio-balance/',ua);report['crawlerProbes'].append({'agent':ua,'status':s,'containsPublicText':'Studio Balance' in b,'robotsAllowsPublic':can_fetch(ua,'/aplikace/studio-balance/'),'robotsExcludesPrivate':not can_fetch(ua,'/prehled/')})
  except Exception as e:report['crawlerProbes'].append({'agent':ua,'error':str(e)})
 by_url={row['url']:row for row in rows}
 for row in rows:
