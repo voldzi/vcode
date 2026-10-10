@@ -21,7 +21,7 @@ const byId = (id: string) => {
 export const appStoreProducts: AppStoreProduct[] = [
   {
     ...byId("rinklet"), storeSlug: "rinklet",
-    appStoreUrl: "https://apps.apple.com/app/rinklet-air-hockey-duel/id6821032563",
+    appStoreUrl: "https://apps.apple.com/app/rinklet/id6821032563",
     storePlatformsCs: "Hra pro iPhone a iPad", storePlatformsEn: "Game for iPhone and iPad",
     operatingSystem: "iOS",
     privacyCs: "/rinklet/privacy/", privacyEn: "/en/rinklet/privacy/",
@@ -29,7 +29,7 @@ export const appStoreProducts: AppStoreProduct[] = [
   },
   {
     ...byId("foldlight"), storeSlug: "foldlight",
-    appStoreUrl: "https://apps.apple.com/app/vcode-foldlight/id6821035786",
+    appStoreUrl: "https://apps.apple.com/app/foldlight-by-vcode/id6821035786",
     storePlatformsCs: "Hra pro iPhone a iPad", storePlatformsEn: "Game for iPhone and iPad",
     operatingSystem: "iOS",
     privacyCs: "/foldlight/privacy/", privacyEn: "/en/foldlight/privacy/",
