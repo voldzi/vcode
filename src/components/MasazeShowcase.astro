@@ -1,0 +1,108 @@
+---
+import ProductIcon from "./ProductIcon.astro";
+import { masazeCopy, masazeScreenshots } from "../lib/masaze-showcase";
+const { lang = "cs" } = Astro.props as { lang?: "cs" | "en" };
+const cs = lang === "cs";
+const copy = masazeCopy[lang];
+const demoHref = `${cs ? "/spoluprace/" : "/en/work-with-us/"}?app=masaze&area=private-deployment#poptavka`;
+const guideHref = cs ? "/navody/masaze-sprava-provozovny/" : "/en/guides/masaze-managing-your-practice/";
+const hero = masazeScreenshots[0];
+---
+
+<header class="masaze-hero">
+  <div class="masaze-intro">
+    <div class="masaze-brand"><ProductIcon id="masaze" size={56} /><p class="kicker">{copy.eyebrow}</p></div>
+    <h1>Masáže</h1>
+    <p class="masaze-headline">{copy.headline}</p>
+    <p class="masaze-lead">{copy.intro}</p>
+    <div class="masaze-actions"><a class="button masaze-primary" href={demoHref} data-collaboration-interest="true">{copy.action}<span aria-hidden="true">↗</span></a><a class="masaze-link" href="#moznosti">{copy.explore}<span aria-hidden="true">↓</span></a></div>
+    <p class="masaze-action-note">{copy.actionNote}</p>
+  </div>
+  {hero && <a class="masaze-hero-image" href="#ukazky" aria-label={copy.galleryTitle}><img src={hero.preview} width={hero.width} height={hero.height} alt={cs ? hero.captionCs : hero.captionEn} fetchpriority="high" decoding="async" /><span>{copy.heroCaption}</span></a>}
+  <p class="masaze-arrangement">{copy.arrangement}</p>
+</header>
+
+<ul class="masaze-facts" aria-label={cs ? "Masáže v kostce" : "Masáže at a glance"}>{copy.facts.map(([value, label]) => <li><strong>{value}</strong><span>{label}</span></li>)}</ul>
+
+<section id="moznosti" class="masaze-section" aria-labelledby="masaze-features-title">
+  <div class="masaze-section-heading"><p class="kicker">{cs ? "Možnosti správy" : "Practice management"}</p><h2 id="masaze-features-title">{copy.featuresTitle}</h2><p>{copy.featuresIntro}</p></div>
+  <ul class="masaze-features">{copy.features.map(([title, text], index) => <li><span class="masaze-feature-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span><h3>{title}</h3><p>{text}</p></li>)}</ul>
+</section>
+
+<section id="ukazky" class="masaze-section" aria-labelledby="masaze-gallery-title">
+  <div class="masaze-section-heading"><p class="kicker">{cs ? "Nahlédněte do aplikace" : "Inside the app"}</p><h2 id="masaze-gallery-title">{copy.galleryTitle}</h2><p>{copy.galleryIntro}</p></div>
+  <ul class="masaze-gallery">{masazeScreenshots.map((shot) => <li><figure><a href={shot.src} aria-label={`${cs ? shot.titleCs : shot.titleEn} — ${copy.imageAction}`}><div class="masaze-gallery-image"><img src={shot.preview} width={shot.width} height={shot.height} alt={cs ? shot.captionCs : shot.captionEn} loading="lazy" decoding="async" /></div><figcaption><h3>{cs ? shot.titleCs : shot.titleEn}<span aria-hidden="true">↗</span></h3><p>{cs ? shot.captionCs : shot.captionEn}</p></figcaption></a></figure></li>)}</ul>
+  <p class="masaze-gallery-note">{copy.galleryNotice}</p>
+</section>
+
+<section class="masaze-workflow masaze-section" aria-labelledby="masaze-workflow-title">
+  <div class="masaze-section-heading"><p class="kicker">{cs ? "Jak to funguje" : "How it works"}</p><h2 id="masaze-workflow-title">{copy.workflowTitle}</h2></div>
+  <ol>{copy.workflow.map(([title, text]) => <li><h3>{title}</h3><p>{text}</p></li>)}</ol>
+  <a class="masaze-link" href={guideHref}>{copy.guideAction}<span aria-hidden="true">→</span></a>
+</section>
+
+<aside class="masaze-eet" aria-labelledby="masaze-eet-title"><p class="kicker">{copy.eetEyebrow}</p><h2 id="masaze-eet-title">{copy.eetTitle}</h2><p>{copy.eetText}</p><p>{copy.eetPlan}</p></aside>
+
+<section class="masaze-section masaze-faq" aria-labelledby="masaze-faq-title"><div class="masaze-section-heading"><h2 id="masaze-faq-title">{copy.faqTitle}</h2></div>{copy.faq.map(([question, answer]) => <details><summary>{question}</summary><p>{answer}</p></details>)}</section>
+
+<aside class="masaze-reference"><div><p class="kicker">{copy.referenceEyebrow}</p><h2>{copy.referenceTitle}</h2><p>{copy.referenceText}</p></div><a class="masaze-link" href="https://masaze.zeleznalady.cz/">{copy.referenceAction}<span aria-hidden="true">↗</span></a></aside>
+
+<section class="masaze-contact" aria-labelledby="masaze-contact-title"><p class="kicker">{copy.contactEyebrow}</p><h2 id="masaze-contact-title">{copy.contactTitle}</h2><p>{copy.contactText}</p><a class="button" href={demoHref} data-collaboration-interest="true">{copy.contactAction}<span aria-hidden="true">→</span></a></section>
+
+<style>
+  :global(.product-detail.masaze-operator-detail) {padding-top:clamp(1.5rem,3vw,2.5rem);}
+  :global(.masaze-operator-detail>.back-link) {margin-bottom:1.25rem;}
+  :global(.product-detail.masaze-operator-detail header) {max-width:none;}
+  .masaze-hero {display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:1.75rem;max-width:none;}
+  .masaze-intro {min-width:0;grid-column:1;}
+  .masaze-brand {display:flex;align-items:center;gap:.85rem;margin-bottom:1rem;}
+  .masaze-brand .kicker {margin:0;color:#8f2f51;font-size:.72rem;max-width:24rem;}
+  .masaze-hero h1 {font-size:4.25rem;line-height:1.05;letter-spacing:0;overflow-wrap:anywhere;}
+  .masaze-headline {font:750 2.25rem/1.25 "Manrope Variable",sans-serif;letter-spacing:0;color:#8f2f51;margin:.85rem 0;}
+  .masaze-lead {font-size:1.04rem;line-height:1.7;max-width:48ch;color:#4d5554;}
+  .masaze-actions {display:flex;flex-wrap:wrap;align-items:center;gap:.65rem 1rem;margin-top:1.25rem;}
+  .masaze-primary {background:#8f2f51;color:#fff;}
+  .masaze-hero .button,.masaze-contact .button {max-width:100%;min-width:0;overflow-wrap:anywhere;white-space:normal;}
+  .masaze-action-note {font-size:.86rem;color:#60525a;max-width:48ch;}
+  .masaze-link {display:inline-flex;align-items:center;gap:.7rem;font-weight:700;color:#8f2f51;min-height:44px;max-width:100%;line-height:1.5;text-decoration:underline;text-underline-offset:.25em;overflow-wrap:anywhere;}
+  .masaze-link span {flex:none;}
+  .masaze-hero-image {align-self:center;min-width:0;}
+  .masaze-hero-image img {border-radius:.6rem;width:100%;height:auto;}
+  .masaze-hero-image>span {display:block;text-align:center;color:#60525a;font-size:.78rem;padding:.65rem .3rem .25rem;}
+  .masaze-arrangement {grid-column:1/-1;margin:0;padding-top:1.1rem;border-top:1px solid #dfc9ce;color:#60525a;font-size:.92rem;}
+  .masaze-facts {list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:1.8rem 0;margin:0;border-bottom:1px solid var(--line);}
+  .masaze-facts li {min-width:0;display:flex;flex-direction:column;gap:.3rem;padding:.5rem 1.5rem;border-right:1px solid var(--line);}
+  .masaze-facts li:first-child {padding-left:0;}.masaze-facts li:last-child {border:0;}
+  .masaze-facts strong {font:750 1.4rem/1.3 "Manrope Variable",sans-serif;color:#8f2f51;overflow-wrap:anywhere;}
+  .masaze-facts span {font-size:.9rem;color:var(--muted);}
+  .masaze-section {margin-top:clamp(3rem,6vw,5rem);scroll-margin-top:7rem;}
+  .masaze-section-heading {max-width:48rem;margin-bottom:1.75rem;}
+  h2 {font:750 2.5rem/1.25 "Manrope Variable",sans-serif;letter-spacing:0;color:var(--navy);margin:.5rem 0 1rem;overflow-wrap:anywhere;}
+  h3 {font:720 1.08rem/1.4 "Manrope Variable",sans-serif;letter-spacing:0;color:var(--navy);overflow-wrap:anywhere;}
+  p,summary,.kicker {overflow-wrap:anywhere;}
+  .masaze-section-heading>p:last-child {color:var(--muted);max-width:60ch;}
+  .masaze-features {list-style:none;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;}
+  .masaze-features li {min-width:0;position:relative;padding:1.6rem 1.6rem 1.2rem;background:#fff;border:1px solid #e8dce0;border-radius:1.15rem;transition:transform .2s ease,border-color .2s ease;}
+  .masaze-feature-number {display:block;font-size:.78rem;font-weight:750;color:#8f2f51;margin-bottom:.8rem;}
+  .masaze-features h3 {margin:0 0 .65rem;}.masaze-features p {color:var(--muted);margin:0;line-height:1.7;font-size:.96rem;}
+  .masaze-gallery {list-style:none;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.25rem;}
+  .masaze-gallery li {min-width:0;}.masaze-gallery figure {margin:0;border:1px solid #e8dce0;border-radius:1.1rem;overflow:hidden;background:#fff;}
+  .masaze-gallery a {display:block;}
+  .masaze-gallery-image {height:280px;background:#f2ede6;display:flex;align-items:center;justify-content:center;padding:.75rem;}
+  .masaze-gallery-image img {object-fit:contain;width:100%;height:100%;border-radius:.4rem;transition:transform .25s ease;}
+  .masaze-gallery figcaption {padding:1.1rem 1.25rem;}.masaze-gallery h3 {display:flex;justify-content:space-between;gap:1rem;margin:0;}.masaze-gallery h3 span {flex:none;color:#8f2f51;}
+  .masaze-gallery p {color:var(--muted);font-size:.9rem;margin:.5rem 0 0;}.masaze-gallery-note {font-size:.86rem;color:var(--muted);}
+  .masaze-workflow {padding:2rem 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .masaze-workflow ol {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2rem;padding:0;list-style:none;counter-reset:step;}
+  .masaze-workflow li {min-width:0;counter-increment:step;}.masaze-workflow li::before {content:"0" counter(step);font-weight:750;color:#8f2f51;}.masaze-workflow h3 {margin:.7rem 0;}.masaze-workflow p {color:var(--muted);font-size:.95rem;}
+  .masaze-eet {margin-top:3rem;padding:0 0 0 1.5rem;border-left:3px solid #8f2f51;}.masaze-eet .kicker {color:#705021;}.masaze-eet h2 {font-size:2rem;}.masaze-eet p:not(.kicker) {color:#5d5345;max-width:70ch;}.masaze-eet p:last-child {margin-bottom:0;}
+  .masaze-faq details {border-bottom:1px solid var(--line);padding:1.1rem 0;}.masaze-faq summary {font-weight:700;cursor:pointer;color:var(--navy);padding:.3rem 0;}.masaze-faq details p {color:var(--muted);max-width:65ch;margin:.75rem 0;}
+  .masaze-reference {display:flex;align-items:center;justify-content:space-between;gap:2rem;margin:3rem 0;padding:1.5rem 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);}.masaze-reference>div {min-width:0;}.masaze-reference h2 {font-size:1.45rem;}.masaze-reference p:last-child {max-width:60ch;color:var(--muted);margin:0;}.masaze-reference>.masaze-link {flex:none;max-width:25%;}
+  .masaze-contact {padding:1rem 0 0;}.masaze-contact .kicker {color:#8f2f51;}.masaze-contact h2 {max-width:24ch;}.masaze-contact p {color:var(--muted);max-width:62ch;}.masaze-contact .button {background:#8f2f51;color:#fff;margin-top:.7rem;}
+  a:focus-visible,summary:focus-visible {outline:3px solid #155e9b;outline-offset:5px;}
+  .masaze-gallery a:focus-visible {outline-offset:-3px;}
+  @media(hover:hover) {.masaze-features li:hover {border-color:#a04d6c;}.masaze-gallery a:hover img {transform:scale(1.02);}}
+  @media(max-width:1000px) {.masaze-hero {grid-template-columns:1fr;}.masaze-hero-image {max-width:640px;transform:none;}.masaze-workflow ol {grid-template-columns:1fr;gap:.5rem;}.masaze-reference {display:block;}.masaze-reference>.masaze-link {max-width:100%;margin-top:.75rem;}}
+  @media(max-width:600px) {.masaze-hero h1 {font-size:2.75rem;}.masaze-brand {align-items:flex-start;}.masaze-features,.masaze-gallery {grid-template-columns:1fr;}.masaze-gallery-image {height:240px;}.masaze-facts {grid-template-columns:1fr;gap:1rem;}.masaze-facts li {border:0;padding:0;}.masaze-facts strong {font-size:1.4rem;}.masaze-actions {align-items:flex-start;}.masaze-primary {width:100%;}.masaze-headline {font-size:1.85rem;}h2 {font-size:1.8rem;}.masaze-eet h2 {font-size:1.65rem;}}
+  @media(prefers-reduced-motion:reduce) {.masaze-features li,.masaze-gallery img,.masaze-hero-image {transition:none;}.masaze-features li:hover,.masaze-gallery a:hover img {transform:none;}.masaze-hero-image {transform:none;}}
+</style>

@@ -1,5 +1,9 @@
 ---
 import GameShowcase from "../../components/GameShowcase.astro";
+import StudioBalanceShowcase from "../../components/StudioBalanceShowcase.astro";
+import MasazeShowcase from "../../components/MasazeShowcase.astro";
+import { masazeScreenshots } from "../../lib/masaze-showcase";
+import { studioScreenshots } from "../../lib/studio-balance-showcase";
 import { getGameShowcase, getShowcaseHero } from "../../lib/game-showcases";
 import RecallHero from "../../components/RecallHero.astro";
 import RecallDownloads from "../../components/RecallDownloads.astro";
@@ -13,24 +17,27 @@ import { appStoreProducts } from "../../lib/appStore";
 export function getStaticPaths() { return getPublicProducts().map(product => ({ params: { slug: product.href }, props: { product } })); }
 const { product } = Astro.props;
 const showcase = getGameShowcase(product.id);
-const socialPreview = showcase ? getShowcaseHero(showcase, "cs") : undefined;
+const operationsHero = product.id === "studio-balance" ? studioScreenshots[0] : product.id === "masaze" ? masazeScreenshots[0] : undefined;
+const socialPreview = showcase ? getShowcaseHero(showcase, "cs") : operationsHero ? { src: operationsHero.src, width: operationsHero.width, height: operationsHero.height, alt: operationsHero.captionCs } : undefined;
 const storeProduct = appStoreProducts.find(item => item.id === product.id);
 const family = product.family ? getPublicProducts().filter(item => item.family === product.family && item.id !== product.id) : [];
 const pageStructuredData = { "@context": "https://schema.org", "@type": "SoftwareApplication", name: product.name, description: product.summaryCs, applicationCategory: product.kind === "game" ? "GameApplication" : product.categoryCs, url: `https://vcode.zeleznalady.cz/aplikace/${product.href}/`, publisher: { "@type": "Organization", name: "VCode" } };
 ---
 <BaseLayout title={`${product.name} — VCode`} description={product.summaryCs} lang="cs" path={`/aplikace/${product.href}/`} alternatePath={`/en/apps/${product.href}/`} {pageStructuredData} {socialPreview}>
-  <article class:list={["product-detail", `tone-${product.tone}`, {"mestem-hrou-detail": product.id === "mestem-hrou", "game-product-detail": Boolean(showcase)}]}>
+  <article class:list={["product-detail", `tone-${product.tone}`, {"mestem-hrou-detail": product.id === "mestem-hrou", "game-product-detail": Boolean(showcase), "studio-balance-detail": product.id === "studio-balance", "masaze-operator-detail": product.id === "masaze"}]}>
     <a class="back-link" href={product.kind === "game" ? "/hry/" : "/#aplikace"}>← {product.kind === "game" ? "Všechny hry" : "Všechny aplikace"}</a>
     {showcase && <GameShowcase {product} {showcase} {storeProduct} lang="cs" />}
-    {!showcase && (product.id === "vcode-recall" ? <RecallHero {product} lang="cs" guideHref="/navody/vcode-recall-prvni-nastaveni/" released={true} /> : <header><p class="kicker">{product.categoryCs}</p><h1>{product.name}</h1><p class="detail-headline">{product.headlineCs}</p>{product.id !== "mestem-hrou" && <p class="detail-summary">{product.summaryCs}</p>}</header>)}
+    {product.id === "studio-balance" && <StudioBalanceShowcase lang="cs" />}
+    {product.id === "masaze" && <MasazeShowcase lang="cs" />}
+    {!showcase && !["studio-balance", "masaze"].includes(product.id) && (product.id === "vcode-recall" ? <RecallHero {product} lang="cs" guideHref="/navody/vcode-recall-prvni-nastaveni/" released={true} /> : <header><p class="kicker">{product.categoryCs}</p><h1>{product.name}</h1><p class="detail-headline">{product.headlineCs}</p>{product.id !== "mestem-hrou" && <p class="detail-summary">{product.summaryCs}</p>}</header>)}
     {product.id === "mestem-hrou" && <MestemHrouShowcase {product} lang="cs" />}
-    {!showcase && !["vcode-recall", "mestem-hrou"].includes(product.id) && <div class="detail-grid"><section><h2>Co umí</h2><ul>{product.capabilitiesCs.map(item => <li>{item}</li>)}</ul></section><aside><span>Dostupnost</span><strong>{product.availabilityCs}</strong>{storeProduct?.appStoreUrl && <AppStoreBadge href={storeProduct.appStoreUrl} lang="cs" />}{storeProduct && <a class="store-link" href={`/app-store/${storeProduct.storeSlug}/`}>Informace o aplikaci</a>}{product.externalUrl && !product.startUrl && <a class="store-link" href={product.externalUrl}>Otevřít aplikaci <span aria-hidden="true">↗</span></a>}{product.startUrl && <a class="button primary" href={product.startUrl}>Vyzkoušet zdarma <span aria-hidden="true">↗</span></a>}{product.learnMoreUrl && <a class="store-link" href={product.learnMoreUrl}>Jak to funguje <span aria-hidden="true">↗</span></a>}{product.id === "event" && <a class="button primary" href="/podpora/">Domluvit ukázku</a>}</aside></div>}
+    {!showcase && !["vcode-recall", "mestem-hrou", "studio-balance", "masaze"].includes(product.id) && <div class="detail-grid"><section><h2>Co umí</h2><ul>{product.capabilitiesCs.map(item => <li>{item}</li>)}</ul></section><aside><span>Dostupnost</span><strong>{product.availabilityCs}</strong>{storeProduct?.appStoreUrl && <AppStoreBadge href={storeProduct.appStoreUrl} lang="cs" />}{storeProduct && <a class="store-link" href={`/app-store/${storeProduct.storeSlug}/`}>Informace o aplikaci</a>}{product.externalUrl && !product.startUrl && <a class="store-link" href={product.externalUrl}>Otevřít aplikaci <span aria-hidden="true">↗</span></a>}{product.startUrl && <a class="button primary" href={product.startUrl}>Vyzkoušet zdarma <span aria-hidden="true">↗</span></a>}{product.learnMoreUrl && <a class="store-link" href={product.learnMoreUrl}>Jak to funguje <span aria-hidden="true">↗</span></a>}{product.id === "event" && <a class="button primary" href="/podpora/">Domluvit ukázku</a>}</aside></div>}
     {["apsyd", "apsyd-central"].includes(product.id) && <section class="detail-support"><h2>Související aplikace APSYD</h2><p><a class="text-link" href={product.id === "apsyd" ? "/aplikace/apsyd-central/" : "/aplikace/apsyd/"}>{product.id === "apsyd" ? "APSYD Central" : "APSYD"} →</a></p></section>}
     {product.id === "stratos-voice" && <section class="detail-support"><h2>Podpora a soukromí</h2><p><a class="text-link" href="/podpora/stratos-voice/">Pomoc s nahráváním, přepisem a AI →</a></p><p><a class="text-link" href="/stratos-voice/privacy/">Jak STRATOS Voice pracuje s údaji →</a></p></section>}
     {!showcase && product.id === "millora" && storeProduct && <section class="detail-support"><h2>Podpora a soukromí</h2><p><a class="text-link" href={storeProduct.supportCs}>Pomoc s pravidly a online hraním →</a></p><p><a class="text-link" href={storeProduct.privacyCs}>Jak MILLORA pracuje s údaji →</a></p></section>}
     {product.id === "vcode-recall" && <><RecallDownloads lang="cs" /><RecallDetails released={true} lang="cs" guideHref="/navody/vcode-recall-prvni-nastaveni/" /></>}
     {product.id === "kaloricke-tabulky" && <MojePorceDetails lang="cs" />}
     {family.length > 0 && <section class="family-links"><h2>Další aplikace rodiny STRATOS</h2><div>{family.map(item => <a href={`/aplikace/${item.href}/`}>{item.name}<span aria-hidden="true">→</span></a>)}</div></section>}
-    {!showcase && !product.inDevelopment && (!product.family || product.id === "stratos") && <section class="detail-support"><h2>Začínáte?</h2><p>Postupy, odpovědi a informace o soukromí najdete v centru nápovědy.</p><a class="text-link" href={`/navody/aplikace/${product.href}/`}>Návody pro {product.name} →</a></section>}
+    {!showcase && !product.inDevelopment && !["studio-balance", "masaze"].includes(product.id) && (!product.family || product.id === "stratos") && <section class="detail-support"><h2>Začínáte?</h2><p>Postupy, odpovědi a informace o soukromí najdete v centru nápovědy.</p><a class="text-link" href={`/navody/aplikace/${product.href}/`}>Návody pro {product.name} →</a></section>}
   </article>
 </BaseLayout>
