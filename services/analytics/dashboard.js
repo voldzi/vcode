@@ -13,6 +13,38 @@ function authenticated(active){document.body.dataset.authenticated=String(active
 function locale(){document.documentElement.lang=language;document.documentElement.dataset.theme=theme;document.title=t('appName')+' — VCode';document.querySelectorAll('[data-i18n]').forEach(n=>n.textContent=t(n.dataset.i18n));document.querySelectorAll('[data-i18n-aria]').forEach(n=>n.setAttribute('aria-label',t(n.dataset.i18nAria)));$('theme').textContent=t(theme==='dark'?'light':'dark');$('language').textContent=language==='cs'?'EN':'CS';$('language').setAttribute('aria-label',language==='cs'?'Switch to English':'Přepnout do češtiny');$('source-content').replaceChildren(node('p','',t('sourceText')));authenticated(Boolean(data));if(data)render();}
 async function request(path,options={}){const r=await fetch('/prehled/api/'+path,{...options,credentials:'same-origin',cache:'no-store',headers:{'Content-Type':'application/json'},signal:AbortSignal.timeout(25000)});if(!r.ok)throw Object.assign(new Error(),{status:r.status});return r.json();}
 function clear(){window.VCodeContactInbox?.clear($('inquiries'));window.VCodePartnershipInbox?.clear($('partnerships'));window.VCodeDownloadMetrics?.clear($('application-distribution'));window.VCodeDownloadMetrics?.clear($('distribution'));revision++;data=null;authenticated(false);clearTimeout(expiry);for(const id of ['totals','timeline','ranking','sites','detail-lists','site-filter','detail-filter'])$(id).replaceChildren();for(const id of ['period-range','updated-at','collection','detail-name','detail-state','site-count'])$(id).textContent='';$('dashboard').hidden=true;$('login').hidden=!navigator.onLine;}
+// Fragment targets start hidden and their inbox content loads after authentication.
+// Restore a requested section once it is ready, rather than relying on the initial
+// browser anchor jump or repeatedly scrolling during refreshes.
+function initSectionNavigation(){
+ const allowed=new Set(['overview','websites','application-distribution','distribution','inquiries','partnerships']);
+ const dashboard=$('dashboard');let pending=null,frame=0;
+ const observer=new MutationObserver(schedule);
+ function stop(){pending=null;observer.disconnect();if(frame)cancelAnimationFrame(frame);frame=0;}
+ function schedule(){if(pending&&!frame)frame=requestAnimationFrame(open);}
+ function open(){
+  frame=0;if(!pending||dashboard.hidden||document.body.dataset.authenticated!=='true')return;
+  const target=$(pending);if(!target||target.closest('[hidden]'))return;
+  // Earlier async sections can still change the destination's vertical position.
+  for(const busy of dashboard.querySelectorAll('[aria-busy="true"]'))if(busy===target||(busy.compareDocumentPosition(target)&Node.DOCUMENT_POSITION_FOLLOWING))return;
+  const heading=target.querySelector('h2');if(!heading)return;
+  stop();target.scrollIntoView({block:'start',behavior:'instant'});heading.tabIndex=-1;heading.focus({preventScroll:true});
+ }
+ function request(){
+  stop();let id;try{id=decodeURIComponent(location.hash.slice(1));}catch{return;}
+  if(!allowed.has(id))return;pending=id;observer.observe(dashboard,{subtree:true,childList:true,attributes:true,attributeFilter:['hidden','aria-busy']});schedule();
+ }
+ window.addEventListener('hashchange',request);
+ window.addEventListener('pageshow',event=>{if(event.persisted)request();});
+ $('dashboard-navigation').addEventListener('click',event=>{
+  const link=event.target.closest('a[href^="#"]');if(!link||!allowed.has(link.hash.slice(1)))return;
+  if(location.hash===link.hash){event.preventDefault();request();}
+ });
+ function userScroll(){if(!dashboard.hidden)stop();}
+ window.addEventListener('wheel',userScroll,{passive:true});window.addEventListener('touchmove',userScroll,{passive:true});
+ window.addEventListener('keydown',event=>{if(['PageUp','PageDown','Home','End','ArrowUp','ArrowDown',' '].includes(event.key)&&!event.target.closest('input,textarea,select,button'))userScroll();});
+ request();
+}
 function scheduleExpiry(deadline){const remaining=deadline-Date.now();if(remaining<=0){clear();status(t('expired'));return;}expiry=setTimeout(()=>scheduleExpiry(deadline),Math.min(remaining,86400000));}
 async function load(){const current=++revision;status(t('loading'));$('refresh').disabled=true;try{const next=await request('summary?days='+$('period').value);if(current!==revision)return;data=next;authenticated(true);$('login').hidden=true;$('dashboard').hidden=false;render();status('');clearTimeout(expiry);scheduleExpiry(Date.parse(next.sessionExpiresAt));}catch(e){if(current!==revision)return;if(e.status===401){clear();status('');}else status(t(data?'stale':'error'),'error');}finally{if(current===revision)$('refresh').disabled=false;}}
 function metric(label,value,previous){const box=node('article','metric');const icon=node('span','metric-icon','↗');icon.setAttribute('aria-hidden','true');box.append(icon);box.append(node('span','metric-label',label),node('strong','',value===undefined?t('notMeasured'):format(value)));if(previous!==undefined&&value!==null)box.append(node('small','muted',previous>0?`${Math.round((value-previous)/previous*100)} % ${t('previous')}`:t('noPrevious')));return box;}
@@ -64,6 +96,6 @@ $('export').addEventListener('click',()=>{if(!data)return;const quote=v=>'"'+Str
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;});$('install').addEventListener('click',async()=>{if(installPrompt){await installPrompt.prompt();installPrompt=null;}else $('install-dialog').showModal();});window.addEventListener('appinstalled',()=>$('install').hidden=true);
 window.addEventListener('offline',()=>{clear();$('offline').hidden=false;status('');});window.addEventListener('online',()=>{$('offline').hidden=true;load();});window.addEventListener('pagehide',clear);window.addEventListener('pageshow',e=>{if(e.persisted)load();});
 if('serviceWorker'in navigator){let reloading=false;navigator.serviceWorker.register('/prehled/sw.js',{scope:'/prehled/'}).then(reg=>{const ready=()=>{$('update-banner').hidden=!reg.waiting;};ready();reg.addEventListener('updatefound',()=>reg.installing?.addEventListener('statechange',ready));$('update').addEventListener('click',()=>reg.waiting?.postMessage({type:'ACTIVATE_UPDATE'}));}).catch(()=>{});navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!reloading){reloading=true;location.reload();}});}
-locale();if(navigator.onLine)load();else{$('login').hidden=true;$('offline').hidden=false;}
+initSectionNavigation();locale();if(navigator.onLine)load();else{$('login').hidden=true;$('offline').hidden=false;}
 
 document.addEventListener('vcode:inbox-auth-expired',()=>{clear();status(t('expired'));});
