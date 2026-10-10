@@ -21,11 +21,16 @@ Search discovery does not grant a licence to train on the content. VCode allows 
 
 1. Deploy and verify the canonical origin, social image, sitemaps, feeds, `robots.txt`, `llms.txt` and structured data.
 2. Submit the sitemap from an owner-verified property in Google Search Console and Bing Webmaster Tools.
-3. Submit the homepage to Seznam's public URL form and create or claim a Firmy.cz profile only with the verified legal business identity.
+3. Advertise both sitemap URLs in `robots.txt` for SeznamBot and request homepage reindexing in the verified Seznam Webmaster property (or use its public URL form). Create or claim a Firmy.cz profile only with the verified legal business identity.
 4. Run `pnpm indexnow:submit --dry-run` to check coverage, then `pnpm indexnow:submit` after a material public release. The script includes current applications, guides and published articles from the live sitemaps.
 5. Inspect coverage, crawl errors and structured-data warnings monthly; do not chase ranking through duplicated or keyword-stuffed content.
 
 Account verification records, legal business identifiers and webmaster credentials stay in the private operations inventory.
+
+Google and Seznam ownership was verified on 10 October 2026; see
+`docs/webmaster-verification-2026-10-10.md` for submission and processing evidence.
+Keep the approved public proof tags in the shared layout. Actual sitemap processing
+and index coverage must be checked separately; Bing ownership remains unverified.
 
 ## Build and live regression gates
 

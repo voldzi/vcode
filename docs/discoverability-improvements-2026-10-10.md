@@ -46,4 +46,8 @@ Production acceptance and immutable image identities are recorded after deployme
 
 The initial activation attempts did not pass acceptance and restored the previous source/images. The deployment procedure now restores required interpolation values from existing read-only runtime mounts, verifies the effective blog environment without printing it, and explicitly overrides the old image pinned by the private runtime definition. The audit's original standard-library robot parser used first-match behavior; it was corrected to RFC longest-match precedence. The final full acceptance above passed with the corrected procedure. Protected receipts contain backups, source hashes, before/after identities, public metadata and validation results; they contain no genuine visitor/enquiry records. Future releases must inspect the effective image and the complete current Compose configuration set.
 
-Google/Bing owner-account coverage is still unverified. Seznam's official [URL-add form](https://search.seznam.cz/wt/pridej-stranku) is available but requires a human verification code; it was not automatically submitted. These are owner-side follow-ups, not proof that the site is absent from search results.
+At the initial SEO release, Google/Bing owner-account coverage was unverified and
+Seznam's public URL-add form was not submitted. Later on 10 October the owner
+authorized Google and Seznam property verification, which completed successfully;
+see `docs/webmaster-verification-2026-10-10.md` for actual sitemap, live crawl and
+index-request evidence. Bing ownership and actual index coverage remain unconfirmed.
