@@ -27,7 +27,7 @@ export async function collectPublicUrls(siteOrigin, fetchImpl = fetch) {
     }
     for (const item of asArray(document.urlset?.url)) {
       const url = new URL(item.loc);
-      if (url.origin !== siteOrigin.origin || url.search || url.hash || url.pathname.includes("/review/")) throw new Error(`Unexpected public URL: ${url.href}`);
+      if (url.origin !== siteOrigin.origin || url.search || url.hash || /^\/(?:prehled|api|internal|preview-local)(?:\/|$)/.test(url.pathname) || url.pathname.includes("/review/")) throw new Error(`Unexpected public URL: ${url.href}`);
       urls.add(url.href);
       if (urls.size > 10_000) throw new Error("Too many public URLs");
     }

@@ -13,7 +13,7 @@ const path = `/app-store/${product.storeSlug}/`;
 const alternatePath = `/en/app-store/${product.storeSlug}/`;
 const pageStructuredData = { "@context":"https://schema.org", "@type":"MobileApplication", name:product.name, description:product.summaryCs, operatingSystem:product.operatingSystem ?? "iOS", applicationCategory:product.categoryCs, url:new URL(path, Astro.site).href, ...(product.appStoreUrl ? { downloadUrl: product.appStoreUrl } : {}), publisher:{"@type":"Organization",name:"VCode"} };
 ---
-<BaseLayout title={`${product.name} — VCode`} description={product.summaryCs} lang="cs" {path} {alternatePath} {pageStructuredData} {socialPreview}>
+<BaseLayout title={`${product.name} — App Store — VCode`} description={product.summaryCs} lang="cs" {path} {alternatePath} {pageStructuredData} {socialPreview}>
   {showcase ? <article class="product-detail game-product-detail"><a class="back-link" href="/hry/">← Všechny hry</a><GameShowcase {product} {showcase} storeProduct={product} lang="cs" /></article> : (
   <div class:list={["app-store-page", `tone-${product.tone}`]}>
     <section class="app-store-hero">

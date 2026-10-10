@@ -21,7 +21,16 @@ const operationsHero = product.id === "studio-balance" ? studioScreenshots[0] : 
 const socialPreview = showcase ? getShowcaseHero(showcase, "cs") : operationsHero ? { src: operationsHero.src, width: operationsHero.width, height: operationsHero.height, alt: operationsHero.captionCs } : undefined;
 const storeProduct = appStoreProducts.find(item => item.id === product.id);
 const family = product.family ? getPublicProducts().filter(item => item.family === product.family && item.id !== product.id) : [];
-const pageStructuredData = { "@context": "https://schema.org", "@type": "SoftwareApplication", name: product.name, description: product.summaryCs, applicationCategory: product.kind === "game" ? "GameApplication" : product.categoryCs, url: `https://vcode.zeleznalady.cz/aplikace/${product.href}/`, publisher: { "@type": "Organization", name: "VCode" } };
+const pageStructuredData = {
+  "@context": "https://schema.org", "@type": product.kind === "game" ? "VideoGame" : "SoftwareApplication",
+  "@id": `https://vcode.zeleznalady.cz/aplikace/${product.href}/#application`,
+  name: product.name, description: product.summaryCs, inLanguage: "cs",
+  applicationCategory: product.kind === "game" ? "GameApplication" : product.categoryCs,
+  url: `https://vcode.zeleznalady.cz/aplikace/${product.href}/`,
+  ...(socialPreview ? { image: new URL(socialPreview.src, Astro.site).href } : {}),
+  ...(storeProduct?.appStoreUrl ? { downloadUrl: storeProduct.appStoreUrl, operatingSystem: storeProduct.operatingSystem ?? "iOS" } : {}),
+  publisher: { "@id": "https://vcode.zeleznalady.cz/#organization" }
+};
 ---
 <BaseLayout title={`${product.name} — VCode`} description={product.summaryCs} lang="cs" path={`/aplikace/${product.href}/`} alternatePath={`/en/apps/${product.href}/`} {pageStructuredData} {socialPreview}>
   <article class:list={["product-detail", `tone-${product.tone}`, {"mestem-hrou-detail": product.id === "mestem-hrou", "game-product-detail": Boolean(showcase), "studio-balance-detail": product.id === "studio-balance", "masaze-operator-detail": product.id === "masaze"}]}>

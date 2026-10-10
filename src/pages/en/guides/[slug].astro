@@ -4,7 +4,16 @@ import { getPublicProducts } from "../../../lib/products";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 export async function getStaticPaths() { const all=await getCollection("guides", ({data})=>data.status==="published" && data.classification==="public" && getPublicProducts().some(product => product.id === data.application_id)); const items=all.filter(({data})=>data.language==="en"); return items.map(entry=>{const other=all.find(({data})=>data.language==="cs"&&data.translation_key===entry.data.translation_key);return {params:{slug:entry.data.slug},props:{entry,alternatePath:other?`/navody/${other.data.slug}/`:undefined}}}); }
 const { entry, alternatePath }=Astro.props; const { Content }=await render(entry);
+const pageStructuredData = {
+  "@context": "https://schema.org", "@type": "TechArticle",
+  "@id": `https://vcode.zeleznalady.cz/en/guides/${entry.data.slug}/#guide`,
+  headline: entry.data.title, description: entry.data.summary, inLanguage: "en",
+  dateModified: entry.data.reviewed_on.toISOString().slice(0, 10),
+  mainEntityOfPage: `https://vcode.zeleznalady.cz/en/guides/${entry.data.slug}/`,
+  author: { "@id": "https://vcode.zeleznalady.cz/#organization" },
+  publisher: { "@id": "https://vcode.zeleznalady.cz/#organization" }
+};
 ---
-<BaseLayout title={`${entry.data.title} — VCode`} description={entry.data.summary} lang="en" path={`/en/guides/${entry.data.slug}/`} {alternatePath}>
+<BaseLayout title={`${entry.data.title} — VCode`} description={entry.data.summary} lang="en" path={`/en/guides/${entry.data.slug}/`} {alternatePath} {pageStructuredData}>
   <article class:list={["guide", { "recall-guide": entry.data.application_id === "vcode-recall", "mestem-hrou-guide": entry.data.application_id === "mestem-hrou", "operator-guide": ["studio-balance-operator-start", "masaze-operator-start"].includes(entry.data.translation_key) }]}><a class="back-link" href="/en/guides/">← Help centre</a><header><p class="kicker">Verified guide</p><h1>{entry.data.title}</h1><p>{entry.data.summary}</p><div class="guide-meta"><span>Revision {entry.data.document_revision}</span><span>Reviewed {entry.data.reviewed_on.toLocaleDateString("en-GB")}</span></div></header><div class="guide-body"><Content /></div></article>
 </BaseLayout>

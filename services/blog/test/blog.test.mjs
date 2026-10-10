@@ -253,3 +253,21 @@ test("official product launch outranks a keyword-rich customer case study", () =
   assert.equal(pageMetadata('<meta content="A factual description" name="description">'),"A factual description");
   assert.equal(documentationLink('<a href="https://evil.example/docs">Documentation</a><a href="https://help.openai.com/article">Help</a>',"https://openai.com/",["help.openai.com"]),"https://help.openai.com/article");
  });
+
+test("public blog exposes reciprocal languages and search previews without indexing review pages", () => {
+  for (const lang of ["cs", "en"]) {
+    const html = renderIndex([], lang);
+    assert.match(html, /hreflang="x-default" href="https:\/\/vcode\.zeleznalady\.cz\/blog\/"/);
+    assert.match(html, /name="robots" content="max-image-preview:large"/);
+    assert.match(html, /property="og:locale"/);
+    assert.doesNotMatch(html, /content="noindex/);
+  }
+});
+
+test("IndexNow rejects private and preview routes even if a sitemap accidentally includes them", async () => {
+  const origin = new URL("https://vcode.zeleznalady.cz");
+  for (const path of ["/prehled/", "/api/contact", "/internal/status", "/preview-local/recall/cs/", "/blog/review/token/"]) {
+    const fetcher = async () => ({ ok: true, text: async () => `<urlset><url><loc>${origin.origin}${path}</loc></url></urlset>` });
+    await assert.rejects(collectPublicUrls(origin, fetcher), /Unexpected public URL/);
+  }
+});

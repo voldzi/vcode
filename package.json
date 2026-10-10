@@ -10,7 +10,7 @@
   },
   "scripts": {
     "dev": "astro dev --host 0.0.0.0",
-    "build": "pnpm validate:content && astro check && astro build && node scripts/validate-recall-build.mjs && node scripts/validate-catalog-build.mjs && node scripts/validate-contact-build.mjs",
+    "build": "pnpm validate:content && astro check && astro build && node scripts/validate-recall-build.mjs && node scripts/validate-catalog-build.mjs && node scripts/validate-contact-build.mjs && pnpm validate:discovery",
     "preview": "astro preview --host 0.0.0.0",
     "check": "pnpm validate:public && pnpm validate:openapi && pnpm validate:content && astro check",
     "validate:public": "node scripts/validate-public-repository.mjs",
@@ -24,7 +24,9 @@
     "indexnow:submit": "node scripts/submit-indexnow.mjs",
     "telegram:webhook": "node scripts/configure-telegram-webhook.mjs",
     "brand:assets": "node scripts/generate-brand-assets.mjs",
-    "test:downloads": "node --test services/downloads/test/*.test.mjs"
+    "test:downloads": "node --test services/downloads/test/*.test.mjs",
+    "validate:discovery": "node scripts/validate-discoverability-build.mjs",
+    "verify:discovery": "python3 scripts/verify-discoverability.py"
   },
   "dependencies": {
     "@astrojs/sitemap": "3.7.4",

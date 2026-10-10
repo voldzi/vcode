@@ -40,7 +40,7 @@ async function inspect(directory) {
       await inspect(path);
     } else if (/\.(?:html|xml|txt)$/.test(entry.name)) {
       const content = await readFile(path, 'utf8');
-      if (content.includes('/preview-local/')) throw new Error(`Private preview link in ${path}`);
+      if ((entry.name === 'robots.txt' ? content.replace(/^Disallow: \/preview-local\/\s*$/gm, '') : content).includes('/preview-local/')) throw new Error(`Private preview link in ${path}`);
       if (recall?.publication === 'draft' && /vcode-recall|VCode Recall|chromadb-status/.test(content)) {
         throw new Error(`Draft Recall content in ${path}`);
       }

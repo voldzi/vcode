@@ -31,6 +31,18 @@ const structuredData = [
     inLanguage: ["cs", "en"],
     publisher: { "@id": new URL("/#organization", origin).href }
   },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${canonical.href}#webpage`,
+    url: canonical.href,
+    name: title,
+    description,
+    inLanguage: lang,
+    isPartOf: { "@id": new URL("/#website", origin).href },
+    publisher: { "@id": new URL("/#organization", origin).href },
+    ...(pageStructuredData?.["@id"] ? { mainEntity: { "@id": pageStructuredData["@id"] } } : {})
+  },
   ...(pageStructuredData ? [pageStructuredData] : [])
 ];
 ---
@@ -42,7 +54,7 @@ const structuredData = [
     <meta name="theme-color" content="#071525" />
     <meta name="description" content={description} />
     <meta name="author" content="VCode" />
-    {noindex && <meta name="robots" content="noindex,nofollow" />}
+    <meta name="robots" content={noindex ? "noindex,nofollow" : "max-image-preview:large"} />
     <link rel="canonical" href={canonical} />
     <link rel="alternate" hreflang="cs" href={new URL(csPath, origin)} />
     <link rel="alternate" hreflang="en" href={new URL(enPath, origin)} />
@@ -53,6 +65,7 @@ const structuredData = [
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="VCode" />
     <meta property="og:locale" content={lang === "cs" ? "cs_CZ" : "en_GB"} />
+    <meta property="og:locale:alternate" content={lang === "cs" ? "en_GB" : "cs_CZ"} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
@@ -64,7 +77,7 @@ const structuredData = [
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={socialImage} />
-    {!noindex && <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />}
+    {!noindex && <script type="application/ld+json" set:html={JSON.stringify(structuredData).replaceAll("<", "\\u003c")} />}
     <title>{title}</title>
   </head>
   <body>

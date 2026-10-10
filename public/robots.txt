@@ -1,32 +1,67 @@
 User-agent: *
 Allow: /
-Disallow: /prehled/
+Disallow: /prehled
+Disallow: /api/
+Disallow: /internal/
+Disallow: /preview-local/
+Disallow: /blog/review/
+Disallow: /en/blog/review/
 
 # Search and user-requested retrieval are welcome. Training crawlers are
 # handled separately so discovery does not imply a training licence.
 User-agent: OAI-SearchBot
 Allow: /
-Disallow: /prehled/
+Disallow: /prehled
+Disallow: /api/
+Disallow: /internal/
+Disallow: /preview-local/
+Disallow: /blog/review/
+Disallow: /en/blog/review/
 
 User-agent: ChatGPT-User
 Allow: /
-Disallow: /prehled/
+Disallow: /prehled
+Disallow: /api/
+Disallow: /internal/
+Disallow: /preview-local/
+Disallow: /blog/review/
+Disallow: /en/blog/review/
 
 User-agent: Claude-SearchBot
 Allow: /
-Disallow: /prehled/
+Disallow: /prehled
+Disallow: /api/
+Disallow: /internal/
+Disallow: /preview-local/
+Disallow: /blog/review/
+Disallow: /en/blog/review/
 
 User-agent: Claude-User
 Allow: /
-Disallow: /prehled/
+Disallow: /prehled
+Disallow: /api/
+Disallow: /internal/
+Disallow: /preview-local/
+Disallow: /blog/review/
+Disallow: /en/blog/review/
 
 User-agent: PerplexityBot
 Allow: /
-Disallow: /prehled/
+Disallow: /prehled
+Disallow: /api/
+Disallow: /internal/
+Disallow: /preview-local/
+Disallow: /blog/review/
+Disallow: /en/blog/review/
 
 User-agent: Perplexity-User
 Allow: /
-Disallow: /prehled/
+Disallow: /prehled
+Disallow: /api/
+Disallow: /internal/
+Disallow: /preview-local/
+Disallow: /blog/review/
+Disallow: /en/blog/review/
 
 User-agent: GPTBot
 Disallow: /
