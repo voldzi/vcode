@@ -4,6 +4,8 @@
 
 This records source provenance and local preparation. It does not record a production release.
 
+Subsequent owner approval and production publication are recorded in [the release receipt](operator-presentations-release-2026-10-10.md).
+
 - Source repository: Masaze.
 - Source handoff commit: `7f66c62016ac41725d16d4878736d4afea7ef99f`.
 - Source package: `docs/marketing/masaze-vcode-2026-10-10/`.

@@ -2,7 +2,9 @@
 
 ## Status
 
-Prepared and tested locally; **not deployed**. The source application requested collaboration on a presentation for other studio operators. Source interface revision: `5816c77`. This record verifies the demonstrated source version; it does not establish that every demonstrated feature is running on the current studio production website.
+At the preparation checkpoint, tested locally and **not yet deployed**. The source application requested collaboration on a presentation for other studio operators. Source interface revision: `5816c77`. This record verifies the demonstrated source version; it does not establish that every demonstrated feature is running on the current studio production website.
+
+This is the preparation record. Subsequent owner approval and production publication are recorded in [the release receipt](operator-presentations-release-2026-10-10.md).
 
 ## Scope
 
