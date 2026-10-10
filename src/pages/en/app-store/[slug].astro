@@ -1,15 +1,20 @@
 ---
+import GameShowcase from "../../../components/GameShowcase.astro";
+import { getGameShowcase, getShowcaseHero } from "../../../lib/game-showcases";
 import AppStoreBadge from "../../../components/AppStoreBadge.astro";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import ProductIcon from "../../../components/ProductIcon.astro";
 import { appStoreProducts } from "../../../lib/appStore";
 export function getStaticPaths() { return appStoreProducts.map(product => ({ params: { slug: product.storeSlug }, props: { product } })); }
 const { product } = Astro.props;
+const showcase = getGameShowcase(product.id);
+const socialPreview = showcase ? getShowcaseHero(showcase, "en") : undefined;
 const path = `/en/app-store/${product.storeSlug}/`;
 const alternatePath = `/app-store/${product.storeSlug}/`;
-const pageStructuredData = { "@context":"https://schema.org", "@type":"MobileApplication", name:product.name, description:product.summaryEn, operatingSystem:product.operatingSystem ?? "iOS", applicationCategory:product.categoryEn, url:new URL(path, Astro.site).href, ...(product.appStoreUrl ? { downloadUrl: product.appStoreUrl } : {}), publisher:{"@type":"Organization",name:"VCode"} };
+const pageStructuredData = { "@context":"https://schema.org", "@type":"MobileApplication", name:product.nameEn ?? product.name, description:product.summaryEn, operatingSystem:product.operatingSystem ?? "iOS", applicationCategory:product.categoryEn, url:new URL(path, Astro.site).href, ...(product.appStoreUrl ? { downloadUrl: product.appStoreUrl } : {}), publisher:{"@type":"Organization",name:"VCode"} };
 ---
-<BaseLayout title={`${product.name} — VCode`} description={product.summaryEn} lang="en" {path} {alternatePath} {pageStructuredData}>
+<BaseLayout title={`${product.nameEn ?? product.name} — VCode`} description={product.summaryEn} lang="en" {path} {alternatePath} {pageStructuredData} {socialPreview}>
+  {showcase ? <article class="product-detail game-product-detail"><a class="back-link" href="/en/games/">← All games</a><GameShowcase {product} {showcase} storeProduct={product} lang="en" /></article> : (
   <div class:list={["app-store-page", `tone-${product.tone}`]}>
     <section class="app-store-hero">
       <div><p class="kicker">{product.storePlatformsEn ?? "iPhone app"}</p><h1>{product.name}</h1><p class="detail-headline">{product.headlineEn}</p><p class="lead">{product.summaryEn}</p><div class="store-links">{product.appStoreUrl ? <AppStoreBadge href={product.appStoreUrl} lang="en" /> : <a class="button primary" href={product.supportEn}>App support</a>}<a class="store-link" href={product.privacyEn}>Privacy</a></div></div>
@@ -19,5 +24,5 @@ const pageStructuredData = { "@context":"https://schema.org", "@type":"MobileApp
       <section><h2>Everything that matters, together</h2><ul>{product.capabilitiesEn.map(item => <li>{item}</li>)}</ul></section>
       <section class="app-store-meta"><h2>Information and help</h2><p>{product.availabilityEn}</p><a href={product.supportEn}>Technical support →</a><a href={product.privacyEn}>Privacy information →</a><a href={`/en/apps/${product.href}/`}>More about the app →</a></section>
     </div>
-  </div>
+  </div>)}
 </BaseLayout>

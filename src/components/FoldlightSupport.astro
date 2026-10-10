@@ -1,0 +1,64 @@
+---
+const { lang = "cs" } = Astro.props as { lang?: "cs" | "en" };
+const cs = lang === "cs";
+const firstSteps = cs ? [
+  ["Otevřete první kapitolu", "Na úvodní obrazovce vyberte „První světlo“. Krátká ukázka vás také provede přehybem, zrcadlem a dvěma květinami; funguje i dotykem na běžném iPhonu a iPadu."],
+  ["Najděte cestu pro paprsek", "Posuvníkem „Přehyb“ rozevírejte dvě stránky, dokud světlo nedosáhne květiny. Další kapitoly přidávají lampy a zrcadla. Jejich nastavení můžete měnit dotykem nebo příslušnými posuvníky."],
+  ["Nechte květinu rozkvést", "Nechte světlo na květině krátce spočinout. Pokud jsou v kapitole dvě, musí být osvětlené zároveň. Pak zvolte „Další světlo“. Když potřebujete poradit, použijte „Malá nápověda“." ]
+] : [
+  ["Open the first chapter", "Select “First light” on the home screen. The short showcase also introduces the fold, a mirror and two flowers; it works with touch on ordinary iPhones and iPads too."],
+  ["Find a path for the beam", "Use the “Fold” slider to open the two pages until the light reaches the flower. Later chapters add lamps and mirrors. Adjust them with touch or their labelled sliders."],
+  ["Let the flower bloom", "Let the light rest on the flower for a moment. If a chapter has two flowers, both must be lit at the same time. Then select “Next light”. Choose “A little hint” when you need help."]
+];
+const questions = cs ? [
+  ["Jak ovládám lampu a zrcadla?", "Pohyblivou lampu táhněte nahoru či dolů. Zrcadlem otočíte klepnutím nebo tažením kolem jeho středu. Pro jemné nastavení použijte posuvníky „Výška lampy“ a „Zrcadlo“. Tyto prvky se objeví jen v kapitolách, které je obsahují."],
+  ["Jak hra funguje na iPhonu Duo?", "Na vnitřní obrazovce podporovaného Duo otevřeného na šířku vede světlo rozevírání telefonu. Náklon do stran upravuje vybranou lampu nebo zrcadlo; podržením náklonu vzhůru či dolů vyberete jiný prvek a potom telefon vrátíte do klidové polohy. Toto ovládání vyžaduje iOS 27.1 nebo novější. Po zavření telefonu pokračujete dotykem. Běžný iPhone a iPad vyžadují alespoň iOS nebo iPadOS 26."],
+  ["Proč se kapitola nedokončila?", "Paprsek musí dosáhnout všech květin zároveň a krátce na nich zůstat. Rozsvícení jedné po druhé nestačí. Sledujte počet osvětlených květin; zdi paprsek zastaví. Nápověda vám pomůže najít další krok."],
+  ["Funguje hra a ukládání bez internetu?", "Ano. Všech dvanáct kapitol funguje offline a bez účtu. Rozehraná kapitola, dokončené kapitoly a volba zvuku se ukládají v zařízení. Postup se automaticky nepřenáší mezi zařízeními."],
+  ["Jak zopakuji kapitolu?", "Použijte kruhovou šipku vpravo nahoře. Restartujete tím současnou hádanku; dokončené kapitoly zůstanou označené. Šipkou vlevo nahoře se vrátíte na výběr kapitol."],
+  ["Co znamená „Obnovit místní postup“?", "Tato volba se objeví, když hra nedokáže načíst uložený postup. Po potvrzení „Obnovit“ začnete od první kapitoly. Předchozí záznam zůstane v místní záloze, takže nejde o úplné vymazání všech dat. Při potížích nám raději nejprve napište a aplikaci neodstraňujte."],
+  ["Jak vypnu zvuk nebo animace?", "Zvuk přepnete ikonou reproduktoru na úvodní obrazovce. Pro klidnější obraz zapněte v nastavení zpřístupnění zařízení „Omezit pohyb“; květiny a výsledek zůstanou viditelné i bez dekorativních animací."]
+] : [
+  ["How do I control lamps and mirrors?", "Drag a movable lamp up or down. Tap a mirror or drag around its centre to turn it. For fine adjustments, use the “Lamp height” and “Mirror” sliders. These controls appear only in chapters that contain the corresponding objects."],
+  ["How does the game work on iPhone Duo?", "On the inner display of a supported Duo opened in landscape, opening the phone guides the light. Tilt sideways to adjust the selected lamp or mirror. Hold an upward or downward tilt to select another object, then return the phone to its resting position. These controls require iOS 27.1 or later. Close the phone to continue with touch. Ordinary iPhones and iPads require iOS or iPadOS 26 or later."],
+  ["Why has the chapter not completed?", "The beam must reach every flower at the same time and rest on them briefly. Lighting one after another is not enough. Watch the illuminated-flower count; walls stop the beam. A hint can help you find the next step."],
+  ["Do the game and saved progress work offline?", "Yes. All twelve chapters work offline without an account. Your current puzzle, completed chapters and sound preference are saved on your device. Progress does not automatically transfer between devices."],
+  ["How do I replay a chapter?", "Use the circular arrow at the top right. It restarts the current puzzle; completed chapters keep their marks. The arrow at the top left returns you to the chapter list."],
+  ["What does “Reset saved progress” mean?", "This option appears when the game cannot read your saved progress. Confirming “Reset” starts you again from the first chapter. The previous record remains in a local backup, so this does not erase all data. If something has gone wrong, contact us first and keep the app installed."],
+  ["How do I turn off sound or animations?", "Toggle sound with the speaker icon on the home screen. For a calmer display, enable Reduce Motion in your device’s accessibility settings. Flowers and completion feedback remain visible without decorative animations."]
+];
+const contactSubject = encodeURIComponent(cs ? "Podpora Foldlight" : "Foldlight support");
+---
+<p class="lead">{cs ? "Začněte prvním světlem a hrajte svým tempem. Tady najdete ovládání, odpovědi k uloženému postupu i přímý kontakt na podporu." : "Begin with the first light and play at your own pace. Find the controls, answers about saved progress and a direct way to contact support below."}</p>
+
+<div class="support-options">
+  <a href={`mailto:podpora@zeleznalady.cz?subject=${contactSubject}`}><strong>{cs ? "Napsat podpoře" : "Contact support"}</strong><span>podpora@zeleznalady.cz →</span></a>
+  <a href={cs ? "/aplikace/foldlight/" : "/en/apps/foldlight/"}><strong>{cs ? "Možnosti hry" : "Game features"}</strong><span>Foldlight →</span></a>
+</div>
+
+<section aria-labelledby="foldlight-first-steps">
+  <h2 id="foldlight-first-steps">{cs ? "První tři kroky" : "Your first three steps"}</h2>
+  <ol class="first-steps">
+    {firstSteps.map(([title, body]) => <li><h3>{title}</h3><p>{body}</p></li>)}
+  </ol>
+</section>
+
+<section aria-labelledby="foldlight-common-questions">
+  <h2 id="foldlight-common-questions">{cs ? "Časté otázky" : "Common questions"}</h2>
+  {questions.map(([question, answer]) => <details><summary>{question}</summary><p>{answer}</p></details>)}
+</section>
+
+<p class="support-note">{cs ? "Když nám napíšete, uveďte verzi Foldlightu, model zařízení, verzi systému, číslo kapitoly a stručný popis problému. Neposílejte hesla ani citlivé osobní údaje." : "When contacting us, include your Foldlight version, device model, system version, chapter number and a short description of the issue. Never send passwords or sensitive personal information."}</p>
+<p><a href={cs ? "/foldlight/privacy/" : "/en/foldlight/privacy/"}>{cs ? "Podrobnosti o místních datech a jejich odstranění →" : "Details about local data and deletion →"}</a></p>
+
+<style>
+  section { margin: 2rem 0; }
+  .first-steps { padding-inline-start: 1.5rem; }
+  .first-steps li { padding-inline-start: 0.4rem; margin-block: 1.2rem; }
+  .first-steps h3 { margin-bottom: 0.35rem; }
+  .first-steps p { margin-top: 0; }
+  details { padding: 0.8rem 0; border-bottom: 1px solid var(--line); }
+  summary { display: list-item; font-weight: 650; cursor: pointer; min-height: 44px; padding-block: 0.5rem; }
+  summary:focus-visible { outline: 2px solid var(--accent, #245aa7); outline-offset: 4px; border-radius: 4px; }
+  section p, .support-note { max-width: 68ch; line-height: 1.7; }
+</style>

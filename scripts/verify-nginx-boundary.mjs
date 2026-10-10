@@ -128,6 +128,10 @@ try {
   docker('exec', web, 'nginx', '-t');
   const publicResponse = await get('/');
   assert.equal(publicResponse.status, 200);
+  assert.equal(publicResponse.value('cache-control'), 'no-cache', 'Static HTML must revalidate after a release');
+  const conditionalPage = await get('/', ['If-None-Match: ' + publicResponse.value('etag')]);
+  assert.equal(conditionalPage.status, 304);
+  assert.equal(conditionalPage.value('cache-control'), 'no-cache', 'Revalidation policy remains on 304');
   const publicCsp = publicResponse.value('content-security-policy');
   assert.match(publicCsp, /style-src 'self' 'unsafe-inline'/);
   security(publicResponse, publicCsp);

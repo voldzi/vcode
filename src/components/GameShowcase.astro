@@ -1,0 +1,130 @@
+---
+import AppStoreBadge from "./AppStoreBadge.astro";
+import ProductIcon from "./ProductIcon.astro";
+import type { Product } from "../lib/products";
+import type { AppStoreProduct } from "../lib/appStore";
+import type { GameShowcase } from "../lib/game-showcases";
+import { getShowcaseHero } from "../lib/game-showcases";
+const { product, showcase, storeProduct, lang = "cs" } = Astro.props as {
+  product: Product; showcase: GameShowcase; storeProduct?: AppStoreProduct; lang: "cs" | "en";
+};
+const en = lang === "en";
+const text = (row: { titleCs: string; titleEn: string; bodyCs: string; bodyEn: string }) => ({
+  title: en ? row.titleEn : row.titleCs, body: en ? row.bodyEn : row.bodyCs
+});
+const hero = getShowcaseHero(showcase, lang);
+const support = storeProduct ? (en ? storeProduct.supportEn : storeProduct.supportCs) : (en ? "/en/support/" : "/podpora/");
+const privacy = storeProduct ? (en ? storeProduct.privacyEn : storeProduct.privacyCs) : undefined;
+---
+<div class:list={["game-showcase", `game-${product.id}`]}>
+  <header class="game-hero">
+    <div class="game-intro">
+      <div class="game-brand"><ProductIcon id={product.id} size={64} /><p class="kicker">{en ? product.categoryEn : product.categoryCs}</p></div>
+      <h1>{en ? (product.nameEn ?? product.name) : product.name}</h1>
+      <p class="game-tagline">{en ? showcase.taglineEn : showcase.taglineCs}</p>
+      <p class="game-description">{en ? showcase.introEn : showcase.introCs}</p>
+      <p class="game-availability"><span aria-hidden="true" class:list={["status-dot", {pending: !storeProduct?.appStoreUrl}]}></span>{en ? showcase.availabilityEn : showcase.availabilityCs}</p>
+      <div class="game-actions">
+        {storeProduct?.appStoreUrl ? <AppStoreBadge href={storeProduct.appStoreUrl} {lang} /> : <a class="button primary" href="#pravidla">{en ? "Discover the game" : "Poznejte hru"}<span aria-hidden="true">→</span></a>}
+        <a class="game-text-link" href="#ukazky">{en ? "See it in action" : "Podívejte se na hru"}<span aria-hidden="true">↓</span></a>
+      </div>
+    </div>
+    <div class="game-hero-art"><img src={hero.src} alt={hero.alt} width={hero.width} height={hero.height} loading="eager" fetchpriority="high" decoding="async" /><span class="art-glow" aria-hidden="true"></span></div>
+  </header>
+
+  <section class="game-features" aria-label={en ? "Ways to play" : "Možnosti hraní"}>
+    {showcase.features.map((row, i) => <article class="game-feature"><span class="feature-number" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span><h2>{text(row).title}</h2><p>{text(row).body}</p></article>)}
+  </section>
+
+  <section class="game-gallery" id="ukazky" aria-labelledby="gallery-title">
+    <div class="section-heading"><div><p class="kicker">{en ? showcase.galleryKickerEn ?? "Inside the game" : showcase.galleryKickerCs ?? "Přímo ze hry"}</p><h2 id="gallery-title">{en ? showcase.galleryTitleEn ?? "Find your favourite view." : showcase.galleryTitleCs ?? "Najděte si svůj pohled."}</h2></div><p>{en ? "Open a picture to explore the details." : "Otevřete snímek a prohlédněte si detaily."}</p></div>
+    <div class="gallery-grid">
+      {showcase.screenshots.map((shot, i) => {
+        const src = en ? shot.srcEn ?? shot.src : shot.src;
+        const thumbnail = en ? shot.thumbnailSrcEn ?? shot.thumbnailSrc ?? src : shot.thumbnailSrc ?? src;
+        return <figure><a class="screenshot-link" href={src} aria-label={`${en ? "Open image" : "Otevřít snímek"}: ${en ? shot.captionEn : shot.captionCs}`}><div class="screenshot-frame"><img src={thumbnail} width={shot.width} height={shot.height} alt={en ? shot.altEn : shot.altCs} loading="lazy" decoding="async" /><span class="image-open" aria-hidden="true">↗</span></div></a><figcaption><span aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>{en ? shot.captionEn : shot.captionCs}</figcaption></figure>;
+      })}
+    </div>
+  </section>
+
+  {showcase.video && <section class="game-video" aria-labelledby="video-title"><div><p class="kicker">{en ? "A moment of play" : "Chvilka hraní"}</p><h2 id="video-title">{en ? showcase.video.titleEn : showcase.video.titleCs}</h2><p>{en ? showcase.video.captionEn : showcase.video.captionCs}</p></div><video controls playsinline preload="none" poster={showcase.video.poster} width={showcase.video.width} height={showcase.video.height} aria-label={en ? showcase.video.titleEn : showcase.video.titleCs}><source src={showcase.video.src} type="video/mp4" /><a href={showcase.video.src}>{en ? "Open the gameplay video" : "Otevřít video ze hry"}</a></video></section>}
+
+  <section class="game-rules" id="pravidla" aria-labelledby="rules-title">
+    <div><p class="kicker">{en ? "Your first game" : "Vaše první hra"}</p><h2 id="rules-title">{en ? "A few steps. A new challenge." : "Pár kroků. Nová výzva."}</h2><p>{en ? "Start simply and discover the possibilities as you play." : "Začněte jednoduše a objevujte další možnosti při hraní."}</p></div>
+    <ol>{showcase.steps.map((row, i) => <li><span class="step-number" aria-hidden="true">{i + 1}</span><h3>{text(row).title}</h3><p>{text(row).body}</p></li>)}</ol>
+  </section>
+
+  <nav class="game-help" aria-label={en ? "Game information" : "Informace ke hře"}>
+    <a href={support}>{en ? "Rules and support" : "Pravidla a podpora"}<span aria-hidden="true">↗</span></a>
+    {privacy && <a href={privacy}>{en ? "Privacy" : "Ochrana soukromí"}<span aria-hidden="true">→</span></a>}
+    <a href={en ? "/en/games/" : "/hry/"}>{en ? "More games by VCode" : "Další hry od VCode"}<span aria-hidden="true">→</span></a>
+  </nav>
+  <section class="game-contact"><div><p class="kicker">VCode</p><h2>{en ? "Have an idea for your own app?" : "Máte nápad na vlastní aplikaci?"}</h2><p>{en ? "Let’s talk about what we could create together." : "Pojďme si říct, co bychom mohli vytvořit společně."}</p></div><a class="button" data-collaboration-interest="true" href={en ? "/en/work-with-us/#poptavka" : "/spoluprace/#poptavka"}>{en ? "Let’s talk" : "Domluvit spolupráci"}<span aria-hidden="true">→</span></a></section>
+</div>
+
+<style>
+  .game-showcase { --game-accent:#15527b; --game-soft:#e4f0f7; --game-ink:#122f48; margin-top:1.5rem; }
+  :global(.game-product-detail) {padding-top:2rem;}
+  :global(.game-product-detail > .back-link) {margin-bottom:1rem;}
+  .game-rinklet { --game-accent:#006b73; --game-soft:#dcf2ef; --game-ink:#113237; }
+  .game-millora { --game-accent:#805516; --game-soft:#f5ead8; --game-ink:#362915; }
+  .game-foldlight { --game-accent:#365f36; --game-soft:#e8eddd; --game-ink:#293824; }
+  .game-sibenice { --game-accent:#426130; --game-soft:#edf2df; --game-ink:#233f28; }
+  .game-nest { --game-accent:#252b33; --game-soft:#e9ecef; --game-ink:#161c25; }
+  .game-hero { display:grid; grid-template-columns:1fr 1fr; align-items:center; gap:clamp(1.5rem,4vw,4rem); padding:clamp(1.25rem,4vw,3.25rem); border:1px solid #d7e2ed; border-radius:2rem; background:linear-gradient(125deg,#fff 10%,var(--game-soft)); overflow:hidden; }
+  .game-brand { display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem; }
+  .game-brand :global(.product-icon) { flex:none; }
+  .game-brand .kicker {margin:0;color:var(--game-accent);}
+  .game-intro { min-width:0;position:relative;z-index:1; }
+  .game-intro h1 {font-size:clamp(2.5rem,5vw,4.2rem);line-height:1.08;letter-spacing:-.05em;color:var(--game-ink);margin:0 0 1.2rem;overflow-wrap:anywhere;}
+  .game-tagline {font-size:clamp(1.25rem,2.5vw,1.9rem);font-weight:750;line-height:1.3;color:var(--game-accent);margin:0 0 1rem;}
+  .game-description {font-size:1.08rem;line-height:1.8;max-width:48ch;}
+  .game-availability {display:flex;align-items:flex-start;gap:.6rem;font-size:.9rem;line-height:1.6;margin:1.5rem 0;}
+  .status-dot {width:.55rem;height:.55rem;border-radius:50%;background:#16804f;flex:none;margin-top:.4rem;}
+  .status-dot.pending {background:#96650e;}
+  .game-actions {display:flex;flex-wrap:wrap;align-items:flex-start;gap:1.3rem;}
+  .game-actions :global(.app-store-download) {max-width:22rem;}
+  .game-text-link {display:inline-flex;align-items:center;gap:.6rem;min-height:48px;color:var(--game-accent);font-weight:700;}
+  .game-hero-art {position:relative;display:grid;place-items:center;isolation:isolate;min-width:0;animation:game-arrive .7s ease-out both;}
+  .game-hero-art img {position:relative;z-index:1;width:100%;height:auto;max-height:540px;object-fit:contain;border-radius:1rem;filter:drop-shadow(0 18px 24px #182a3820);}
+  .art-glow {position:absolute;inset:12%;border-radius:50%;background:var(--game-accent);opacity:.08;filter:blur(40px);}
+  .game-features {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin:2rem 0 4rem;}
+  .game-feature {padding:1.5rem;background:#fff;border:1px solid #dce5ee;border-radius:1.3rem;transition:transform .2s,border-color .2s;}
+  .feature-number {display:inline-flex;font-size:.8rem;letter-spacing:.12em;font-weight:800;color:var(--game-accent);background:var(--game-soft);padding:.4rem .65rem;border-radius:.5rem;margin-bottom:1rem;}
+  .game-feature h2 {font-size:1.12rem;margin:0 0 .7rem;color:var(--game-ink);}
+  .game-feature p {font-size:.95rem;line-height:1.75;margin:0;}
+  .section-heading {display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;margin-bottom:1.5rem;}
+  .section-heading h2,.game-rules h2,.game-contact h2 {font-size:clamp(1.5rem,3vw,2.2rem);line-height:1.25;letter-spacing:-.03em;margin:.5rem 0;}
+  .section-heading>p {max-width:25ch;font-size:.95rem;}
+  .gallery-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:1.2rem;}
+  figure {margin:0;min-width:0;}
+  .screenshot-link {display:block;border-radius:1.2rem;}
+  .screenshot-frame {height:350px;padding:1rem;background:var(--game-soft);border:1px solid #dce5ee;border-radius:1.2rem;position:relative;overflow:hidden;display:grid;place-items:center;}
+  .screenshot-frame img {width:100%;height:100%;object-fit:contain;min-height:0;transition:transform .25s;}
+  .image-open {position:absolute;right:.65rem;bottom:.65rem;background:#fff;color:var(--game-ink);border-radius:50%;width:2rem;height:2rem;display:grid;place-items:center;box-shadow:0 2px 8px #0001;}
+  figcaption {display:flex;gap:.7rem;padding:1rem .2rem;line-height:1.6;font-size:.94rem;}
+  figcaption>span {font-size:.75rem;font-weight:800;opacity:.6;line-height:2;flex:none;}
+  .game-video {display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:center;margin:3rem 0;padding:2rem;border:1px solid #dce5ee;border-radius:1.5rem;background:var(--game-soft);}
+  .game-video h2 {font-size:clamp(1.5rem,3vw,2.2rem);line-height:1.25;margin:.5rem 0;}
+  .game-video video {width:100%;height:auto;max-height:500px;border-radius:1rem;background:#12252e;}
+  .game-rules {display:grid;grid-template-columns:.8fr 1.2fr;gap:3rem;margin:4rem 0 2rem;padding:clamp(1.25rem,4vw,3rem);background:var(--game-soft);border-radius:1.5rem;}
+  .game-rules ol {list-style:none;margin:0;padding:0;}
+  .game-rules li {position:relative;padding:0 0 1.5rem 3rem;}
+  .game-rules li:last-child {padding-bottom:0;}
+  .step-number {position:absolute;left:0;top:0;width:2rem;height:2rem;border:1px solid var(--game-accent);border-radius:50%;color:var(--game-accent);font-size:.85rem;font-weight:800;display:grid;place-items:center;}
+  .game-rules h3 {font-size:1.08rem;margin:.2rem 0 .5rem;}
+  .game-rules li p {margin:0;font-size:.96rem;line-height:1.7;}
+  .game-help {display:flex;flex-wrap:wrap;gap:.75rem;margin:1.5rem 0 3rem;}
+  .game-help a {display:flex;align-items:center;gap:1rem;border:1px solid #dce5ee;background:#fff;padding:.8rem 1.1rem;border-radius:.8rem;color:var(--game-accent);font-weight:650;min-height:48px;}
+  .game-contact {display:flex;align-items:center;justify-content:space-between;gap:2rem;padding:2rem;background:#132c46;color:#fff;border-radius:1.5rem;}
+  .game-contact .kicker,.game-contact p {color:#d5e5f3;}
+  .game-contact h2 {color:#fff;}
+  .game-contact .button {flex:none;background:#fff;color:#132c46;min-height:48px;gap:.7rem;}
+  a:focus-visible {outline:3px solid #155e9b;outline-offset:4px;}
+  #ukazky,#pravidla {scroll-margin-top:7rem;}
+  @media(hover:hover) { .game-feature:hover {transform:translateY(-3px);border-color:var(--game-accent);} .screenshot-link:hover img {transform:scale(1.025);} }
+  @keyframes game-arrive {from {opacity:0;transform:translateY(12px);}to {opacity:1;transform:translateY(0);}}
+  @media(max-width:900px) {.game-hero {grid-template-columns:1fr;gap:0;}.game-intro {display:contents;}.game-hero-art {grid-row:4;margin:1rem 0 1.5rem;}.game-hero-art img {max-height:340px;}.game-features {grid-template-columns:repeat(2,minmax(0,1fr));}.game-rules {grid-template-columns:1fr;gap:1.5rem;}}
+  @media(max-width:560px) {.game-features {grid-template-columns:1fr;}.section-heading,.game-contact {display:block;}.section-heading>p {max-width:none;}.game-contact .button {margin-top:1rem;}.game-hero {border-radius:1.3rem;}.game-intro h1 {font-size:2.5rem;}.screenshot-frame {height:330px;}.game-help a {width:100%;justify-content:space-between;}.game-video {grid-template-columns:1fr;padding:1.25rem;}}
+  @media(prefers-reduced-motion:reduce) {.game-hero-art {animation:none;}.game-feature,.screenshot-frame img {transition:none;}.game-feature:hover,.screenshot-link:hover img {transform:none;}}
+</style>

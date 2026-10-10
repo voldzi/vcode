@@ -71,34 +71,34 @@ export const products: Product[] = [
     availabilityCs: "Ve vývoji — ukázka po domluvě", availabilityEn: "In development — demo by arrangement"
   },
   {
-    id: "foldlight", name: "Foldlight", href: "foldlight", tone: "forest", kind: "game", inDevelopment: true,
+    id: "foldlight", name: "Foldlight", href: "foldlight", tone: "forest", kind: "game",
     categoryCs: "Světelná hříčka", categoryEn: "Light puzzle",
     headlineCs: "Rozevřete telefon. Nechte světlo rozkvést.", headlineEn: "Open your phone. Let the light bloom.",
-    summaryCs: "Jednoduchá hra se světlem, zrcadly a květinami. Krátká ukázka představuje ovládání ohybem na iPhonu Duo; na běžném iPhonu a iPadu slouží dotykové ovládání.",
-    summaryEn: "A simple game of light, mirrors and flowers. A short showcase explores fold controls on iPhone Duo, with touch controls on ordinary iPhones and iPads.",
+    summaryCs: "Dvanáct světelných hlavolamů pro iPhone a iPad. Veďte paprsek přes zrcadla a nechte květiny rozkvést. Hrajte dotykem; na podporovaném iPhonu Duo můžete cestu světla měnit přehybem a náklonem.",
+    summaryEn: "Twelve light puzzles for iPhone and iPad. Guide a beam through mirrors and let the flowers bloom. Play by touch, or use folding and tilt to change the light’s path on a supported iPhone Duo.",
     capabilitiesCs: ["Tři ukázky: ohyb, odraz a větvení světla", "Světlo probouzí květiny", "Dotykové ovládání na iPhonu a iPadu", "Dvanáct hlavolamů k prozkoumání"],
     capabilitiesEn: ["Three demonstrations: folding, reflection and branching light", "Light wakes the flowers", "Touch controls on iPhone and iPad", "Twelve puzzles to explore"],
-    availabilityCs: "Vývojový prototyp", availabilityEn: "Development prototype"
+    availabilityCs: "Dostupné v App Storu pro iPhone a iPad", availabilityEn: "Available on the App Store for iPhone and iPad"
   },
   {
-    id: "rinklet", name: "Rinklet", href: "rinklet", tone: "cyan", kind: "game", inDevelopment: true,
+    id: "rinklet", name: "Rinklet", href: "rinklet", tone: "cyan", kind: "game",
     categoryCs: "Stolní hokej", categoryEn: "Table hockey",
     headlineCs: "Malý stůl. Rychlá odveta.", headlineEn: "A small table. A quick rematch.",
-    summaryCs: "Stolní hokej pro iPhone a iPad. Zahrajte si proti počítači, trénujte nebo vyzvěte druhého hráče na jednom zařízení. Pro iPhone Duo připravujeme rozdělení stolu a ovladače.",
-    summaryEn: "Table hockey for iPhone and iPad. Play the computer, practise or challenge a second player on one device. A separate rink and controller layout is being developed for iPhone Duo.",
+    summaryCs: "Stolní hokej pro iPhone a iPad. Zahrajte si proti počítači, vyzvěte druhého hráče na jednom zařízení nebo soupeře přes Game Center. Rozdělené ovládání ponechá celý stůl na očích nad plochou pro prst.",
+    summaryEn: "Air hockey for iPhone and iPad. Play the computer, challenge a second player on one device or find an opponent through Game Center. Split controls keep the whole rink in view above a separate touch surface.",
     capabilitiesCs: ["Soupeř se třemi obtížnostmi", "Dva hráči na jednom zařízení", "Trénink a místní hra offline", "Stůl a ovladač na oddělených plochách"],
     capabilitiesEn: ["Computer opponent with three difficulty levels", "Two players on one device", "Practice and offline local play", "Separate rink and controller surfaces"],
-    availabilityCs: "Ve vývoji", availabilityEn: "In development"
+    availabilityCs: "Dostupné v App Storu pro iPhone a iPad", availabilityEn: "Available on the App Store for iPhone and iPad"
   },
   {
     id: "millora", name: "MILLORA — Mlýn", nameEn: "MILLORA — Nine Men's Morris", href: "millora", tone: "amber", kind: "game", inDevelopment: true,
     categoryCs: "Desková strategie", categoryEn: "Board strategy",
     headlineCs: "Devět kamenů. Spousta možností.", headlineEn: "Nine pieces. Many possibilities.",
-    summaryCs: "Moderní zpracování klasického Mlýna pro iPhone a iPad. Pokládejte a posouvejte kameny, uzavírejte mlýny a promýšlejte další tah.",
-    summaryEn: "A modern take on Nine Men's Morris for iPhone and iPad. Place and move pieces, form mills and think ahead.",
+    summaryCs: "Moderní zpracování klasického Mlýna pro iPhone, iPad a Apple TV. Pokládejte a posouvejte kameny, uzavírejte mlýny a promýšlejte další tah.",
+    summaryEn: "A modern take on Nine Men's Morris for iPhone, iPad and Apple TV. Place and move pieces, form mills and think ahead.",
     capabilitiesCs: ["Klasická pravidla Mlýna", "Čtyři úrovně místního soupeře", "Dva hráči na jednom zařízení", "Interaktivní lekce a trénink", "Volitelné tahové hraní přes Game Center", "11 jazyků a volba materiálového tématu", "Vypnutí odlesků, zvuku a haptiky"],
     capabilitiesEn: ["Classic Nine Men's Morris rules", "Four levels of on-device opponent", "Two players on one device", "Interactive lessons and practice", "Optional turn-based play through Game Center", "11 languages and selectable material themes", "Optional reflections, sound and haptics"],
-    availabilityCs: "Ve vývoji", availabilityEn: "In development"
+    availabilityCs: "Připravujeme pro App Store", availabilityEn: "Coming to the App Store"
   },
 
   {
@@ -220,12 +220,12 @@ export const products: Product[] = [
     tone: "amber",
     categoryCs: "Česká slovní hra",
     categoryEn: "Czech word game",
-    headlineCs: "Uhodněte slovo dřív, než vyprší čas.",
-    headlineEn: "Guess the Czech word before time runs out.",
-    summaryCs: "Kreslená slovní hra pro iPhone a iPad. Hrajte sami nebo se střídejte s druhým hráčem na jednom zařízení; verzi pro Apple TV připravujeme.",
-    summaryEn: "An illustrated Czech word game for iPhone and iPad. Play solo or take turns with a second player on one device; an Apple TV version is in preparation.",
-    capabilitiesCs: ["Čtyři obtížnosti a časomíra", "Hra dvou hráčů na jednom zařízení", "České slovníky pro různé věkové skupiny", "Ovládání Apple TV pomocí ovladače"],
-    capabilitiesEn: ["Four difficulty levels and a timer", "Two players on one device", "Czech word lists for different age groups", "Apple TV remote control support"],
+    headlineCs: "Každé písmeno vás přiblíží.",
+    headlineEn: "Every letter brings you closer.",
+    summaryCs: "Česká slovní hra pro iPhone a iPad. Odkrývejte písmena a překonejte svůj nejlepší čas. Představujeme také připravovanou aktualizaci pro rodiny a dva hráče; verzi pro Apple TV připravujeme.",
+    summaryEn: "A Czech word game for iPhone and iPad. Reveal the letters and beat your best time. Explore the upcoming update for families and two players; an Apple TV version is in preparation.",
+    capabilitiesCs: ["Tři obtížnosti, režim Slovesa a časomíra", "České slovníky a výsledky v Game Center", "Připravovaná aktualizace pro rodiny a dva hráče", "Připravovaná verze pro Apple TV"],
+    capabilitiesEn: ["Three difficulties, Verbs mode and a timer", "Czech word lists and Game Center results", "Upcoming update for families and two players", "Apple TV version in preparation"],
     availabilityCs: "Dostupné v App Storu pro iPhone a iPad",
     availabilityEn: "Available on the App Store for iPhone and iPad"
   },

@@ -20,9 +20,25 @@ const byId = (id: string) => {
 
 export const appStoreProducts: AppStoreProduct[] = [
   {
-    ...byId("millora"), storeSlug: "millora",
+    ...byId("rinklet"), storeSlug: "rinklet",
+    appStoreUrl: "https://apps.apple.com/app/rinklet-air-hockey-duel/id6821032563",
     storePlatformsCs: "Hra pro iPhone a iPad", storePlatformsEn: "Game for iPhone and iPad",
     operatingSystem: "iOS",
+    privacyCs: "/rinklet/privacy/", privacyEn: "/en/rinklet/privacy/",
+    supportCs: "/podpora/rinklet/", supportEn: "/en/support/rinklet/"
+  },
+  {
+    ...byId("foldlight"), storeSlug: "foldlight",
+    appStoreUrl: "https://apps.apple.com/app/vcode-foldlight/id6821035786",
+    storePlatformsCs: "Hra pro iPhone a iPad", storePlatformsEn: "Game for iPhone and iPad",
+    operatingSystem: "iOS",
+    privacyCs: "/foldlight/privacy/", privacyEn: "/en/foldlight/privacy/",
+    supportCs: "/podpora/foldlight/", supportEn: "/en/support/foldlight/"
+  },
+  {
+    ...byId("millora"), storeSlug: "millora",
+    storePlatformsCs: "Hra pro iPhone, iPad a Apple TV", storePlatformsEn: "Game for iPhone, iPad and Apple TV",
+    operatingSystem: "iOS, tvOS",
     privacyCs: "/millora/privacy/", privacyEn: "/en/millora/privacy/",
     supportCs: "/podpora/millora/", supportEn: "/en/support/millora/"
   },
