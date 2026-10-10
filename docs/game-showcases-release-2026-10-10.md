@@ -37,6 +37,7 @@ Only the public static website is activated. Both required Docker images are bui
 ## Live release
 
 - Release identifier: `game-showcases-20261010-r2`.
+- Implementation source commit: `d8da3ddb6635cd60dd5d2d1eb8d6dd39235e3ebb`.
 - Final production acceptance: **10 October 2026, 16:05:13 Europe/Prague** (`2026-10-10T14:05:13Z`).
 - Active web image: `sha256:371033bd4856093b8564359da4803cda343607effdf3574ef0546bf902cd1412`.
 - Required blog image built: `sha256:5e175b0ced4cc817c7ab10e5146b5b5810189fb9a3d9e1fedda1f66cb1e004ed`; blog runtime was not replaced.
