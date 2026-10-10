@@ -1,0 +1,50 @@
+# REVIEW EXAMPLE ONLY. Own project; never merge another app network into the
+# existing Městem hrou gateway. No installation/activation is implied.
+# Require an independently verified existing Moje app network name/ID/member.
+# Static source suggests kaloricke-tabulky-production_backend, not live proof.
+# Fresh CA signing key remains operator-only; mount only own leaf/key/public CA.
+name: vcode-contact-relay-mojeporce
+services:
+  gateway:
+    image: nginx@sha256:97d490c12ba55b4946b01546d1c3ed324e8d41ab1c9fcb2a616aa470620e5b46
+    restart: unless-stopped
+    user: "101:101"
+    entrypoint: ["nginx", "-g", "daemon off;"]
+    read_only: true
+    tmpfs:
+      - /tmp:uid=101,gid=101,mode=0700,size=16m
+    volumes:
+      - ./tls-gateway.conf:/etc/nginx/nginx.conf:ro
+      - ./api-security-headers.conf:/etc/nginx/contact-relays/api-security-headers.conf:ro
+      - ./error-pages.conf:/etc/nginx/contact-relays/error-pages.conf:ro
+      - ./error-handlers.conf:/etc/nginx/contact-relays/error-handlers.conf:ro
+      - type: bind
+        source: ${VCODE_MOJEPORCE_CONTACT_RELAY_TLS_DIR:?Configure this app own protected TLS leaf directory}
+        target: /run/contact-relay-tls
+        read_only: true
+        bind:
+          create_host_path: false
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: [ALL]
+    mem_limit: 64m
+    cpus: 0.25
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "--max-time", "5", "--cacert", "/run/contact-relay-tls/ca.pem", "--resolve", "vcode-contact-relay:8443:127.0.0.1", "--header", "Host: vcode-contact-relay", "https://vcode-contact-relay:8443/health"]
+      interval: 30s
+      timeout: 6s
+      retries: 3
+      start_period: 5s
+    networks:
+      central:
+        # Unique on central: do not collide with the existing Městem alias.
+        aliases: [vcode-contact-relay-mojeporce]
+      app:
+        # Fixed Node URL/SNI resolve only to this gateway on Moje's own network.
+        aliases: [vcode-contact-relay]
+networks:
+  central:
+    external: true
+    name: vcode-prod_default
+  app:
+    external: true
+    name: ${VCODE_MOJEPORCE_CONTACT_RELAY_APP_NETWORK:?Use only the independently verified existing Moje app network}

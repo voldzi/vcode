@@ -1,0 +1,232 @@
+# REVIEW EXAMPLE ONLY. This is not an installed or enabled integration.
+# Insert these locations only in the existing canonical mojeporce.cz HTTPS
+# server. Define/reuse its verified app upstream as mojeporce_node_runtime.
+# Keep HTTP/www/legacy-host redirects and all existing application/API locations.
+# Copy the public api-security-headers.conf beside the private guard include.
+# Before inclusion, verify no broader server error_page redirects bypass these
+# named handlers and verify the actual trusted edge/TCP-peer topology.
+#
+# CRITICAL in EVERY other existing proxy location (also HTTP/legacy servers):
+#   proxy_set_header X-Mojeporce-Contact-Ingress "";
+# A server-level proxy_set_header does NOT inherit into locations which already
+# contain any proxy_set_header. Clear the header in each proxy context or insert
+# a reviewed shared clearing include in each. The exact locations below use
+# proxy_pass_request_headers off plus their own protected guard include.
+#
+# Node alone mounts the fresh central credential, separate guard and public CA
+# read-only at /etc/mojeporce-contact (planned UID/GID 1001:1001; verify runtime).
+# The DMZ receives only the fresh ingress guard. Its protected include contains:
+#   proxy_set_header X-Mojeporce-Contact-Ingress "GENERATED_EDGE_GUARD";
+# Never print nginx -T, complete Compose config or private includes.
+# Node transport must explicitly set Host: vcode-contact-relay while preserving
+# https://vcode-contact-relay:8443, SNI and verification with this app's fresh CA.
+#
+# Source and registry must remain OFF until exact notice review/publication:
+# PARTNER_CONTACT_ENABLED=false, PARTNER_CONTACT_PRIVACY_APPROVED=false,
+# PARTNER_CONTACT_PRIVACY_PUBLISHED=false. Never reuse old PARTNERSHIP_* secrets.
+# No production POST/visitor records for acceptance; test this actual chain with
+# disposable central DB and mock Telegram before the future activation gate.
+
+location = /api/partner-contact/challenge {
+  client_max_body_size 16k;
+  client_body_buffer_size 32k;
+  client_body_timeout 10s;
+  access_log off;
+  error_log /dev/null crit;
+  include /etc/nginx/mojeporce-contact-relay/api-security-headers.conf;
+  error_page 400 = @mojeporce_contact_invalid_input;
+  error_page 403 = @mojeporce_contact_origin_rejected;
+  error_page 405 = @mojeporce_contact_method_not_allowed;
+  error_page 413 = @mojeporce_contact_too_large;
+  error_page 415 = @mojeporce_contact_invalid_content_type;
+  error_page 502 504 = @mojeporce_contact_unavailable;
+  if ($request_uri != "/api/partner-contact/challenge") { return 400; }
+  if ($request_method != GET) { return 405; }
+  if ($http_host != "mojeporce.cz") { return 403; }
+  if ($http_sec_fetch_site != "same-origin") { return 403; }
+  if ($http_origin !~ "^(|https://mojeporce\\.cz)$") { return 403; }
+  if ($content_length != "") { return 400; }
+  if ($http_transfer_encoding != "") { return 400; }
+  if ($http_content_encoding != "") { return 415; }
+  # Replace only this upstream symbol with the existing, verified app upstream.
+  proxy_pass http://mojeporce_node_runtime;
+  proxy_http_version 1.1;
+  proxy_pass_request_headers off;
+  proxy_set_header Host mojeporce.cz;
+  proxy_set_header Connection "";
+  proxy_set_header Accept application/json;
+  proxy_set_header Origin $http_origin;
+  proxy_set_header Sec-Fetch-Site $http_sec_fetch_site;
+  # Original TCP peer even when a global realip module rewrites $remote_addr.
+  # An actual extra trusted edge needs its own reviewed peer/IP policy first.
+  proxy_set_header X-Real-IP $realip_remote_addr;
+  # Root-owned 0600 file: exactly one server-only guard directive; never Bearer.
+  include /etc/nginx/mojeporce-contact-relay/ingress-guard.conf;
+  proxy_request_buffering on;
+  proxy_buffering off;
+  proxy_max_temp_file_size 0;
+  proxy_cache off;
+  proxy_connect_timeout 3s;
+  proxy_read_timeout 8s;
+  proxy_send_timeout 8s;
+  proxy_intercept_errors off;
+  # Replace upstream API security headers with the single edge-owned set above.
+  proxy_hide_header Cache-Control;
+  proxy_hide_header Content-Security-Policy;
+  proxy_hide_header Referrer-Policy;
+  proxy_hide_header X-Content-Type-Options;
+  proxy_hide_header X-Robots-Tag;
+  proxy_hide_header Set-Cookie;
+  proxy_hide_header Access-Control-Allow-Origin;
+  proxy_hide_header Access-Control-Allow-Credentials;
+  proxy_hide_header Access-Control-Allow-Methods;
+  proxy_hide_header Access-Control-Allow-Headers;
+  proxy_hide_header Access-Control-Expose-Headers;
+  proxy_hide_header Access-Control-Max-Age;
+  proxy_hide_header Access-Control-Allow-Private-Network;
+  proxy_pass_request_body off;
+  proxy_set_header Content-Length "";
+  proxy_set_header Transfer-Encoding "";
+}
+
+location = /api/partner-contact {
+  client_max_body_size 16k;
+  client_body_buffer_size 32k;
+  client_body_timeout 10s;
+  access_log off;
+  error_log /dev/null crit;
+  include /etc/nginx/mojeporce-contact-relay/api-security-headers.conf;
+  error_page 400 = @mojeporce_contact_invalid_input;
+  error_page 403 = @mojeporce_contact_origin_rejected;
+  error_page 405 = @mojeporce_contact_method_not_allowed;
+  error_page 413 = @mojeporce_contact_too_large;
+  error_page 415 = @mojeporce_contact_invalid_content_type;
+  error_page 502 504 = @mojeporce_contact_unavailable;
+  if ($request_uri != "/api/partner-contact") { return 400; }
+  if ($request_method != POST) { return 405; }
+  if ($http_host != "mojeporce.cz") { return 403; }
+  if ($http_origin != "https://mojeporce.cz") { return 403; }
+  if ($http_sec_fetch_site != "same-origin") { return 403; }
+  if ($http_content_type !~* "^application/json(?:\\s*;\\s*charset=utf-8)?$") { return 415; }
+  if ($http_content_encoding != "") { return 415; }
+  # Replace only this upstream symbol with the existing, verified app upstream.
+  proxy_pass http://mojeporce_node_runtime;
+  proxy_http_version 1.1;
+  proxy_pass_request_headers off;
+  proxy_set_header Host mojeporce.cz;
+  proxy_set_header Connection "";
+  proxy_set_header Accept application/json;
+  proxy_set_header Origin $http_origin;
+  proxy_set_header Sec-Fetch-Site $http_sec_fetch_site;
+  # Original TCP peer even when a global realip module rewrites $remote_addr.
+  # An actual extra trusted edge needs its own reviewed peer/IP policy first.
+  proxy_set_header X-Real-IP $realip_remote_addr;
+  # Root-owned 0600 file: exactly one server-only guard directive; never Bearer.
+  include /etc/nginx/mojeporce-contact-relay/ingress-guard.conf;
+  proxy_request_buffering on;
+  proxy_buffering off;
+  proxy_max_temp_file_size 0;
+  proxy_cache off;
+  proxy_connect_timeout 3s;
+  proxy_read_timeout 8s;
+  proxy_send_timeout 8s;
+  proxy_intercept_errors off;
+  # Replace upstream API security headers with the single edge-owned set above.
+  proxy_hide_header Cache-Control;
+  proxy_hide_header Content-Security-Policy;
+  proxy_hide_header Referrer-Policy;
+  proxy_hide_header X-Content-Type-Options;
+  proxy_hide_header X-Robots-Tag;
+  proxy_hide_header Set-Cookie;
+  proxy_hide_header Access-Control-Allow-Origin;
+  proxy_hide_header Access-Control-Allow-Credentials;
+  proxy_hide_header Access-Control-Allow-Methods;
+  proxy_hide_header Access-Control-Allow-Headers;
+  proxy_hide_header Access-Control-Expose-Headers;
+  proxy_hide_header Access-Control-Max-Age;
+  proxy_hide_header Access-Control-Allow-Private-Network;
+  proxy_set_header Content-Type $http_content_type;
+  # Nginx derives the bounded, buffered body length. Do not copy a browser
+  # transfer-encoding/content-length pair or permit a streaming body upstream.
+}
+
+# Normalised aliases which resolve to an exact location are rejected by its raw
+# request_uri equality above; all other contact-prefixed paths are closed here.
+location ^~ /api/partner-contact {
+  access_log off;
+  error_log /dev/null crit;
+  include /etc/nginx/mojeporce-contact-relay/api-security-headers.conf;
+  error_page 404 = @mojeporce_contact_not_found;
+  return 404;
+}
+
+location @mojeporce_contact_invalid_input {
+  internal;
+  access_log off;
+  error_log /dev/null crit;
+  default_type application/json;
+  include /etc/nginx/mojeporce-contact-relay/api-security-headers.conf;
+  add_header X-Request-ID "req_$request_id" always;
+  return 400 '{"error":{"code":"VALIDATION_ERROR","message":"Požadavek není platný.","requestId":"req_$request_id"}}';
+}
+
+location @mojeporce_contact_origin_rejected {
+  internal;
+  access_log off;
+  error_log /dev/null crit;
+  default_type application/json;
+  include /etc/nginx/mojeporce-contact-relay/api-security-headers.conf;
+  add_header X-Request-ID "req_$request_id" always;
+  return 403 '{"error":{"code":"ORIGIN_REJECTED","message":"Otevřete formulář přímo v Moje porce.","requestId":"req_$request_id"}}';
+}
+
+location @mojeporce_contact_method_not_allowed {
+  internal;
+  access_log off;
+  error_log /dev/null crit;
+  default_type application/json;
+  include /etc/nginx/mojeporce-contact-relay/api-security-headers.conf;
+  add_header X-Request-ID "req_$request_id" always;
+  return 405 '{"error":{"code":"METHOD_NOT_ALLOWED","message":"Požadavek není platný.","requestId":"req_$request_id"}}';
+}
+
+location @mojeporce_contact_too_large {
+  internal;
+  access_log off;
+  error_log /dev/null crit;
+  default_type application/json;
+  include /etc/nginx/mojeporce-contact-relay/api-security-headers.conf;
+  add_header X-Request-ID "req_$request_id" always;
+  return 413 '{"error":{"code":"PAYLOAD_TOO_LARGE","message":"Zpráva je příliš dlouhá.","requestId":"req_$request_id"}}';
+}
+
+location @mojeporce_contact_invalid_content_type {
+  internal;
+  access_log off;
+  error_log /dev/null crit;
+  default_type application/json;
+  include /etc/nginx/mojeporce-contact-relay/api-security-headers.conf;
+  add_header X-Request-ID "req_$request_id" always;
+  return 415 '{"error":{"code":"UNSUPPORTED_MEDIA_TYPE","message":"Zprávu se nepodařilo přečíst.","requestId":"req_$request_id"}}';
+}
+
+location @mojeporce_contact_not_found {
+  internal;
+  access_log off;
+  error_log /dev/null crit;
+  default_type application/json;
+  include /etc/nginx/mojeporce-contact-relay/api-security-headers.conf;
+  add_header X-Request-ID "req_$request_id" always;
+  return 404 '{"error":{"code":"NOT_FOUND","message":"Stránka nebyla nalezena.","requestId":"req_$request_id"}}';
+}
+
+location @mojeporce_contact_unavailable {
+  internal;
+  access_log off;
+  error_log /dev/null crit;
+  default_type application/json;
+  include /etc/nginx/mojeporce-contact-relay/api-security-headers.conf;
+  add_header Retry-After "60" always;
+  add_header X-Request-ID "req_$request_id" always;
+  return 503 '{"error":{"code":"CONTACT_UNAVAILABLE","message":"Formulář teď není dostupný. Napište nám e-mailem.","requestId":"req_$request_id"}}';
+}
