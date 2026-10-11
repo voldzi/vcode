@@ -6,10 +6,10 @@ export const milloraShowcase = {
   titleEn: "MILLORA — Nine Men's Morris",
   taglineCs: "Devět kamenů. Tři v řadě. Váš další tah.",
   taglineEn: "Nine pieces. Three in a row. Your next move.",
-  introCs: "Klasický Mlýn v klidném moderním provedení. Vytvořte trojici, připravte soupeře o kámen a promyslete příští tah. MILLORA se připravuje pro iPhone, iPad a Apple TV: proti počítači, ve dvou na jednom zařízení nebo online přes Game Center.",
-  introEn: "Classic Nine Men's Morris in a calm, modern setting. Form a line of three, capture an opponent's piece and plan your next move. MILLORA is being prepared for iPhone, iPad and Apple TV: play the computer, share one device or take turns online through Game Center.",
-  availabilityCs: "Připravujeme vydání pro iPhone, iPad a Apple TV. Aplikace čeká na schválení v App Storu.",
-  availabilityEn: "Coming to iPhone, iPad and Apple TV. The app is awaiting App Store review.",
+  introCs: "Klasický Mlýn v klidném moderním provedení. Vytvořte trojici, připravte soupeře o kámen a promyslete příští tah. Zahrajte si proti počítači, ve dvou na jednom zařízení nebo online přes Game Center.",
+  introEn: "Classic Nine Men's Morris in a calm, modern setting. Form a line of three, capture an opponent's piece and plan your next move. Play the computer, share one device or take turns online through Game Center.",
+  availabilityCs: "Verze pro iPhone a iPad byla schválena. Dostupnost v App Storu se postupně aktualizuje. Verze pro Apple TV čeká na schválení.",
+  availabilityEn: "The iPhone and iPad version has been approved. App Store availability is gradually updating. The Apple TV version is awaiting review.",
   heroSrc: `${assetRoot}/millora-hero-1600.webp`,
   heroThumbnailSrc: `${assetRoot}/millora-hero-1280.webp`,
   heroWidth: 1280,
@@ -148,8 +148,8 @@ export const milloraShowcase = {
       height: 1080,
       altCs: "Herní deska MILLORY na Apple TV s vybraným kamenem a postranním přehledem tahu a zásobníků.",
       altEn: "MILLORA's Apple TV board with a selected piece and a side panel showing the turn and reserves.",
-      captionCs: "Mlýn pro velkou obrazovku. Pole vybíráte ovladačem.",
-      captionEn: "Morris on the big screen. Select a space with your remote."
+      captionCs: "Verze pro Apple TV čeká na schválení. Pole vybíráte ovladačem.",
+      captionEn: "The Apple TV version is awaiting review. Select a space with your remote."
     }
   ]
 };

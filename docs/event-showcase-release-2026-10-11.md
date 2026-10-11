@@ -82,6 +82,6 @@ beyond its existing anonymous home-page contract. The catalogue's existing
 development and availability metadata was preserved intentionally.
 
 Machine-readable acceptance, candidate inputs, build logs and rollback files
-are retained in the protected server release directory
-`/srv/vcode/releases/event-showcase-20261011/`. Private runtime overlays and
+are retained in the protected server release named
+`event-showcase-20261011`. Private runtime overlays and
 registries must remain on the server.
