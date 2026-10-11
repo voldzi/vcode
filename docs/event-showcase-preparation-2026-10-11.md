@@ -7,9 +7,10 @@ main interface captures and three visual styles, reusing the first Studio frame.
 Asset provenance and checks are in `event-showcase-assets-2026-10-11.md`.
 Publication is authorised by the direct human request in the Event thread to
 prepare the VCode presentation and coordinate deployment with the VCode owner.
-Final local checks and scoped release acceptance must still finish before a
-production claim. No changes to Event itself, private access, analytics scope
-or the contact service are part of this work.
+Final local checks and scoped production acceptance completed on 11 October
+2026. The deployed source, image identities and acceptance results are recorded
+in `event-showcase-release-2026-10-11.md`. No changes to Event itself, private
+access, analytics scope or the contact service are part of this work.
 
 ## Source and destinations
 
