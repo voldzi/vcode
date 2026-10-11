@@ -12,6 +12,9 @@ for (const path of ['dist/index.html', 'dist/en/index.html']) {
   assert.ok(cards.get('sibenice')?.includes('tvos:upcoming'), `${path}: Šibenice tvOS is upcoming`);
   assert.ok(!cards.get('sibenice')?.includes('tvos:available'), `${path}: Šibenice tvOS must not be advertised as released`);
   assert.ok(cards.get('nest')?.includes('tvos:available'), `${path}: NEST tvOS is available`);
+  assert.ok(cards.get('jizda')?.includes('ios:available'), `${path}: Jízda has a verified public iPhone and iPad release`);
+  assert.ok(cards.get('jizda')?.includes('watchos:available'), `${path}: Jízda has verified Apple Watch support`);
+  assert.ok(!cards.get('jizda')?.some(target => target.endsWith(':upcoming')), `${path}: future features must not hide Jízda’s available platforms`);
   assert.ok(cards.get('vcode-recall')?.includes('macos:available'), `${path}: Recall is available on Mac`);
   for (const id of ['stratos', 'budget-contract', 'executive-center', 'projectflow', 'archflow', 'akb']) {
     const targets = cards.get(id);

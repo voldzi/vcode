@@ -155,12 +155,12 @@ export const products: Product[] = [
     categoryEn: "Mobility",
     headlineCs: "Každá cesta přehledně.",
     headlineEn: "Every journey, clearly recorded.",
-    summaryCs: "Evidence jízd, navigace, vozidla, cestující, náklady a bezpečná komunikace v jedné aplikaci pro iPhone a Apple Watch.",
-    summaryEn: "Ride logging, navigation, vehicles, passengers, costs and secure communication in one iPhone and Apple Watch app.",
-    capabilitiesCs: ["Záznam a obnova jízdy", "Navigace a dopravní kontext", "Vozidla, náklady a statistiky", "COP komunikace"],
-    capabilitiesEn: ["Ride recording and recovery", "Navigation and road context", "Vehicles, costs and insights", "COP communication"],
-    availabilityCs: "Připravujeme pro App Store",
-    availabilityEn: "Preparing for the App Store"
+    summaryCs: "GPS i ruční evidence cest, vozidla, cestující, výdaje a statistiky v aplikaci pro iPhone, iPad a Apple Watch. Rozšířenou verzi s propojením COP připravujeme.",
+    summaryEn: "GPS and manual trip logging, vehicles, passengers, expenses and statistics for iPhone, iPad and Apple Watch. An expanded version with COP integration is in preparation.",
+    capabilitiesCs: ["GPS a ruční evidence jízd", "Vozidla a cestující", "Výdaje a statistiky", "Export a sdílení přehledů"],
+    capabilitiesEn: ["GPS and manual trip logging", "Vehicles and passengers", "Expenses and statistics", "Report export and sharing"],
+    availabilityCs: "Dostupné v App Storu pro iPhone, iPad a Apple Watch",
+    availabilityEn: "Available on the App Store for iPhone, iPad and Apple Watch"
   },
   {
     id: "cop-mobile",

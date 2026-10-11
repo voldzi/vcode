@@ -46,6 +46,10 @@ export const appStoreProducts: AppStoreProduct[] = [
   {
     ...byId("jizda"),
     storeSlug: "jizda",
+    appStoreUrl: "https://apps.apple.com/cz/app/j%C3%ADzda/id6744852413",
+    storePlatformsCs: "Aplikace pro iPhone, iPad a Apple Watch",
+    storePlatformsEn: "App for iPhone, iPad and Apple Watch",
+    operatingSystem: "iOS, watchOS",
     privacyCs: "/jizda/privacy/",
     privacyEn: "/en/jizda/privacy/",
     supportCs: "/podpora/jizda/",

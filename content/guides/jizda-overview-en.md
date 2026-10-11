@@ -9,8 +9,8 @@ classification: public
 status: published
 document_type: knowledge_base_article
 documentation_profile: akb-application-docs-1
-document_revision: "1.0"
-reviewed_on: 2026-09-22
+document_revision: "1.1"
+reviewed_on: 2026-10-11
 slug: jizda-your-day-on-the-road
 order: 30
 ---
@@ -21,9 +21,9 @@ Jízda brings together the route, vehicle, passengers, purpose and costs. After 
 
 ## Smarter preparation
 
-History helps suggest a likely destination, vehicle and passengers. Navigation adds traffic context while keeping the driver in control.
+In the upcoming expanded version, history helps suggest a likely destination, vehicle and passengers. Navigation with COP traffic context and an alternative Apple route is also in preparation. The driver remains in control throughout the journey.
 
 ## Designed for daily use
 
-The app is designed for iPhone and Apple Watch. COP communication adds secure chat, calls and situational information to the journey.
+The app is available for iPhone, iPad and Apple Watch. Optional COP integration, shared vehicles, chat and calls are part of the upcoming expansion. CarPlay is in development and requires Apple approval; it is not yet available.
 

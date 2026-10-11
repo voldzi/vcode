@@ -42,6 +42,7 @@ export function getCatalogTargets(product: Product): CatalogTarget[] {
   if (storeProduct?.appStoreUrl) {
     if (/iOS/i.test(storeProduct.operatingSystem ?? "")) add("ios", "available");
     if (/tvOS/i.test(storeProduct.operatingSystem ?? "")) add("tvos", "available");
+    if (/watchOS/i.test(storeProduct.operatingSystem ?? "")) add("watchos", "available");
   }
   if (product.externalUrl && !product.inDevelopment) add("web", "available");
   if (describedPlatforms.includes("macos") && /zdarma|free|dostupn|available/i.test(availability) && !product.inDevelopment) {

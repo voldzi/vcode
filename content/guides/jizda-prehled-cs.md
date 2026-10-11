@@ -9,8 +9,8 @@ classification: public
 status: published
 document_type: knowledge_base_article
 documentation_profile: akb-application-docs-1
-document_revision: "1.0"
-reviewed_on: 2026-09-22
+document_revision: "1.1"
+reviewed_on: 2026-10-11
 slug: jizda-vas-den-na-cestach
 order: 30
 ---
@@ -21,9 +21,9 @@ Jízda spojuje záznam trasy, vozidlo, cestující, účel a náklady. Po návra
 
 ## Chytřejší příprava
 
-Historie pomáhá nabídnout pravděpodobný cíl, vozidlo a cestující. Navigace přidává dopravní kontext a nechává rozhodnutí na řidiči.
+V připravované rozšířené verzi historie pomáhá nabídnout pravděpodobný cíl, vozidlo a cestující. Připravujeme také navigaci s dopravním kontextem COP a náhradní trasou od Apple. Rozhodnutí během cesty zůstává na řidiči.
 
 ## Pro každodenní používání
 
-Aplikace je navržená pro iPhone a Apple Watch. Komunikace s COP rozšiřuje cestu o bezpečný chat, hovory a situační informace.
+Aplikace je dostupná pro iPhone, iPad a Apple Watch. Volitelné propojení s COP, společná vozidla, chat a hovory jsou součástí připravovaného rozšíření. CarPlay je ve vývoji a vyžaduje schválení Apple; zatím není dostupné.
 

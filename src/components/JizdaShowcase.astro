@@ -1,0 +1,183 @@
+---
+import AppStoreBadge from "./AppStoreBadge.astro";
+import ProductIcon from "./ProductIcon.astro";
+import { jizdaCopy, jizdaScreenshots } from "../lib/jizda-showcase";
+import type { Product } from "../lib/products";
+import type { AppStoreProduct } from "../lib/appStore";
+
+const { product, storeProduct, lang = "cs" } = Astro.props as {
+  product: Product;
+  storeProduct?: AppStoreProduct;
+  lang?: "cs" | "en";
+};
+const cs = lang === "cs";
+const copy = jizdaCopy[lang];
+const collaborationHref = `${cs ? "/spoluprace/" : "/en/work-with-us/"}?app=jizda&area=partnership#poptavka`;
+const guideHref = cs ? "/navody/jizda-prvni-nastaveni/" : "/en/guides/jizda-first-time-setup/";
+const helpHrefs = cs
+  ? ["/navody/aplikace/jizda/", "/podpora/jizda/", "/jizda/privacy/", "/jizda/terms/"]
+  : ["/en/guides/apps/jizda/", "/en/support/jizda/", "/en/jizda/privacy/", "/en/jizda/terms/"];
+---
+
+<header class="jizda-hero">
+  <div class="jizda-intro">
+    <p class="kicker">{copy.eyebrow}</p>
+    <h1>{cs ? product.name : product.nameEn ?? product.name}</h1>
+    <p class="jizda-headline">{copy.headline}</p>
+    <p class="jizda-lead">{copy.intro}</p>
+    <p class="jizda-availability">{storeProduct?.appStoreUrl ? copy.available : copy.preparing}</p>
+    <div class="jizda-actions">
+      {storeProduct?.appStoreUrl && <AppStoreBadge href={storeProduct.appStoreUrl} {lang} />}
+      <a class="jizda-link" href="#moznosti"><span>{copy.explore}</span><span aria-hidden="true">↓</span></a>
+    </div>
+    <p class="jizda-map-note">{copy.mapNote}</p>
+  </div>
+  <aside class="jizda-concept" aria-labelledby="jizda-concept-title">
+    <div class="jizda-icon-scene">
+      <svg class="jizda-route" viewBox="0 0 420 220" fill="none" aria-hidden="true" focusable="false">
+        <path d="M28 160C95 160 57 47 132 47S195 180 273 180 304 68 393 68" stroke="currentColor" stroke-width="3" stroke-dasharray="7 8" />
+        <circle cx="28" cy="160" r="8" fill="currentColor" />
+        <circle cx="393" cy="68" r="10" fill="currentColor" />
+        <circle cx="393" cy="68" r="19" stroke="currentColor" stroke-width="2" opacity=".3" />
+      </svg>
+      <ProductIcon id="jizda" size={144} />
+    </div>
+    <h2 id="jizda-concept-title">{copy.visualTitle}</h2>
+    <ol class="jizda-concept-list">
+      {copy.visualItems.map(([title, text]) => <li><strong>{title}</strong><span>{text}</span></li>)}
+    </ol>
+  </aside>
+</header>
+
+<ul class="jizda-facts" aria-label={cs ? "Jízda v kostce" : "Jízda at a glance"}>
+  {copy.facts.map(([title, text]) => <li><strong>{title}</strong><span>{text}</span></li>)}
+</ul>
+
+<section id="moznosti" class="jizda-section" aria-labelledby="jizda-features-title">
+  <div class="jizda-section-heading"><h2 id="jizda-features-title">{copy.featuresTitle}</h2><p>{copy.featuresIntro}</p></div>
+  <ul class="jizda-features">
+    {copy.features.map(([title, text], index) => <li><span class="jizda-feature-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span><h3>{title}</h3><p>{text}</p></li>)}
+  </ul>
+</section>
+
+<section class="jizda-section jizda-workflow" aria-labelledby="jizda-workflow-title">
+  <div class="jizda-section-heading"><h2 id="jizda-workflow-title">{copy.workflowTitle}</h2></div>
+  <ol>{copy.workflow.map(([title, text]) => <li><h3>{title}</h3><p>{text}</p></li>)}</ol>
+  <a class="jizda-link" href={guideHref}><span>{copy.guideAction}</span><span aria-hidden="true">→</span></a>
+</section>
+
+<section class="jizda-section jizda-upcoming" aria-labelledby="jizda-upcoming-title">
+  <div class="jizda-section-heading"><p class="kicker">{copy.upcomingEyebrow}</p><h2 id="jizda-upcoming-title">{copy.upcomingTitle}</h2><p>{copy.upcomingIntro}</p></div>
+  <ul>{copy.upcoming.map(([title, text]) => <li><h3>{title}</h3><p>{text}</p></li>)}</ul>
+</section>
+
+{jizdaScreenshots.length > 0 && <section id="ukazky" class="jizda-section" aria-labelledby="jizda-gallery-title">
+  <div class="jizda-section-heading"><h2 id="jizda-gallery-title">{copy.galleryTitle}</h2><p>{copy.galleryIntro}</p><p class="jizda-gallery-notice">{copy.galleryNotice} {copy.galleryLanguageNote}</p></div>
+  <ul class="jizda-gallery">
+    {jizdaScreenshots.map((shot) => <li><figure><a href={shot.src} aria-label={`${cs ? shot.titleCs : shot.titleEn} — ${copy.imageAction}`}>
+      <div class:list={["jizda-gallery-image", { "jizda-gallery-ipad": shot.width / shot.height > .6 }]}><img src={shot.preview} width={shot.width} height={shot.height} alt={cs ? shot.captionCs : shot.captionEn} loading="lazy" decoding="async" /></div>
+      <figcaption><h3>{cs ? shot.titleCs : shot.titleEn}<span aria-hidden="true">↗</span></h3><p>{cs ? shot.captionCs : shot.captionEn}</p></figcaption>
+    </a></figure></li>)}
+  </ul>
+</section>}
+
+<section class="jizda-section jizda-faq" aria-labelledby="jizda-faq-title">
+  <div class="jizda-section-heading"><h2 id="jizda-faq-title">{copy.faqTitle}</h2></div>
+  {copy.faq.map(([question, answer]) => <details><summary>{question}</summary><p>{answer}</p></details>)}
+</section>
+
+<section class="jizda-section" aria-labelledby="jizda-help-title">
+  <div class="jizda-section-heading"><h2 id="jizda-help-title">{copy.helpTitle}</h2></div>
+  <ul class="jizda-help">
+    {copy.help.map(([title, text], index) => <li><a href={helpHrefs[index]}><h3>{title}<span aria-hidden="true">→</span></h3><p>{text}</p></a></li>)}
+  </ul>
+</section>
+
+<section class="jizda-section jizda-contact" aria-labelledby="jizda-contact-title">
+  <div><h2 id="jizda-contact-title">{copy.contactTitle}</h2><p>{copy.contactText}</p></div>
+  <a class="button" href={collaborationHref} data-collaboration-interest="true"><span>{copy.contactAction}</span><span aria-hidden="true">→</span></a>
+</section>
+
+<style>
+  :global(.product-detail.jizda-showcase-detail) { --accent: #086a67; padding-top: clamp(1.5rem, 3vw, 2.5rem); }
+  :global(.jizda-showcase-detail > .back-link) { margin-bottom: 1.25rem; }
+  :global(.product-detail.jizda-showcase-detail header) { max-width: none; }
+  .jizda-hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); align-items: center; gap: clamp(1.75rem, 4vw, 4rem); }
+  .jizda-intro { min-width: 0; }
+  .jizda-intro > .kicker { color: #086a67; line-height: 1.5; }
+  .jizda-hero h1 { font-size: 4.5rem; line-height: 1.05; letter-spacing: 0; }
+  .jizda-headline { font: 750 2.25rem/1.3 "Manrope Variable", sans-serif; color: #086a67; margin: 1rem 0; max-width: 25ch; }
+  .jizda-lead { color: var(--muted); font-size: 1.05rem; line-height: 1.75; max-width: 55ch; }
+  .jizda-availability { color: var(--navy); font-size: .92rem; font-weight: 700; margin-top: 1.3rem; }
+  .jizda-actions { display: flex; flex-wrap: wrap; align-items: flex-start; gap: .8rem 1.25rem; }
+  .jizda-actions :global(.app-store-download) { max-width: 100%; }
+  .jizda-actions :global(.apple-credit) { max-width: 34ch; }
+  .jizda-link { display: inline-flex; align-items: center; gap: .7rem; min-height: 44px; max-width: 100%; font-weight: 720; color: #086a67; line-height: 1.5; text-decoration: underline; text-underline-offset: .25em; }
+  .jizda-link > span:first-child, .button > span:first-child { min-width: 0; }
+  .jizda-link > span[aria-hidden], .button > span[aria-hidden] { flex: none; }
+  .jizda-map-note { margin-top: 1rem; max-width: 60ch; color: var(--muted); font-size: .85rem; }
+  .jizda-concept { min-width: 0; padding: 1.75rem; border: 1px solid #c6dfdb; border-radius: 1.5rem; background: #eef8f5; }
+  .jizda-icon-scene { position: relative; display: grid; place-items: center; min-height: 210px; isolation: isolate; }
+  .jizda-route { position: absolute; width: 100%; height: auto; max-height: 220px; inset: 0; margin: auto; z-index: -1; color: #228778; opacity: .55; }
+  .jizda-icon-scene :global(.product-icon) { max-width: 100%; }
+  .jizda-concept h2 { font-size: 1.3rem; margin: .75rem 0 1rem; }
+  .jizda-concept-list { list-style: none; margin: 0; padding: 0; display: grid; gap: .9rem; counter-reset: context; }
+  .jizda-concept-list li { counter-increment: context; display: grid; grid-template-columns: 1.5rem minmax(0, 1fr); gap: .15rem .7rem; }
+  .jizda-concept-list li::before { content: counter(context); grid-row: span 2; color: #086a67; font-weight: 750; }
+  .jizda-concept-list strong { font-size: .95rem; color: var(--navy); }
+  .jizda-concept-list span { grid-column: 2; color: #4e6662; font-size: .86rem; }
+  .jizda-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); list-style: none; padding: 2rem 0; margin: 2rem 0 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .jizda-facts li { display: grid; gap: .3rem; min-width: 0; padding: .25rem 1.25rem; border-right: 1px solid var(--line); }
+  .jizda-facts li:first-child { padding-left: 0; } .jizda-facts li:last-child { border: 0; }
+  .jizda-facts strong { font: 750 1.2rem/1.4 "Manrope Variable", sans-serif; color: #086a67; }
+  .jizda-facts span { color: var(--muted); font-size: .9rem; }
+  .jizda-section { margin-top: clamp(3rem, 6vw, 5rem); scroll-margin-top: 7rem; }
+  .jizda-section-heading { max-width: 48rem; margin-bottom: 1.7rem; }
+  h2 { margin: .5rem 0 1rem; font: 750 2.5rem/1.25 "Manrope Variable", sans-serif; color: var(--navy); letter-spacing: 0; }
+  h3 { margin: 0 0 .6rem; font: 720 1.08rem/1.45 "Manrope Variable", sans-serif; color: var(--navy); }
+  h1, h2, h3, p, summary, a, strong, span, .kicker { overflow-wrap: anywhere; }
+  .jizda-section-heading > p:not(.kicker) { color: var(--muted); max-width: 64ch; line-height: 1.75; }
+  .jizda-features { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+  .jizda-features li { min-width: 0; padding: 1.6rem; background: #fff; border: 1px solid #d1e3df; border-radius: 1.1rem; transition: border-color .2s ease, transform .2s ease; }
+  .jizda-feature-number { display: block; color: #086a67; font-size: .8rem; font-weight: 750; margin-bottom: .8rem; }
+  .jizda-features p, .jizda-workflow p, .jizda-upcoming li p, .jizda-help p { color: var(--muted); margin: 0; line-height: 1.75; font-size: .95rem; }
+  .jizda-workflow { padding: 2rem 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .jizda-workflow ol { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); list-style: none; padding: 0; margin-bottom: 1.5rem; gap: 2rem; counter-reset: step; }
+  .jizda-workflow li { min-width: 0; counter-increment: step; }
+  .jizda-workflow li::before { content: "0" counter(step); color: #086a67; font-weight: 750; }
+  .jizda-workflow h3 { margin-top: .7rem; }
+  .jizda-upcoming { padding: 1.5rem 0 0 1.5rem; border-left: 3px solid #ab7123; }
+  .jizda-upcoming .kicker { color: #805215; }
+  .jizda-upcoming ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.75rem 2rem; }
+  .jizda-upcoming li { min-width: 0; }
+  .jizda-gallery { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+  .jizda-gallery li { min-width: 0; }
+  .jizda-gallery figure { margin: 0; border: 1px solid #d1e3df; border-radius: 1.1rem; overflow: hidden; background: #fff; }
+  .jizda-gallery a { display: block; min-height: 44px; }
+  .jizda-gallery-image { height: 430px; padding: 1rem; background: #edf5f2; display: flex; align-items: center; justify-content: center; }
+  .jizda-gallery-image img { object-fit: contain; width: 100%; height: 100%; border-radius: .4rem; transition: transform .25s ease; }
+  .jizda-gallery figcaption { padding: 1.15rem 1.3rem; }
+  .jizda-gallery h3 { display: flex; align-items: flex-start; justify-content: space-between; gap: .75rem; margin: 0; }
+  .jizda-gallery h3 span { flex: none; color: #086a67; }
+  .jizda-gallery p { color: var(--muted); font-size: .9rem; line-height: 1.7; margin: .6rem 0 0; }
+  .jizda-section-heading .jizda-gallery-notice { font-size: .86rem; }
+  .jizda-gallery a:focus-visible { outline-offset: -3px; }
+  .jizda-faq details { border-bottom: 1px solid var(--line); padding: .6rem 0; }
+  .jizda-faq summary { cursor: pointer; min-height: 44px; padding: .7rem 0; color: var(--navy); font-weight: 700; }
+  .jizda-faq details p { max-width: 70ch; color: var(--muted); margin: .3rem 0 .8rem; line-height: 1.75; }
+  .jizda-help { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; list-style: none; margin: 0; padding: 0; }
+  .jizda-help li { min-width: 0; }
+  .jizda-help a { display: block; min-height: 44px; padding: 1.4rem; border: 1px solid #d1e3df; border-radius: 1rem; background: #fff; transition: border-color .2s ease; }
+  .jizda-help h3 { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+  .jizda-help h3 span { flex: none; color: #086a67; }
+  .jizda-contact { display: flex; align-items: center; justify-content: space-between; gap: 2rem; padding-top: 2rem; border-top: 1px solid var(--line); }
+  .jizda-contact > div { min-width: 0; max-width: 42rem; }
+  .jizda-contact h2 { font-size: 2rem; }
+  .jizda-contact p { color: var(--muted); max-width: 65ch; margin: 0; }
+  .jizda-contact .button { background: #086a67; color: #fff; flex: 0 1 auto; max-width: 100%; min-width: 0; line-height: 1.5; text-align: center; white-space: normal; }
+  a:focus-visible, summary:focus-visible { outline: 3px solid #155e9b; outline-offset: 5px; }
+  @media (hover: hover) { .jizda-features li:hover { border-color: #228778; transform: translateY(-2px); } .jizda-help a:hover { border-color: #228778; } .jizda-gallery a:hover img { transform: scale(1.02); } }
+  @media (max-width: 1000px) { .jizda-hero { grid-template-columns: 1fr; } .jizda-concept { max-width: 40rem; } .jizda-workflow ol { grid-template-columns: 1fr; gap: 1.5rem; } .jizda-contact { display: block; } .jizda-contact .button { margin-top: 1.25rem; } }
+  @media (max-width: 600px) { .jizda-hero h1 { font-size: 3rem; } .jizda-headline { font-size: 1.85rem; } .jizda-concept { padding: 1.25rem; } .jizda-facts { grid-template-columns: 1fr; gap: 1rem; } .jizda-facts li { border: 0; padding: 0; } .jizda-features, .jizda-upcoming ul, .jizda-help, .jizda-gallery { grid-template-columns: 1fr; } .jizda-gallery-image { height: 390px; } .jizda-gallery-ipad { height: 360px; } .jizda-features li { padding: 1.3rem; } .jizda-upcoming { padding-left: 1rem; } h2 { font-size: 1.8rem; } .jizda-contact h2 { font-size: 1.8rem; } }
+  @media (prefers-reduced-motion: reduce) { .jizda-features li, .jizda-help a, .jizda-contact .button, .jizda-gallery img { transition: none; } .jizda-features li:hover, .jizda-contact .button:hover, .jizda-gallery a:hover img { transform: none; } }
+</style>
