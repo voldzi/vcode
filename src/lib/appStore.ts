@@ -37,8 +37,9 @@ export const appStoreProducts: AppStoreProduct[] = [
   },
   {
     ...byId("millora"), storeSlug: "millora",
-    storePlatformsCs: "Hra pro iPhone, iPad a Apple TV", storePlatformsEn: "Game for iPhone, iPad and Apple TV",
-    operatingSystem: "iOS, tvOS",
+    appStoreUrl: "https://apps.apple.com/cz/app/vcode-millora-morris/id6821033229",
+    storePlatformsCs: "Hra pro iPhone a iPad", storePlatformsEn: "Game for iPhone and iPad",
+    operatingSystem: "iOS",
     privacyCs: "/millora/privacy/", privacyEn: "/en/millora/privacy/",
     supportCs: "/podpora/millora/", supportEn: "/en/support/millora/"
   },
