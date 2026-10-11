@@ -174,9 +174,9 @@ test('distribution UI explains ranges and proxy writes; missing data is never re
   const elements = new Map([['application-distribution', summary], ['distribution', host]]);
   context.$ = id => { if (!elements.has(id)) elements.set(id, new Element('div')); return elements.get(id); };
   context.revision = 0; context.data = populated; context.expiry = 1; context.navigator = { onLine: true };
-  context.clearTimeout = () => {}; let authenticated = true; context.authenticated = value => { authenticated = value; };
+  context.clearTimeout = () => {}; context.clearAttention=()=>{};context.document.querySelectorAll=()=>[];let authenticated = true; context.authenticated = value => { authenticated = value; };
   const dashboard = await readFile(new URL('../dashboard.js', import.meta.url), 'utf8');
-  vm.runInNewContext(dashboard.slice(dashboard.indexOf('function clear(){'), dashboard.indexOf('function scheduleExpiry(')), context);
+  vm.runInNewContext(dashboard.slice(dashboard.indexOf('function clear(){'), dashboard.indexOf('// Fragment targets')), context);
   context.clear();
   for (const surface of [summary, host]) { assert.equal(surface.hidden, true); assert.equal(surface.textContent, ''); }
   assert.equal(authenticated, false); assert.equal(context.data, null);

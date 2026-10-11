@@ -1,5 +1,8 @@
 FROM node:24.20.0-alpine
+RUN corepack enable
 WORKDIR /app
+COPY services/analytics/package.json services/analytics/pnpm-lock.yaml ./
+RUN pnpm install --prod --frozen-lockfile
 COPY services/analytics ./services/analytics
 RUN mkdir -p /sessions && chown node:node /sessions && chmod 700 /sessions
 USER node

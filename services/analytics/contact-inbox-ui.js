@@ -46,7 +46,7 @@
   }
   async function change(id,method,body){
     if(pending||!host)return;pending=true;draw();const current=generation;
-    try{await request('/'+id,{method,...(body?{body:JSON.stringify(body)}:{})});if(current!==generation||!host)return;pending=false;await load({id,method});}
+    try{await request('/'+id,{method,...(body?{body:JSON.stringify(body)}:{})});if(current!==generation||!host)return;pending=false;document.dispatchEvent(new CustomEvent('vcode:attention-changed'));await load({id,method});}
     catch(error){if(current!==generation||!host)return;pending=false;if(error.status===401||error.status===403){clear();if(error.status===401)document.dispatchEvent(new CustomEvent('vcode:inbox-auth-expired'));return;}data=null;notice(copy[language].failed);const retry=element('button','',copy[language].retry);retry.type='button';retry.addEventListener('click',load);host.append(retry);}
   }
   function render(target,options={}){if(!target)return;const nextDays=options.days??7,changed=target!==host||nextDays!==days;host=target;language=options.language==='en'?'en':'cs';days=nextDays;clicks=Number.isSafeInteger(options.clicks)&&options.clicks>=0?options.clicks:null;if(changed||!data){load();return;}draw();}

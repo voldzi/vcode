@@ -132,6 +132,8 @@ services:
     environment:
       ANALYTICS_UPSTREAM: http://umami:3000
       PUBLIC_SITE_URL: https://vcode.zeleznalady.cz
+      # Optional owner-reviewed device notifications; each device must opt in.
+      ANALYTICS_PUSH_ENABLED: ${ANALYTICS_PUSH_ENABLED:-false}
       ANALYTICS_SESSION_DIR: /sessions
       ANALYTICS_STATUS_FILE: /state/connections.json
       ANALYTICS_COLLECTION_ENABLED: ${ANALYTICS_COLLECTION_ENABLED:-false}

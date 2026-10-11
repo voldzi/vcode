@@ -8,7 +8,8 @@ import { sanitizeEvent, sameOrigin } from './security.mjs';
 import {effectiveApprovedEvents} from './collector-security.mjs';
 import {canReadDownloadMetrics,readDownloadMetrics,unavailableDownloadMetrics} from './lib/download-metrics.mjs';
 import {createPublicShell} from './public-shell.mjs';
-import {createPartnershipProxy} from './lib/partnership-proxy.mjs';
+import {createPartnershipProxy,partnershipList} from './lib/partnership-proxy.mjs';
+import {createDashboardPush,createDashboardPushHandler} from './lib/dashboard-push.mjs';
 const upstream=process.env.ANALYTICS_UPSTREAM ?? 'http://umami:3000';
 const origin=process.env.PUBLIC_SITE_URL ?? 'https://vcode.zeleznalady.cz';
 const statusPath=process.env.ANALYTICS_STATUS_FILE??'/state/connections.json';
@@ -19,7 +20,7 @@ const enabled=process.env.ANALYTICS_COLLECTION_ENABLED==='true';
 const partnershipsEnabled=process.env.PARTNERSHIP_DASHBOARD_ENABLED==='true';
 const here=new URL('./',import.meta.url);
 const staticAssets=new Map();
-for(const [name,type] of [['manifest.webmanifest','application/manifest+json'],['offline.html','text/html'],['icon-192.png','image/png'],['icon-512.png','image/png'],['dashboard.css','text/css'],['dashboard.js','text/javascript'],['download-metrics-ui.js','text/javascript'],['contact-inbox-ui.js','text/javascript'],['partnership-inbox-ui.js','text/javascript']])staticAssets.set('/prehled/'+name,{body:await readFile(new URL(name,here)),type});
+for(const [name,type] of [['manifest.webmanifest','application/manifest+json'],['offline.html','text/html'],['icon-192.png','image/png'],['icon-512.png','image/png'],['dashboard.css','text/css'],['dashboard.js','text/javascript'],['download-metrics-ui.js','text/javascript'],['contact-inbox-ui.js','text/javascript'],['partnership-inbox-ui.js','text/javascript'],['dashboard-notifications.js','text/javascript']])staticAssets.set('/prehled/'+name,{body:await readFile(new URL(name,here)),type});
 const shell=createPublicShell(await readFile(new URL('dashboard.html',here)),await readFile(new URL('sw.js',here)),staticAssets);
 const page=shell.page;
 const tracker=await readFile(new URL('tracker.js',here),'utf8');
@@ -72,6 +73,18 @@ function contactResult(result){
 function session(req){const id=/(?:^|;\s*)__Host-vcode-metrics=([a-f0-9]{64})(?:;|$)/.exec(req.headers.cookie??'')?.[1];return sessions.get(id);}
 const cookie=(id,age)=>`__Host-vcode-metrics=${id}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${age}`;
 function limited(req,limit,windowMs){const key=String(req.headers['x-real-ip']??req.socket.remoteAddress).split(',').at(-1).trim()+':'+(req.url?.includes('login')?'login':'event');const now=Date.now();const bucket=attempts.get(key)??{count:0,until:now+windowMs};if(bucket.until<now){bucket.count=0;bucket.until=now+windowMs;}bucket.count++;attempts.set(key,bucket);return bucket.count>limit;}
+async function inboxCounts(context){
+ const window=periodWindow(90),unavailable=null;
+ const results=await Promise.allSettled([
+  contactRequest(context,`/internal/contacts?limit=100&startAt=${window.startAt}&endAt=${window.endAt}`).then(contactResult),
+  partnershipsEnabled?contactRequest(context,'/internal/partnerships/v1/inquiries?limit=100').then(result=>partnershipList(result,context.actorId)):Promise.resolve(null)
+ ]);
+ const sections=results.map((result,index)=>{if(result.status==='rejected'){if(result.reason?.status===401)throw result.reason;return unavailable;}const value=result.value;if(!value)return unavailable;return{count:value.summary.new,ids:value.items.filter(item=>(index===0?item.status:item.stage)==='new').map(item=>item.id)};});
+ return{inquiries:sections[0],partnerships:sections[1]};
+}
+const dashboardPush=await createDashboardPush({enabled:process.env.ANALYTICS_PUSH_ENABLED==='true',directory:process.env.ANALYTICS_SESSION_DIR,sessions,authorize:contactAuthorization,readCounts:inboxCounts,onError:()=>console.error('Dashboard notification delivery temporarily unavailable')});
+const handleNotifications=createDashboardPushHandler({service:dashboardPush,send,body,sameOrigin,origin,limited});
+dashboardPush.start();
 setInterval(()=>{const now=Date.now();void sessions.prune().catch(()=>console.error('Session cleanup failed'));for(const[k,v]of attempts)if(v.until<now)attempts.delete(k);},60000).unref();
 createServer(async(req,res)=>{try{
  const url=new URL(req.url,origin),path=url.pathname,partnershipRoute=/^\/prehled\/api\/(?:partnerships|partners)(?:\/|$)/.test(path);
@@ -101,19 +114,27 @@ createServer(async(req,res)=>{try{
    const auth=await api('auth/login',null,{method:'POST',body:JSON.stringify({username:input.username,password:input.password})});
    if(!auth.token){send(res,401,{error:'Přihlášení vyžaduje další ověření.'});return;}
    if(sessions.size>=1000){send(res,503,{});return;}
-   const previous=session(req);if(previous)await sessions.remove(previous.id);
+   const previous=session(req);if(previous){await sessions.remove(previous.id);await dashboardPush.removeSession(previous.id);}
    const created=await sessions.create(auth.token,input.remember===true);send(res,200,{ok:true},'application/json',{'Set-Cookie':cookie(created.id,Math.ceil((created.until-Date.now())/1000))});return;
   }
-  if(path==='/prehled/api/logout'){const s=session(req);if(s)await sessions.remove(s.id);send(res,200,{ok:true},'application/json',{'Set-Cookie':cookie('',0)});return;}
+  if(path==='/prehled/api/logout'){const s=session(req);if(s){await sessions.remove(s.id);await dashboardPush.removeSession(s.id);}send(res,200,{ok:true},'application/json',{'Set-Cookie':cookie('',0)});return;}
  }
  const s=session(req);
  if(path==='/prehled/'&&req.method==='GET'){send(res,200,page,'text/html');return;}
+ if(await handleNotifications(req,res,url,s))return;
  if(partnershipRoute){
   if(!s){send(res,401,{ok:false,code:'unauthorized',message:'Sign in to continue.',requestId:null});return;}
   if(!partnershipsEnabled){send(res,503,{ok:false,code:'unavailable',message:'Partnerships are temporarily unavailable.',requestId:null},'application/json',{'Retry-After':'60'});return;}
   if(await handlePartnerships(req,res,url,s))return;
  }
  if(!s){send(res,401,{error:'Přihlaste se.'});return;}
+ if(path==='/prehled/api/attention'){
+  if(req.method!=='GET'){send(res,405,{});return;}
+  if(url.search){send(res,400,{});return;}
+  const counts=await inboxCounts(await contactAuthorization(s));
+  const item=value=>value?{available:true,count:value.count}:{available:false,count:null};
+  send(res,200,{inquiries:item(counts.inquiries),partnerships:item(counts.partnerships)});return;
+ }
  if(path==='/prehled/api/inquiries'||path.startsWith('/prehled/api/inquiries/')){
   if(!['GET','PATCH','DELETE'].includes(req.method)){send(res,405,{});return;}
   if(req.method!=='GET'&&!sameOrigin(req,origin)){send(res,403,{});return;}

@@ -9,7 +9,7 @@ import {createPublicShell} from '../public-shell.mjs';
 
 test('offline dependencies and worker behavior are part of public shell content identity',async()=>{
  const assets=new Map();
- for(const name of ['dashboard.css','dashboard.js','download-metrics-ui.js','contact-inbox-ui.js','partnership-inbox-ui.js','offline.html','icon-192.png','icon-512.png'])assets.set('/prehled/'+name,{body:await readFile(new URL('../'+name,import.meta.url))});
+ for(const name of ['dashboard.css','dashboard.js','dashboard-notifications.js','download-metrics-ui.js','contact-inbox-ui.js','partnership-inbox-ui.js','offline.html','icon-192.png','icon-512.png'])assets.set('/prehled/'+name,{body:await readFile(new URL('../'+name,import.meta.url))});
  const html=await readFile(new URL('../dashboard.html',import.meta.url)),worker=await readFile(new URL('../sw.js',import.meta.url));
  const shell=createPublicShell(html,worker,assets),offline=assets.get('/prehled/offline.html').body.toString();
  for(const match of offline.matchAll(/(?:href|src)="(\/prehled\/(?:[^"?]+\.(?:css|png))(?:\?[^" ]*)?)"/g))assert.ok([...shell.urls.values()].includes(match[1]),'Offline dependency must have a cached content identity');

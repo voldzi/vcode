@@ -33,6 +33,8 @@ export async function createSessionStore(directory,{now=Date.now}={}) {
    records.set(hash,s);try{if(remember)await save();}catch(e){records.delete(hash);throw e;}return {id,...s};
   },
   get(id){if(typeof id!=='string'||!/^[a-f0-9]{64}$/.test(id))return null;const s=records.get(digest(id));return s&&s.until>now()?{id,...s}:null;},
+  reference(id){return typeof id==='string'&&/^[a-f0-9]{64}$/.test(id)?digest(id):null;},
+  getByReference(hash){if(typeof hash!=='string'||!/^[a-f0-9]{64}$/.test(hash))return null;const s=records.get(hash);return s&&s.until>now()?{...s}:null;},
   async remove(id){const hash=digest(id),s=records.get(hash);records.delete(hash);try{if(s?.remember)await save();}catch(e){records.set(hash,s);throw e;}},
   async prune(){let changed=false;for(const [hash,s]of records)if(s.until<=now()){records.delete(hash);changed=changed||s.remember;}if(changed)await save();}
  };

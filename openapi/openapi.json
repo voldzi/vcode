@@ -1792,6 +1792,302 @@
           }
         ]
       }
+    },
+    "/prehled/api/attention": {
+      "get": {
+        "operationId": "getDashboardAttention",
+        "summary": "Read global unread counts",
+        "description": "Every operation freshly verifies the configured owner admin and canonical VCode website permission. No query parameters. Counts are independent of date, site, app and inbox filters. An unavailable inbox has available=false and count=null, never a fabricated zero. No names, contacts, messages or identifiers are returned. Available even when opt-in push is disabled.",
+        "security": [
+          {
+            "metricsSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "No-store authenticated response. Never cache in the service worker.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardAttention"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query, JSON or device capability."
+          },
+          "401": {
+            "description": "Current dashboard session required."
+          },
+          "403": {
+            "description": "Freshly verified configured owner with VCode website permission required; mutations also require the exact same origin."
+          },
+          "405": {
+            "description": "Unsupported method."
+          },
+          "409": {
+            "description": "Device belongs to a different owner."
+          },
+          "413": {
+            "description": "Request exceeds 4096 bytes."
+          },
+          "415": {
+            "description": "Uncompressed JSON required."
+          },
+          "429": {
+            "description": "Device or request quota reached."
+          },
+          "503": {
+            "description": "Notifications are disabled, unconfigured or temporarily unavailable."
+          }
+        }
+      }
+    },
+    "/prehled/api/notifications": {
+      "get": {
+        "operationId": "getDashboardNotificationConfiguration",
+        "summary": "Read opt-in dashboard notification availability",
+        "description": "Every operation freshly verifies the configured owner admin and canonical VCode website permission. No query parameters. Returns only a public application key and current-session status. Does not request browser permission or subscribe automatically.",
+        "security": [
+          {
+            "metricsSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "No-store authenticated response. Never cache in the service worker.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardPushConfiguration"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query, JSON or device capability."
+          },
+          "401": {
+            "description": "Current dashboard session required."
+          },
+          "403": {
+            "description": "Freshly verified configured owner with VCode website permission required; mutations also require the exact same origin."
+          },
+          "405": {
+            "description": "Unsupported method."
+          },
+          "409": {
+            "description": "Device belongs to a different owner."
+          },
+          "413": {
+            "description": "Request exceeds 4096 bytes."
+          },
+          "415": {
+            "description": "Uncompressed JSON required."
+          },
+          "429": {
+            "description": "Device or request quota reached."
+          },
+          "503": {
+            "description": "Notifications are disabled, unconfigured or temporarily unavailable."
+          }
+        }
+      }
+    },
+    "/prehled/api/notifications/status": {
+      "post": {
+        "operationId": "getDashboardDeviceNotificationStatus",
+        "summary": "Check one current device subscription",
+        "description": "Every operation freshly verifies the configured owner admin and canonical VCode website permission. No query parameters. Exact same-origin uncompressed JSON. Device capabilities stay in request bodies, never URLs or analytics. Returns whether the supplied endpoint is registered under this authenticated session.",
+        "security": [
+          {
+            "metricsSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "No-store authenticated response. Never cache in the service worker.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardPushConfiguration"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query, JSON or device capability."
+          },
+          "401": {
+            "description": "Current dashboard session required."
+          },
+          "403": {
+            "description": "Freshly verified configured owner with VCode website permission required; mutations also require the exact same origin."
+          },
+          "405": {
+            "description": "Unsupported method."
+          },
+          "409": {
+            "description": "Device belongs to a different owner."
+          },
+          "413": {
+            "description": "Request exceeds 4096 bytes."
+          },
+          "415": {
+            "description": "Uncompressed JSON required."
+          },
+          "429": {
+            "description": "Device or request quota reached."
+          },
+          "503": {
+            "description": "Notifications are disabled, unconfigured or temporarily unavailable."
+          }
+        },
+        "x-max-request-bytes": 4096,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DashboardPushDevice"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/prehled/api/notifications/subscription": {
+      "post": {
+        "operationId": "registerDashboardPushDevice",
+        "summary": "Explicitly opt in or renew one notification device",
+        "description": "Every operation freshly verifies the configured owner admin and canonical VCode website permission. No query parameters. Exact same-origin uncompressed JSON. Max five devices per session and twenty in total. Only approved HTTPS provider endpoints and valid curve keys are accepted. An explicit same-owner renewal may rebind this device after fresh login. The encrypted subscription expires with the existing session (at most thirty days); no separate authorization or login extension. Old unread messages establish a baseline and are not sent as new alerts. Delivery is neutral, encrypted, contains only category/count and never inquiry identity or text.",
+        "security": [
+          {
+            "metricsSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "No-store authenticated response. Never cache in the service worker.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardPushRegistrationResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query, JSON or device capability."
+          },
+          "401": {
+            "description": "Current dashboard session required."
+          },
+          "403": {
+            "description": "Freshly verified configured owner with VCode website permission required; mutations also require the exact same origin."
+          },
+          "405": {
+            "description": "Unsupported method."
+          },
+          "409": {
+            "description": "Device belongs to a different owner."
+          },
+          "413": {
+            "description": "Request exceeds 4096 bytes."
+          },
+          "415": {
+            "description": "Uncompressed JSON required."
+          },
+          "429": {
+            "description": "Device or request quota reached."
+          },
+          "503": {
+            "description": "Notifications are disabled, unconfigured or temporarily unavailable."
+          }
+        },
+        "x-max-request-bytes": 4096,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DashboardPushRegistration"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "removeDashboardPushDevice",
+        "summary": "Opt out one notification device",
+        "description": "Every operation freshly verifies the configured owner admin and canonical VCode website permission. No query parameters. Exact same-origin uncompressed JSON. Removes the supplied device belonging to the same verified owner, including an older login. Logout, expiry, revocation and provider expiry also remove associated state. Provider messages already accepted can remain queued for up to five minutes; new delivery stops immediately.",
+        "security": [
+          {
+            "metricsSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "No-store authenticated response. Never cache in the service worker.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "ok"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query, JSON or device capability."
+          },
+          "401": {
+            "description": "Current dashboard session required."
+          },
+          "403": {
+            "description": "Freshly verified configured owner with VCode website permission required; mutations also require the exact same origin."
+          },
+          "405": {
+            "description": "Unsupported method."
+          },
+          "409": {
+            "description": "Device belongs to a different owner."
+          },
+          "413": {
+            "description": "Request exceeds 4096 bytes."
+          },
+          "415": {
+            "description": "Uncompressed JSON required."
+          },
+          "429": {
+            "description": "Device or request quota reached."
+          },
+          "503": {
+            "description": "Notifications are disabled, unconfigured or temporarily unavailable."
+          }
+        },
+        "x-max-request-bytes": 4096,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DashboardPushDevice"
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2630,7 +2926,7 @@
                   "tiktok",
                   "linkedin",
                   "openai",
-                      "claude",
+                  "claude",
                   "perplexity"
                 ],
                 "description": "Only finite public-service categories; no original referral URL."
@@ -3310,6 +3606,230 @@
           }
         },
         "description": "Counts reflect retained records matching app/stage filters, independently of item limit; deletion/expiry lower them. They are not people, lifetime totals or conversion rates. Only approved policies appear in promotionEnabled. Includes the freshly verified configured owner managerId for the authenticated dashboard."
+      },
+      "DashboardAttention": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "inquiries": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "available": {
+                "type": "boolean"
+              },
+              "count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0
+              }
+            },
+            "required": [
+              "available",
+              "count"
+            ]
+          },
+          "partnerships": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "available": {
+                "type": "boolean"
+              },
+              "count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0
+              }
+            },
+            "required": [
+              "available",
+              "count"
+            ]
+          }
+        },
+        "required": [
+          "inquiries",
+          "partnerships"
+        ]
+      },
+      "DashboardPushConfiguration": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "available": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "disabled",
+              "unconfigured",
+              null
+            ]
+          },
+          "publicKey": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Public VAPID application key; never a private signing key."
+          },
+          "subscribed": {
+            "type": "boolean",
+            "description": "Current session subscription status; status POST narrows it to one supplied device."
+          },
+          "sessionExpiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "enabled",
+          "available",
+          "reason",
+          "publicKey",
+          "subscribed",
+          "sessionExpiresAt"
+        ]
+      },
+      "DashboardPushSubscription": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "endpoint": {
+            "type": "string",
+            "format": "uri",
+            "maxLength": 2048,
+            "description": "Unlogged HTTPS push capability on an approved Apple, Google or Mozilla provider."
+          },
+          "expirationTime": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "keys": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "p256dh": {
+                "type": "string",
+                "minLength": 87,
+                "maxLength": 87
+              },
+              "auth": {
+                "type": "string",
+                "minLength": 22,
+                "maxLength": 22
+              }
+            },
+            "required": [
+              "p256dh",
+              "auth"
+            ]
+          }
+        },
+        "required": [
+          "endpoint",
+          "keys"
+        ]
+      },
+      "DashboardPushRegistration": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "subscription": {
+            "$ref": "#/components/schemas/DashboardPushSubscription"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "cs",
+              "en"
+            ]
+          }
+        },
+        "required": [
+          "subscription",
+          "locale"
+        ]
+      },
+      "DashboardPushDevice": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "endpoint": {
+            "type": "string",
+            "format": "uri",
+            "maxLength": 2048
+          }
+        },
+        "required": [
+          "endpoint"
+        ]
+      },
+      "DashboardPushRegistrationResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "available": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "disabled",
+              "unconfigured",
+              null
+            ]
+          },
+          "publicKey": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Public VAPID application key; never a private signing key."
+          },
+          "subscribed": {
+            "type": "boolean",
+            "description": "Current session subscription status; status POST narrows it to one supplied device."
+          },
+          "sessionExpiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ok": {
+            "type": "boolean",
+            "const": true
+          }
+        },
+        "required": [
+          "enabled",
+          "available",
+          "reason",
+          "publicKey",
+          "subscribed",
+          "sessionExpiresAt",
+          "ok"
+        ]
       }
     },
     "securitySchemes": {

@@ -52,7 +52,7 @@
  }
  async function change(path,method,body,completed){
   if(pending||!host)return;pending=true;draw();host.setAttribute('aria-busy','true');const current=generation;
-  try{await request(path,{method,...(body?{body:JSON.stringify(body)}:{})});if(current!==generation||!host)return;pending=false;await load(completed);}catch(error){if(current!==generation||!host)return;pending=false;failure(error,true);}finally{if(current===generation&&host)host.removeAttribute('aria-busy');}
+  try{await request(path,{method,...(body?{body:JSON.stringify(body)}:{})});if(current!==generation||!host)return;pending=false;document.dispatchEvent(new CustomEvent('vcode:attention-changed'));await load(completed);}catch(error){if(current!==generation||!host)return;pending=false;failure(error,true);}finally{if(current===generation&&host)host.removeAttribute('aria-busy');}
  }
  function render(options={}){const target=options.container;if(!target)return;if(typeof navigator!=='undefined'&&navigator.onLine===false){clear();target.replaceChildren();target.hidden=true;return;}const nextLanguage=options.locale==='en'?'en':'cs',changed=target!==host;if(changed&&host)clear();host=target;language=nextLanguage;if(changed||!data||!partners){load();return;}draw();}
  window.addEventListener('offline',()=>clear());window.addEventListener('pagehide',()=>clear());
