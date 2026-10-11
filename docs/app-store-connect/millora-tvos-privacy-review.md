@@ -5,7 +5,8 @@ zpřesnění i jeho zveřejnění. Účinnost upraveného textu je 11. 10. 2026.
 Dosavadní schválené
 zásady pokrývají místní hry a volitelný Game Center, ale v úvodu uvádějí jen
 iPhone a iPad. Níže jsou schválené změny pro Apple TV. Produkční zveřejnění
-bude doložené samostatným záznamem nasazení.
+prošlo akceptací 11. 10. 2026 ve 13:54:04 Europe/Prague; konkrétní výsledky jsou
+v [záznamu nasazení](../millora-status-release-2026-10-11.md).
 Podklad: doplněk Apple TV v projektovém `docs/vcode-app-store-handoff.md`.
 
 ## České změny

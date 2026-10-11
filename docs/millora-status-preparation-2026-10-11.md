@@ -53,9 +53,11 @@ generate an empty basic-guide route. Explicit verified store metadata controls
 the public iPhone/iPad availability independently; tvOS remains upcoming.
 
 Mandatory local checks, both Docker builds, boundary checks and scoped production
-acceptance are required before recording the release as deployed. Genuine
-visitor or inquiry records and real form/notification submissions are excluded
-from acceptance.
+acceptance passed on **11 October 2026 at 13:54:04 Prague**. The accepted source
+commit is `f35501ef17490385cb4522fc22ee6cdc67efcd76`. Publication and validation
+are recorded in [the release record](millora-status-release-2026-10-11.md).
+Acceptance did not read genuine visitor or inquiry records and made no real
+form submissions or notification deliveries.
 
 ## Static artifact readability
 
