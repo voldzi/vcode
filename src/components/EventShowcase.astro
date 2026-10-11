@@ -1,0 +1,584 @@
+---
+import ProductIcon from "./ProductIcon.astro";
+import { eventCopy, eventScreenshots, alternateStyleScreenshots } from "../lib/event-showcase";
+
+const { lang = "cs" } = Astro.props as { lang?: "cs" | "en" };
+const cs = lang === "cs";
+const copy = eventCopy[lang];
+const demoHref = `${cs ? "/spoluprace/" : "/en/work-with-us/"}?app=event&area=private-deployment#poptavka`;
+const hero = eventScreenshots[0];
+---
+
+<header class:list={["event-hero", { "event-hero-with-image": Boolean(hero) }]}>
+  <div class="event-intro">
+    <div class="event-brand">
+      <ProductIcon id="event" size={56} />
+      <p class="kicker">{copy.eyebrow}</p>
+    </div>
+    <h1>Event</h1>
+    <p class="event-headline">{copy.headline}</p>
+    <p class="event-lead">{copy.intro}</p>
+    <div class="event-actions">
+      <a class="button event-primary" href={demoHref} data-collaboration-interest="true">
+        <span class="event-button-label">{copy.action}</span><span aria-hidden="true">↗</span>
+      </a>
+      <a class="event-link" href="#moznosti"><span class="event-link-label">{copy.explore}</span><span aria-hidden="true">↓</span></a>
+    </div>
+    <p class="event-action-note">{copy.actionNote}</p>
+  </div>
+  {hero && (
+    <a class="event-hero-image" href="#ukazky" aria-label={copy.galleryTitle}>
+      <img
+        src={hero.preview}
+        width={hero.width}
+        height={hero.height}
+        alt={cs ? hero.captionCs : hero.captionEn}
+        fetchpriority="high"
+        decoding="async"
+      />
+      <span>{cs ? hero.titleCs : hero.titleEn}<span aria-hidden="true">↓</span></span>
+    </a>
+  )}
+</header>
+
+<section id="moznosti" class="event-section" aria-labelledby="event-features-title">
+  <div class="event-section-heading">
+    <h2 id="event-features-title">{copy.featuresTitle}</h2>
+    <p>{copy.featuresIntro}</p>
+  </div>
+  <ul class="event-features">
+    {copy.features.map(([title, text], index) => (
+      <li>
+        <span class="event-feature-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+        <h3>{title}</h3>
+        <p>{text}</p>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<section class="event-section event-workflow" aria-labelledby="event-workflow-title">
+  <div class="event-section-heading"><h2 id="event-workflow-title">{copy.workflowTitle}</h2></div>
+  <ol>
+    {copy.workflow.map(([title, text]) => (
+      <li><h3>{title}</h3><p>{text}</p></li>
+    ))}
+  </ol>
+</section>
+
+{eventScreenshots.length > 0 && (
+  <section id="ukazky" class="event-section" aria-labelledby="event-gallery-title">
+    <div class="event-section-heading">
+      <h2 id="event-gallery-title">{copy.galleryTitle}</h2>
+      <p>{copy.galleryIntro}</p>
+      <p class="event-gallery-notice">{copy.galleryNotice} {copy.galleryLanguageNote}</p>
+    </div>
+    <ul class="event-gallery">
+      {eventScreenshots.map((shot) => (
+        <li>
+          <figure>
+            <a href={shot.src} aria-label={`${cs ? shot.titleCs : shot.titleEn} — ${copy.fullSize}`}>
+              <div class:list={["event-gallery-image", { "event-gallery-portrait": shot.height > shot.width }]}>
+                <img
+                  src={shot.preview}
+                  width={shot.width}
+                  height={shot.height}
+                  alt={cs ? shot.captionCs : shot.captionEn}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <figcaption>
+                <h3>{cs ? shot.titleCs : shot.titleEn}<span aria-hidden="true">↗</span></h3>
+                <p>{cs ? shot.captionCs : shot.captionEn}</p>
+              </figcaption>
+            </a>
+          </figure>
+        </li>
+      ))}
+    </ul>
+  </section>
+)}
+
+{alternateStyleScreenshots.length > 0 && (
+  <section class="event-section" aria-labelledby="event-styles-title">
+    <div class="event-section-heading">
+      <h2 id="event-styles-title">{copy.styleGalleryTitle}</h2>
+      <p>{copy.styleGalleryIntro}</p>
+    </div>
+    <ul class="event-gallery">
+      {[eventScreenshots[0], ...alternateStyleScreenshots].filter(Boolean).map((shot) => (
+        <li><figure><a href={shot.src} aria-label={`${cs ? shot.titleCs : shot.titleEn} — ${copy.fullSize}`}>
+          <div class="event-gallery-image"><img src={shot.preview} width={shot.width} height={shot.height} alt={cs ? shot.captionCs : shot.captionEn} loading="lazy" decoding="async" /></div>
+          <figcaption><h3>{cs ? shot.titleCs : shot.titleEn}<span aria-hidden="true">↗</span></h3><p>{cs ? shot.captionCs : shot.captionEn}</p></figcaption>
+        </a></figure></li>
+      ))}
+    </ul>
+  </section>
+)}
+
+<section class="event-section event-faq" aria-labelledby="event-faq-title">
+  <div class="event-section-heading"><h2 id="event-faq-title">{copy.faqTitle}</h2></div>
+  {copy.faq.map(([question, answer]) => (
+    <details><summary>{question}</summary><p>{answer}</p></details>
+  ))}
+</section>
+
+<aside class="event-public-entry" aria-labelledby="event-public-entry-title">
+  <div>
+    <h2 id="event-public-entry-title">{copy.publicEntryTitle}</h2>
+    <p>{copy.publicEntryText}</p>
+  </div>
+  <a class="event-link" href="https://events.zeleznalady.cz/o/vcode">
+    <span class="event-link-label">{copy.publicEntryAction}</span><span aria-hidden="true">↗</span>
+  </a>
+</aside>
+
+<section class="event-contact" aria-labelledby="event-contact-title">
+  <div>
+    <h2 id="event-contact-title">{copy.contactTitle}</h2>
+    <p>{copy.contactText}</p>
+  </div>
+  <a class="button" href={demoHref} data-collaboration-interest="true">
+    <span class="event-button-label">{copy.contactAction}</span><span aria-hidden="true">→</span>
+  </a>
+</section>
+
+<style>
+  :global(.product-detail.event-showcase-detail) {
+    --accent: #075d8d;
+    padding-top: clamp(1.5rem, 3vw, 2.5rem);
+  }
+  :global(.event-showcase-detail > .back-link) {
+    margin-bottom: 1.25rem;
+  }
+  :global(.product-detail.event-showcase-detail header) {
+    max-width: none;
+  }
+  .event-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+    padding-bottom: clamp(1.5rem, 3vw, 2.5rem);
+    border-bottom: 1px solid var(--line);
+  }
+  .event-hero-with-image {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr);
+  }
+  .event-intro {
+    min-width: 0;
+    max-width: 52rem;
+  }
+  .event-brand {
+    display: flex;
+    align-items: center;
+    gap: .9rem;
+    margin-bottom: 1.15rem;
+  }
+  .event-brand .kicker {
+    margin: 0;
+    color: #075d8d;
+    font-size: .74rem;
+    line-height: 1.55;
+    max-width: 30rem;
+  }
+  .event-hero h1 {
+    font-size: clamp(3.2rem, 6vw, 5rem);
+    line-height: 1.05;
+    letter-spacing: -.035em;
+  }
+  .event-headline {
+    margin: 1rem 0;
+    font: 750 clamp(1.8rem, 3vw, 2.45rem)/1.25 "Manrope Variable", sans-serif;
+    color: #075d8d;
+    max-width: 28ch;
+  }
+  .event-lead {
+    font-size: 1.06rem;
+    line-height: 1.75;
+    color: var(--muted);
+    max-width: 60ch;
+  }
+  .event-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .7rem 1.25rem;
+    margin-top: 1.6rem;
+  }
+  .event-primary {
+    background: #075d8d;
+    color: #fff;
+    box-shadow: 0 8px 22px #075d8d22;
+  }
+  .event-hero .button,
+  .event-contact .button {
+    max-width: 100%;
+    min-width: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-align: center;
+    line-height: 1.5;
+  }
+  .event-action-note {
+    color: var(--muted);
+    font-size: .87rem;
+    line-height: 1.65;
+    max-width: 58ch;
+    margin: .9rem 0 0;
+  }
+  .event-link {
+    display: inline-flex;
+    align-items: center;
+    gap: .7rem;
+    min-height: 44px;
+    max-width: 100%;
+    font-weight: 720;
+    color: #075d8d;
+    line-height: 1.55;
+    text-decoration: underline;
+    text-underline-offset: .25em;
+  }
+  .event-link span[aria-hidden],
+  .button span[aria-hidden] {
+    flex: none;
+  }
+  .event-button-label,
+  .event-link-label {
+    min-width: 0;
+    flex: 0 1 auto;
+  }
+  .event-hero-image {
+    align-self: center;
+    min-width: 0;
+    padding: .7rem;
+    border: 1px solid #c7dde9;
+    border-radius: 1.15rem;
+    background: #f1f8fc;
+    box-shadow: 0 14px 36px #0b2d5b0d;
+  }
+  .event-hero-image img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: .6rem;
+  }
+  .event-hero-image > span {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .8rem;
+    padding: .9rem .3rem .2rem;
+    color: #075d8d;
+    font-size: .85rem;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+  .event-section {
+    margin-top: clamp(3rem, 6vw, 5rem);
+    scroll-margin-top: 7rem;
+  }
+  .event-section-heading {
+    max-width: 48rem;
+    margin-bottom: 1.75rem;
+  }
+  h2 {
+    font: 750 clamp(1.8rem, 3vw, 2.5rem)/1.25 "Manrope Variable", sans-serif;
+    color: var(--navy);
+    margin: .5rem 0 1rem;
+    letter-spacing: -.025em;
+  }
+  h3 {
+    font: 720 1.1rem/1.45 "Manrope Variable", sans-serif;
+    color: var(--navy);
+    margin: 0 0 .65rem;
+  }
+  h1, h2, h3, p, summary, a, .kicker {
+    overflow-wrap: anywhere;
+  }
+  .event-section-heading p {
+    color: var(--muted);
+    max-width: 64ch;
+    line-height: 1.7;
+  }
+  .event-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+  .event-features li {
+    min-width: 0;
+    padding: 1.6rem;
+    border: 1px solid #d0e1ed;
+    border-radius: 1.15rem;
+    background: linear-gradient(145deg, #fff, #f5faff);
+    transition: border-color .2s ease, box-shadow .2s ease;
+  }
+  .event-feature-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.3rem;
+    min-height: 2.3rem;
+    padding: .3rem;
+    margin-bottom: 1rem;
+    border-radius: .7rem;
+    background: #e1f1fa;
+    color: #075d8d;
+    font-size: .8rem;
+    font-weight: 750;
+  }
+  .event-features p,
+  .event-workflow p {
+    color: var(--muted);
+    margin: 0;
+    font-size: .96rem;
+    line-height: 1.75;
+  }
+  .event-workflow {
+    padding: clamp(1.5rem, 3vw, 2.25rem) 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .event-workflow ol {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    counter-reset: event-step;
+  }
+  .event-workflow li {
+    min-width: 0;
+    counter-increment: event-step;
+  }
+  .event-workflow li::before {
+    content: "0" counter(event-step);
+    display: block;
+    margin-bottom: .75rem;
+    font: 750 1.3rem/1.3 "Manrope Variable", sans-serif;
+    color: #075d8d;
+  }
+  .event-gallery {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+  .event-gallery li {
+    min-width: 0;
+  }
+  .event-gallery figure {
+    margin: 0;
+    height: 100%;
+    border: 1px solid #d0e1ed;
+    border-radius: 1.1rem;
+    background: #fff;
+    overflow: hidden;
+    transition: border-color .2s ease, box-shadow .2s ease;
+  }
+  .event-gallery a {
+    display: block;
+    height: 100%;
+  }
+  .event-gallery-image {
+    height: 20rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: .9rem;
+    background: #edf5fb;
+  }
+  .event-gallery-image img {
+    display: block;
+    object-fit: contain;
+    width: 100%;
+    height: 100%;
+    border-radius: .35rem;
+  }
+  .event-gallery figcaption {
+    padding: 1.1rem 1.25rem 1.3rem;
+  }
+  .event-gallery h3 {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 0;
+  }
+  .event-gallery h3 span {
+    flex: none;
+    color: #075d8d;
+  }
+  .event-gallery p {
+    color: var(--muted);
+    font-size: .9rem;
+    line-height: 1.65;
+    margin: .55rem 0 0;
+  }
+  .event-faq details {
+    border-bottom: 1px solid var(--line);
+    padding: 1rem 0;
+  }
+  .event-faq summary {
+    padding: .5rem 0;
+    min-height: 44px;
+    cursor: pointer;
+    font-weight: 720;
+    color: var(--navy);
+    line-height: 1.6;
+  }
+  .event-faq details p {
+    color: var(--muted);
+    line-height: 1.75;
+    max-width: 70ch;
+    margin: .75rem 0;
+  }
+  .event-public-entry {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem 2rem;
+    margin: 3rem 0;
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .event-public-entry > div {
+    min-width: 0;
+  }
+  .event-public-entry h2 {
+    font-size: 1.45rem;
+    margin: 0 0 .65rem;
+  }
+  .event-public-entry p {
+    color: var(--muted);
+    max-width: 66ch;
+    line-height: 1.7;
+    margin: 0;
+  }
+  .event-public-entry > .event-link {
+    flex: 0 1 22rem;
+    max-width: 35%;
+  }
+  .event-contact {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem 2rem;
+    padding: clamp(1.5rem, 4vw, 3rem);
+    border-radius: 1.3rem;
+    background: linear-gradient(130deg, #0b2d5b, #075d8d);
+  }
+  .event-contact > div {
+    min-width: 0;
+    max-width: 40rem;
+  }
+  .event-contact h2 {
+    color: #fff;
+    font-size: clamp(1.65rem, 2.7vw, 2.25rem);
+    margin-top: 0;
+  }
+  .event-contact p {
+    color: #dceef9;
+    max-width: 62ch;
+    line-height: 1.7;
+    margin-bottom: 0;
+  }
+  .event-contact .button {
+    flex: 0 1 20rem;
+    color: #0b2d5b;
+    background: #fff;
+  }
+  a:focus-visible,
+  summary:focus-visible {
+    outline: 3px solid #075d8d;
+    outline-offset: 5px;
+  }
+  .event-gallery a:focus-visible {
+    outline-offset: -3px;
+  }
+  .event-contact a:focus-visible {
+    outline-color: #fff;
+  }
+  @media (hover: hover) {
+    .event-primary:hover {
+      background: #054c75;
+    }
+    .event-features li:hover,
+    .event-gallery figure:has(a:hover) {
+      border-color: #659bbe;
+      box-shadow: 0 8px 24px #0b2d5b0b;
+    }
+  }
+  @media (max-width: 1000px) {
+    .event-hero-with-image {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .event-hero-image {
+      width: 100%;
+      max-width: 42rem;
+    }
+    .event-workflow ol {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1.5rem;
+    }
+    .event-contact {
+      display: block;
+    }
+    .event-contact .button {
+      margin-top: 1.5rem;
+    }
+  }
+  @media (max-width: 700px) {
+    .event-features,
+    .event-gallery {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .event-gallery-image {
+      height: 18rem;
+    }
+    .event-gallery-portrait {
+      height: 28rem;
+    }
+    .event-public-entry {
+      display: block;
+    }
+    .event-public-entry > .event-link {
+      max-width: 100%;
+      margin-top: .8rem;
+    }
+  }
+  @media (max-width: 450px) {
+    .event-brand {
+      align-items: flex-start;
+    }
+    .event-actions {
+      align-items: flex-start;
+    }
+    .event-primary,
+    .event-contact .button {
+      width: 100%;
+    }
+    .event-features li {
+      padding: 1.3rem;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .event-features li,
+    .event-gallery figure,
+    .event-hero .button,
+    .event-contact .button {
+      transition: none;
+    }
+    .event-hero .button:hover,
+    .event-contact .button:hover {
+      transform: none;
+    }
+  }
+</style>

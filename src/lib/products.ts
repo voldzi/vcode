@@ -63,11 +63,11 @@ export const products: Product[] = [
   {
     id: "event", name: "Event", href: "event", tone: "azure", inDevelopment: true,
     categoryCs: "Akce a vzdělávání", categoryEn: "Events and learning",
-    headlineCs: "Od programu k přehledu o celé akci.", headlineEn: "From the programme to a clear view of every event.",
-    summaryCs: "Platforma pro organizaci vzdělávacích a firemních akcí. Spojuje program, přihlášky, QR prezenci, úkoly a přehledy pro organizátory.",
-    summaryEn: "A platform for learning and business events, bringing together programmes, registrations, QR check-in, tasks and organiser overviews.",
-    capabilitiesCs: ["Program a registrace účastníků", "QR prezence a přehled účasti", "Úkoly, materiály a hodnocení", "České a anglické rozhraní"],
-    capabilitiesEn: ["Programmes and participant registration", "QR check-in and attendance overviews", "Tasks, materials and reviews", "Czech and English interface"],
+    headlineCs: "Vaše akce. Vaše značka. Přehled bez chaosu.", headlineEn: "Your events. Your brand. A clear view of attendance.",
+    summaryCs: "Propojte přípravu akce, přihlášky účastníků a mobilní prezenci. Event provede váš tým od programu a QR průkazů až k přehledu docházky v prostředí, které nese styl vaší organizace.",
+    summaryEn: "Bring event preparation, participant registration and mobile attendance together. Event guides your team from the programme and QR passes to an attendance overview in an environment that reflects your organisation’s style.",
+    capabilitiesCs: ["Vlastní vzhled a veřejný vstup organizace", "Přihlášky a QR průkazy potvrzených účastníků", "Mobilní prezence a souhrnný přehled", "České a anglické návody"],
+    capabilitiesEn: ["Your organisation’s style and public entrance", "Registration and QR passes for confirmed participants", "Mobile attendance capture and an overview", "Czech and English guides"],
     availabilityCs: "Ve vývoji — ukázka po domluvě", availabilityEn: "In development — demo by arrangement"
   },
   {
