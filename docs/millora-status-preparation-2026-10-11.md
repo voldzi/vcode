@@ -56,3 +56,24 @@ Mandatory local checks, both Docker builds, boundary checks and scoped productio
 acceptance are required before recording the release as deployed. Genuine
 visitor or inquiry records and real form/notification submissions are excluded
 from acceptance.
+
+## Static artifact readability
+
+Earlier attempts returned HTTP 403 for unchanged Event images and safely restored
+the previously accepted web. Exact remote readback established the cause: an
+Event asset was mode 0600 in the installed source, copied candidate and newly
+built image, while the same asset in the previous image was mode 0644. Bytes and
+hashes were unchanged. Restrictive source installation and mode-preserving file
+copies carried those permissions into the subsequent public artifact.
+
+The final Docker runtime stage normalizes only the built public HTML tree:
+directories 0755 and files 0644. Before synthetic fixtures replace the static
+tree, the existing Nginx boundary check now exhaustively verifies the actual
+artifact as the unprivileged nginx user in an isolated container without network
+access. Its root filesystem is read-only and temporary output is bounded.
+The new gate rejected the earlier faulty image and accepted the previous working
+image. The final corrected image must pass this gate and public byte checks.
+Protected release evidence, keys, registries, private records and running service
+settings are outside this permission normalization. Public check pacing and
+response reuse remain to avoid unnecessary requests; the diagnosed cause is
+artifact permissions, and no external protection rule was established.

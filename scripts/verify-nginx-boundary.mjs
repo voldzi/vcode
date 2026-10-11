@@ -94,6 +94,22 @@ function security(response, expected) {
 }
 
 try {
+  // Verify the actual build as the worker before fixtures replace its public
+  // tree. A readable synthetic mount cannot establish artifact readability.
+  docker('run', '--rm', '--network', 'none', '--user', 'nginx', '--read-only',
+    '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges',
+    '--tmpfs', '/tmp:rw,noexec,nosuid,size=16m', '--entrypoint', 'sh', image,
+    '-e', '-c', `
+      find /usr/share/nginx/html -type f > /tmp/public-artifact-files
+      test -s /tmp/public-artifact-files
+      while IFS= read -r file; do
+        if ! test -r "$file"; then
+          printf 'Unreadable public artifact: %s\\n' "$file" >&2
+          exit 1
+        fi
+      done < /tmp/public-artifact-files
+    `);
+  console.log('PASS: every actual public artifact is readable by the Nginx worker.');
   await mkdir(join(directory, 'public', '_astro'), {recursive: true});
   await mkdir(join(directory, 'upstream', 'prehled'), {recursive: true});
   await mkdir(join(directory, 'upstream', 'analytics'), {recursive: true});
