@@ -1,0 +1,202 @@
+---
+import ProductIcon from "./ProductIcon.astro";
+import { getPublicProducts, type Product } from "../lib/products";
+import { stratosShowcases, type StratosShowcaseId } from "../lib/stratosShowcase";
+
+const { product, lang = "cs" } = Astro.props as { product: Product; lang?: "cs" | "en" };
+const cs = lang === "cs";
+const voice = product.id === "stratos-voice";
+const copy = stratosShowcases[product.id as StratosShowcaseId][lang];
+const name = cs ? product.name : product.nameEn ?? product.name;
+const base = cs ? "/aplikace/" : "/en/apps/";
+const demoHref = `${cs ? "/spoluprace/" : "/en/work-with-us/"}?app=${product.id}&area=private-deployment#poptavka`;
+const products = getPublicProducts();
+const family = products.filter(item => item.family === "stratos" && item.id !== product.id);
+const journey = ["archflow", "budget-contract", "projectflow", "executive-center"].map(id => products.find(item => item.id === id)!);
+const accent: Record<string, string> = { stratos: "#116d91", "budget-contract": "#7351bc", "executive-center": "#a36c16", projectflow: "#3472bf", archflow: "#117d79", akb: "#88643a", "stratos-voice": "#7659b5" };
+const text = cs ? {
+  back: "Všechny aplikace", family: "Rodina STRATOS", availability: "Dostupnost", demo: "Domluvit ukázku", explore: "Prohlédnout možnosti",
+  model: "Modelová ukázka", modelNote: "Ilustrační obsah. Nejde o zákaznická data ani o živou aplikaci.",
+  forWhom: "Pro koho", situations: "Když potřebujete…", features: "Méně hledání. Více souvislostí.", steps: "Jak s aplikací začnete",
+  journey: "Od potřeby k výsledku", journeyIntro: "Každá aplikace má svůj úkol. Společně propojují zadání, plán, práci týmu a přehled pro vedení.",
+  journeyLabels: ["Potřeba a rozhodnutí", "Rozpočtový plán", "Příprava a realizace", "Přehled pro vedení"],
+  journeyBoundary: "Projekt lze připravovat i před stanovením nákladů. Schválení potřeby a příprava projektu jsou oddělené od povolení výdajů.",
+  evidenceTitle: "Podklady, které zůstávají dohledatelné", evidenceBody: "AKB pomáhá pracovat s dokumenty a odkazy na jejich verze. STRATOS Voice může doplnit záznam a přepis jednání; jeho použití nevyžaduje založení projektu.",
+  related: "Vyberte si další část rodiny", relatedIntro: "Začněte tím, co potřebujete řešit. Tady zjistíte, k čemu slouží ostatní aplikace.",
+  deployTitle: "Prostředí pro vaši organizaci", deployText: "Webové aplikace STRATOS jsou určené pro soukromé nasazení. Ukázku a vhodný rozsah použití domluvíme podle vašich potřeb.",
+  voiceTitle: "STRATOS Voice připravujeme pro App Store", voiceText: "iOS aplikace je ve vývoji. Na stránce podpory najdete informace o nahrávání, přepisu a volitelné AI kontrole.",
+  support: "Podpora STRATOS Voice", privacy: "Soukromí STRATOS Voice", questions: "Než začnete", startQuestion: voice ? "Potřebuji účet, projekt nebo portfolio?" : "Musíme hned používat celou rodinu?",
+  startAnswer: voice ? "Nahrávání a místní přepis můžete používat bez účtu, projektu i portfolia. Připojení k organizační AI je samostatná volba a vyžaduje odpovídající přihlášení a oprávnění." : "Výchozí rozsah nasazení volíme podle toho, co organizace skutečně potřebuje. Propojení se nastavuje při přípravě prostředí; každá část má vlastní účel.",
+  rightsQuestion: voice ? "Co se posílá při AI kontrole?" : "Uvidí každý všechny informace?", rightsAnswer: voice ? "Po náhledu a vašem výslovném spuštění se zvolené službě předá text ke kontrole. Audio se při této kontrole neodesílá. Samostatné sdílení přepisu či zvuku je jiná akce, kterou volíte sami." : "Přístup se řídí přidělenými oprávněními a jejich působností. Například manažerský přehled sám nepřiděluje právo měnit projekty nebo rozpočet.",
+  aiQuestion: "Rozhoduje AI místo lidí?", aiAnswer: "AI pomáhá hledat podklady nebo připravovat návrhy. Schválení potřeb, rozpočtu, architektonických návrhů a přepisových oprav zůstává na oprávněných lidech.",
+} : {
+  back: "All applications", family: "The STRATOS family", availability: "Availability", demo: "Arrange a demo", explore: "Explore the possibilities",
+  model: "Illustrative example", modelNote: "Illustrative content. This is neither customer data nor a live application.",
+  forWhom: "Who it is for", situations: "When you need to…", features: "Less searching. More context.", steps: "Getting started with the app",
+  journey: "From a need to an outcome", journeyIntro: "Each application has a clear role. Together, they connect the brief, the plan, team delivery and management oversight.",
+  journeyLabels: ["Needs and decisions", "Budget planning", "Preparation and delivery", "Management overview"],
+  journeyBoundary: "Project preparation can begin before costs are known. Approval of a need and preparation of a project are separate from authorisation to spend.",
+  evidenceTitle: "Keep the supporting sources in view", evidenceBody: "AKB supports work with documents and links to their versions. STRATOS Voice can add meeting recordings and transcripts; using it does not require creating a project.",
+  related: "Explore the rest of the family", relatedIntro: "Start with the work you need to do. See how the other applications can help.",
+  deployTitle: "An environment for your organisation", deployText: "The STRATOS web applications are designed for private deployment. We can arrange a demo and discuss a suitable scope for your organisation.",
+  voiceTitle: "STRATOS Voice is being prepared for the App Store", voiceText: "The iOS application is in development. Its support page explains recording, transcription and optional AI review.",
+  support: "STRATOS Voice support", privacy: "STRATOS Voice privacy", questions: "Before you start", startQuestion: voice ? "Do I need an account, project or portfolio?" : "Do we need the whole family at once?",
+  startAnswer: voice ? "Recording and local transcription work without an account, project or portfolio. Connecting to organisational AI is a separate choice and requires the appropriate sign-in and permissions." : "The initial deployment scope reflects what your organisation needs. Connections are configured as part of the setup; each application has a distinct purpose.",
+  rightsQuestion: voice ? "What is sent for AI review?" : "Can everyone see all information?", rightsAnswer: voice ? "After previewing the text and explicitly starting the review, you send it to the selected service. Audio is not sent for this review. Sharing a transcript or audio separately is another action you choose yourself." : "Access follows the permissions and scope assigned to each person. For example, a management overview does not itself grant permission to change projects or budgets.",
+  aiQuestion: "Does AI make decisions for people?", aiAnswer: "AI helps find sources or prepare suggestions. Authorised people remain responsible for approving needs, budgets, architecture proposals and transcript corrections.",
+};
+---
+
+<article class="stratos-showcase" style={`--showcase-accent:${accent[product.id] ?? accent.stratos}`}>
+  <a class="back-link" href={cs ? "/#aplikace" : "/en/#apps"}>← {text.back}</a>
+  <header class="showcase-hero">
+    <div class="hero-story">
+      <a class="family-label" href={`${base}stratos/`}>{text.family}</a>
+      <div class="product-name"><ProductIcon id={product.id} size={64} /><h1>{name}</h1></div>
+      <p class="showcase-headline">{cs ? product.headlineCs : product.headlineEn}</p>
+      <div class="showcase-actions">
+        <a class="button primary" href={product.id === "stratos-voice" ? (cs ? "/podpora/stratos-voice/" : "/en/support/stratos-voice/") : demoHref} data-collaboration-interest={product.id === "stratos-voice" ? undefined : "true"}>{product.id === "stratos-voice" ? text.support : text.demo} <span aria-hidden="true">→</span></a>
+        <a class="button secondary" href="#moznosti">{text.explore} <span aria-hidden="true">↓</span></a>
+      </div>
+      <p class="showcase-lead">{copy.lead}</p>
+      <div class="audiences" aria-label={text.forWhom}>{copy.audience.map(role => <span>{role}</span>)}</div>
+      <p class="availability"><span>{text.availability}</span><strong>{cs ? product.availabilityCs : product.availabilityEn}</strong></p>
+    </div>
+    <figure class="product-preview" aria-label={`${text.model}: ${name}`}>
+      <div class="preview-top"><ProductIcon id={product.id} size={40} /><strong>{name}</strong><span>{text.model}</span></div>
+      <div class="preview-body">
+        <p class="preview-caption">{cs ? product.categoryCs : product.categoryEn}</p>
+        <h2>{copy.illustration.title}</h2>
+        <dl>{copy.illustration.items.map(item => <div><dt>{item.label}</dt><dd>{item.value}</dd></div>)}</dl>
+        <div class="preview-outcome"><span aria-hidden="true">↗</span><p>{copy.outcome}</p></div>
+      </div>
+      <figcaption>{text.modelNote}</figcaption>
+    </figure>
+  </header>
+
+  <section class="showcase-section situations-section" aria-labelledby="situace">
+    <p class="section-label">{text.forWhom}</p><h2 id="situace">{text.situations}</h2>
+    <div class="situations-grid">{copy.situations.map((item, index) => <div class="situation"><span class="step-number" aria-hidden="true">0{index + 1}</span><h3>{item.title}</h3><p>{item.body}</p></div>)}</div>
+  </section>
+
+  <section class="showcase-section feature-section" aria-labelledby="moznosti">
+    <h2 id="moznosti">{text.features}</h2>
+    <div class="feature-grid">{copy.features.map((item, index) => <div class="feature-card"><span class="feature-mark" aria-hidden="true">{["↗", "◎", "↔", "✓", "+"][index]}</span><h3>{item.title}</h3><p>{item.body}</p></div>)}</div>
+  </section>
+
+  <section class="showcase-section getting-started" aria-labelledby="postup">
+    <h2 id="postup">{text.steps}</h2>
+    <ol>{copy.steps.map(step => <li>{step}</li>)}</ol>
+  </section>
+
+  <section class="showcase-section family-journey" aria-labelledby="navaznost">
+    <p class="section-label">{text.family}</p><h2 id="navaznost">{text.journey}</h2><p class="section-intro">{text.journeyIntro}</p>
+    <ol class="journey-nodes">{journey.map((app, index) => <li><a href={`${base}${app.href}/`} aria-current={app.id === product.id ? "page" : undefined}><ProductIcon id={app.id} size={44} /><strong>{app.name}</strong><span>{text.journeyLabels[index]}</span></a></li>)}</ol>
+    <p class="journey-boundary">{text.journeyBoundary}</p>
+    <aside class="sources-note"><h3>{text.evidenceTitle}</h3><p>{text.evidenceBody}</p><div><a href={`${base}akb/`}>AKB <span aria-hidden="true">→</span></a><a href={`${base}stratos-voice/`}>STRATOS Voice <span aria-hidden="true">→</span></a></div></aside>
+  </section>
+
+  <section class="showcase-section faq-section" aria-labelledby="otazky">
+    <h2 id="otazky">{text.questions}</h2>
+    <details><summary>{text.startQuestion}</summary><p>{text.startAnswer}</p></details>
+    <details><summary>{text.rightsQuestion}</summary><p>{text.rightsAnswer}</p></details>
+    <details><summary>{text.aiQuestion}</summary><p>{text.aiAnswer}</p></details>
+  </section>
+
+  <section class="showcase-section related-section" aria-labelledby="rodina">
+    <h2 id="rodina">{text.related}</h2><p class="section-intro">{text.relatedIntro}</p>
+    <div class="related-grid">{family.map(app => <a class="related-app" href={`${base}${app.href}/`}><ProductIcon id={app.id} size={48} /><div><strong>{cs ? app.name : app.nameEn ?? app.name}</strong><span>{cs ? app.categoryCs : app.categoryEn}</span></div><span aria-hidden="true">→</span></a>)}</div>
+  </section>
+
+  <section class="showcase-contact">
+    <div><h2>{product.id === "stratos-voice" ? text.voiceTitle : text.deployTitle}</h2><p>{product.id === "stratos-voice" ? text.voiceText : text.deployText}</p></div>
+    <div class="contact-actions">
+      <a class="button light" href={product.id === "stratos-voice" ? (cs ? "/podpora/stratos-voice/" : "/en/support/stratos-voice/") : demoHref} data-collaboration-interest={product.id === "stratos-voice" ? undefined : "true"}>{product.id === "stratos-voice" ? text.support : text.demo} <span aria-hidden="true">→</span></a>
+      {product.id === "stratos-voice" && <a class="privacy-link" href={cs ? "/stratos-voice/privacy/" : "/en/stratos-voice/privacy/"}>{text.privacy} <span aria-hidden="true">→</span></a>}
+    </div>
+  </section>
+</article>
+
+<style>
+  .stratos-showcase { padding:clamp(1.5rem,4vw,3.5rem) clamp(1.25rem,5vw,5rem) clamp(4rem,7vw,7rem); overflow-wrap:anywhere; }
+  .stratos-showcase>.back-link { margin-bottom:0; }
+  .stratos-showcase :is(h1,h2,h3) { font-family:"Manrope Variable",sans-serif; color:var(--navy); }
+  .showcase-hero { display:grid; grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr); gap:clamp(2rem,5vw,5rem); align-items:start; margin:2.25rem 0 4rem; }
+  .hero-story { min-width:0; }
+  .family-label { display:inline-block; font-size:.78rem; font-weight:750; color:var(--showcase-accent); text-transform:uppercase; letter-spacing:.12em; margin-bottom:1.5rem; }
+  .family-label:hover { text-decoration:underline; text-underline-offset:.25em; }
+  .product-name { display:flex; align-items:center; gap:1rem; }
+  .product-name :global(.product-icon) { flex:none; }
+  .product-name h1 { margin:0; font-size:clamp(1.9rem,3.4vw,3.5rem); line-height:1.05; letter-spacing:-.055em; overflow-wrap:anywhere; }
+  .showcase-headline { font-family:"Manrope Variable",sans-serif; font-weight:750; font-size:clamp(2.05rem,3.9vw,4rem); line-height:1.12; letter-spacing:-.045em; margin:1.6rem 0 1.25rem; color:var(--navy); text-wrap:balance; }
+  .showcase-lead { color:#425773; font-size:1.1rem; max-width:58ch; margin:0; }
+  .audiences { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.5rem; }
+  .audiences span { border:1px solid var(--hairline); border-radius:999px; padding:.35rem .7rem; font-size:.78rem; color:#425773; }
+  .showcase-actions { display:flex; flex-wrap:wrap; gap:.75rem; margin:1.5rem 0; }
+  .availability { display:flex; flex-wrap:wrap; gap:.35rem .65rem; font-size:.8rem; color:var(--muted); }
+  .availability strong { font-weight:650; color:#314763; }
+  .product-preview { min-width:0; margin:0; background:#fff; border:1px solid var(--hairline); border-radius:1.5rem; box-shadow:0 25px 70px rgba(7,32,65,.1); overflow:hidden; }
+  .preview-top { display:flex; flex-wrap:wrap; align-items:center; gap:.7rem; padding:1rem 1.25rem; border-bottom:1px solid var(--line); }
+  .preview-top strong { font-size:.9rem; }
+  .preview-top>span:last-child { margin-left:auto; font-size:.65rem; background:#f2f6fa; color:#425773; padding:.25rem .5rem; border-radius:.5rem; }
+  .preview-body { padding:clamp(1.4rem,3vw,2.5rem); background:radial-gradient(ellipse at 100% 0,color-mix(in srgb,var(--showcase-accent) 9%,white),transparent 70%); }
+  .preview-caption { margin:0 0 .6rem; font-size:.75rem; color:var(--showcase-accent); font-weight:700; }
+  .preview-body h2 { margin:0 0 1.5rem; font-size:clamp(1.4rem,2.3vw,2.1rem); line-height:1.25; letter-spacing:-.035em; }
+  .preview-body dl { margin:0; display:grid; gap:.7rem; }
+  .preview-body dl>div { padding:.9rem 1rem; background:rgba(255,255,255,.85); border:1px solid var(--hairline); border-left:3px solid var(--showcase-accent); border-radius:.75rem; }
+  .preview-body dt { color:var(--muted); font-size:.73rem; }
+  .preview-body dd { margin:.2rem 0 0; font-size:.95rem; font-weight:650; color:var(--navy); overflow-wrap:anywhere; }
+  .preview-outcome { display:flex; align-items:center; gap:.8rem; margin-top:1.5rem; color:var(--showcase-accent); }
+  .preview-outcome>span { flex:none; font-size:1.6rem; }
+  .preview-outcome p { margin:0; font-weight:650; font-size:.88rem; color:#314763; }
+  .product-preview figcaption { padding:.85rem 1.25rem; border-top:1px solid var(--line); color:var(--muted); font-size:.68rem; }
+  .showcase-section { margin:4rem 0; scroll-margin-top:7rem; }
+  .showcase-section>h2 { margin:0 0 1.5rem; font-size:clamp(1.7rem,3vw,2.7rem); letter-spacing:-.04em; line-height:1.2; text-wrap:balance; }
+  .section-label { color:var(--showcase-accent); font-size:.75rem; font-weight:750; text-transform:uppercase; letter-spacing:.12em; margin-bottom:.6rem; }
+  .section-intro { color:var(--muted); max-width:70ch; margin:-.5rem 0 2rem; }
+  .situations-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:2rem; }
+  .situation { border-top:1px solid var(--line); padding:1.25rem 0 0; }
+  .step-number { font-size:.7rem; color:var(--showcase-accent); font-weight:700; }
+  .situation h3 { margin:.75rem 0; font-size:1.2rem; line-height:1.4; }
+  .situation p,.feature-card p { color:var(--muted); font-size:.95rem; margin:0; }
+  .feature-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; }
+  .feature-card { padding:1.5rem; background:#fff; border:1px solid var(--hairline); border-radius:1rem; }
+  .feature-mark { display:grid; place-items:center; width:2.2rem; height:2.2rem; background:color-mix(in srgb,var(--showcase-accent) 8%,white); border-radius:.7rem; color:var(--showcase-accent); font-size:1.3rem; }
+  .feature-card h3 { font-size:1.02rem; line-height:1.4; margin:1rem 0 .6rem; }
+  .getting-started { padding:2rem; background:#eef3f8; border-radius:1.5rem; }
+  .getting-started ol { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:2rem; padding-left:1.3rem; margin:0; color:#425773; }
+  .getting-started li { padding-left:.4rem; font-size:.95rem; }
+  .getting-started li::marker { color:var(--showcase-accent); font-weight:750; }
+  .journey-nodes { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.8rem; padding:0; list-style:none; }
+  .journey-nodes a { display:flex; flex-direction:column; height:100%; gap:.65rem; padding:1.5rem; border:1px solid var(--hairline); border-radius:1rem; background:#fff; transition:border-color .15s; }
+  .journey-nodes a:hover { border-color:var(--showcase-accent); }
+  .journey-nodes a[aria-current] { border-color:var(--showcase-accent); box-shadow:inset 0 0 0 1px var(--showcase-accent); }
+  .journey-nodes strong { color:var(--navy); font-size:.94rem; }
+  .journey-nodes span { font-size:.78rem; color:var(--muted); }
+  .journey-boundary { max-width:85ch; font-size:.85rem; color:#425773; margin:1.25rem 0 2rem; }
+  .sources-note { padding:1.5rem 2rem; border-left:3px solid var(--showcase-accent); background:#f0f5f9; border-radius:0 1rem 1rem 0; }
+  .sources-note h3 { font-size:1.15rem; margin:0 0 .5rem; }
+  .sources-note p { color:var(--muted); max-width:85ch; font-size:.92rem; }
+  .sources-note>div { display:flex; flex-wrap:wrap; gap:1.25rem; font-size:.85rem; font-weight:700; color:var(--navy); }
+  .sources-note a:hover { text-decoration:underline; text-underline-offset:.2em; }
+  .faq-section { max-width:900px; }
+  .faq-section details { border-bottom:1px solid var(--line); padding:1rem 0; }
+  .faq-section summary { cursor:pointer; color:var(--navy); font-weight:650; padding:.35rem 0; }
+  .faq-section details p { max-width:75ch; color:var(--muted); font-size:.95rem; margin:.75rem 0 .25rem; }
+  .related-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.8rem; }
+  .related-app { display:flex; align-items:center; gap:.9rem; min-width:0; padding:1.1rem; border:1px solid var(--hairline); border-radius:1rem; background:#fff; }
+  .related-app:hover { border-color:var(--showcase-accent); }
+  .related-app>div { min-width:0; display:grid; gap:.2rem; }
+  .related-app strong { font-size:.92rem; line-height:1.4; color:var(--navy); }
+  .related-app>div>span { color:var(--muted); font-size:.73rem; }
+  .related-app>span:last-child { margin-left:auto; color:var(--showcase-accent); }
+  .related-app :global(.product-icon) { flex:none; }
+  .showcase-contact { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:2rem; background:var(--navy); padding:clamp(1.5rem,4vw,3rem); border-radius:1.5rem; color:#d6e5f4; }
+  .showcase-contact h2 { margin:0; max-width:28ch; color:#fff; font-size:clamp(1.5rem,2.5vw,2.2rem); line-height:1.25; letter-spacing:-.035em; }
+  .showcase-contact p { font-size:.95rem; max-width:66ch; margin:1rem 0 0; }
+  .contact-actions { display:grid; justify-items:start; gap:1rem; }
+  .privacy-link { font-size:.83rem; text-decoration:underline; text-underline-offset:.2em; }
+  @media(max-width:1100px) { .showcase-hero { grid-template-columns:1fr; gap:2.25rem; } .product-preview { max-width:660px; } .feature-grid,.related-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  @media(max-width:760px) { .stratos-showcase { padding-top:1.5rem; padding-left:20px; padding-right:20px; } .showcase-hero { margin-top:1.5rem; } .product-name { align-items:flex-start; flex-wrap:wrap; } .product-name :global(.product-icon) { --icon-size:48px !important; } .showcase-headline { font-size:2.1rem; } .showcase-lead { font-size:1rem; } .situations-grid,.feature-grid,.related-grid,.getting-started ol,.journey-nodes,.showcase-contact { grid-template-columns:1fr; } .showcase-section { margin:3rem 0; } .preview-top { padding:16px; gap:10px; } .preview-body { padding:24px; } .preview-body dl>div { padding:16px; } .product-preview figcaption { padding:14px 16px; } .feature-card,.getting-started,.showcase-contact { padding:24px; } .getting-started ol { gap:1rem; padding-left:24px; } .journey-nodes a { display:grid; grid-template-columns:44px minmax(0,1fr); gap:.2rem .8rem; padding:16px; } .journey-nodes a :global(.product-icon) { grid-row:span 2; } .journey-nodes strong { align-self:end; } .showcase-actions .button { width:100%; } .sources-note { padding:20px; } }
+  @media(prefers-reduced-motion:reduce) { .journey-nodes a { transition:none; } }
+</style>
