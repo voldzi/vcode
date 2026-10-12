@@ -21,13 +21,25 @@ export const milloraShowcase = {
       titleCs: "Soupeř ve vašem zařízení",
       titleEn: "An opponent on your device",
       bodyCs: "Vyberte si ze čtyř obtížností počítačového soupeře. Místní partie fungují bez účtu i bez připojení a můžete se k nim později vrátit.",
-      bodyEn: "Choose from four computer difficulty levels. Local matches work without an account or connection, and you can return to an unfinished game later."
+      bodyEn: "Choose from four computer difficulty levels. Local matches work without an account or connection, and you can return to an unfinished game later.",
+      storeLink: {
+        hrefCs: "https://apps.apple.com/cz/app/millora/id6821033229?l=cs&ppid=0287d028-758e-4e69-9738-29a4d55c61c7",
+        hrefEn: "https://apps.apple.com/us/app/vcode-millora-morris/id6821033229?ppid=0287d028-758e-4e69-9738-29a4d55c61c7",
+        labelCs: "Trénink strategie v App Storu",
+        labelEn: "Strategy practice on the App Store"
+      }
     },
     {
       titleCs: "Ve dvou naproti sobě",
       titleEn: "Share the board",
       bodyCs: "Na telefonu a iPadu má každý hráč zásobník na své straně desky. Na Apple TV se střídáte s jedním ovladačem. Jedno zařízení stačí na celou partii.",
-      bodyEn: "On iPhone and iPad, each player has a reserve on their side of the board. On Apple TV, take turns with one remote. One device is all you need for a match."
+      bodyEn: "On iPhone and iPad, each player has a reserve on their side of the board. On Apple TV, take turns with one remote. One device is all you need for a match.",
+      storeLink: {
+        hrefCs: "https://apps.apple.com/cz/app/millora/id6821033229?l=cs&ppid=cf2f4eaa-56f7-4ee4-b65b-7f5d5e7b1b78",
+        hrefEn: "https://apps.apple.com/us/app/vcode-millora-morris/id6821033229?ppid=cf2f4eaa-56f7-4ee4-b65b-7f5d5e7b1b78",
+        labelCs: "Hra ve dvou v App Storu",
+        labelEn: "Two-player game on the App Store"
+      }
     },
     {
       titleCs: "Online, když chcete",
