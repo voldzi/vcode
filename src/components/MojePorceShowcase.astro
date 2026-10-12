@@ -1,0 +1,232 @@
+---
+import ProductIcon from "./ProductIcon.astro";
+import { mojePorceCopy, mojePorceScreenshots } from "../lib/moje-porce-showcase";
+
+const { lang = "cs" } = Astro.props as { lang?: "cs" | "en" };
+const cs = lang === "cs";
+const copy = mojePorceCopy[lang];
+const hero = mojePorceScreenshots[0];
+const appHref = "https://mojeporce.cz/domu";
+const guideHref = "https://mojeporce.cz/pruvodce/recepty-nakupy-a-zasoby";
+---
+
+<div class="mo-p-showcase" data-static-showcase>
+  <header class="mo-p-hero">
+    <div class="mo-p-intro">
+      <div class="mo-p-brand">
+        <ProductIcon id="kaloricke-tabulky" size={56} />
+        <p class="kicker">{copy.eyebrow}</p>
+      </div>
+      <h1>Moje porce</h1>
+      <p class="mo-p-headline">{copy.headline}</p>
+      <p class="mo-p-lead">{copy.intro}</p>
+      <div class="mo-p-actions">
+        <a class="button mo-p-primary" href={appHref}>{copy.action}<span aria-hidden="true">↗</span></a>
+        <a class="mo-p-link" href="https://mojeporce.cz/o-aplikaci">{copy.explore}<span aria-hidden="true">↗</span></a>
+      </div>
+      <p class="mo-p-action-note">{copy.actionNote}</p>
+    </div>
+    {hero && <figure class="mo-p-hero-image">
+      <a href={hero.src} aria-label={`${cs ? hero.titleCs : hero.titleEn} — ${copy.imageAction}`}>
+        <img src={hero.preview} width={hero.previewWidth} height={hero.previewHeight} alt={cs ? hero.altCs : hero.altEn} fetchpriority="high" decoding="async" />
+      </a>
+      <figcaption>{copy.heroCaption}</figcaption>
+    </figure>}
+    {copy.arrangement && <p class="mo-p-arrangement">{copy.arrangement}</p>}
+  </header>
+
+  <ul class="mo-p-facts" aria-label={cs ? "Moje porce v kostce" : "Moje porce at a glance"}>
+    {copy.facts.map(([value, label]) => <li><strong>{value}</strong><span>{label}</span></li>)}
+  </ul>
+
+  <section id="moznosti" class="mo-p-section" aria-labelledby="mo-p-features-title">
+    <div class="mo-p-section-heading">
+      <p class="kicker">{cs ? "Každodenní pomoc" : "Everyday help"}</p>
+      <h2 id="mo-p-features-title">{copy.featuresTitle}</h2>
+      <p>{copy.featuresIntro}</p>
+    </div>
+    <ul class="mo-p-features">
+      {copy.features.map(([title, text], index) => <li>
+        <span class="mo-p-feature-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+        <h3>{title}</h3><p>{text}</p>
+      </li>)}
+    </ul>
+  </section>
+
+  <section id="ukazky" class="mo-p-section" aria-labelledby="mo-p-gallery-title">
+    <div class="mo-p-section-heading">
+      <p class="kicker">{cs ? "Nahlédněte do aplikace" : "Inside the app"}</p>
+      <h2 id="mo-p-gallery-title">{copy.galleryTitle}</h2>
+      <p>{copy.galleryIntro}</p>
+    </div>
+    <ul class="mo-p-gallery">
+      {mojePorceScreenshots.map((shot) => <li>
+        <a href={shot.src} aria-label={`${cs ? shot.titleCs : shot.titleEn} — ${copy.imageAction}`}>
+          <figure>
+            <div class="mo-p-gallery-image"><img src={shot.preview} width={shot.previewWidth} height={shot.previewHeight} alt={cs ? shot.altCs : shot.altEn} loading="lazy" decoding="async" /></div>
+            <figcaption>
+              <h3>{cs ? shot.titleCs : shot.titleEn}<span aria-hidden="true">↗</span></h3>
+              <p>{cs ? shot.captionCs : shot.captionEn}</p>
+            </figcaption>
+          </figure>
+        </a>
+      </li>)}
+    </ul>
+    <p class="mo-p-gallery-note">{copy.galleryNotice}</p>
+  </section>
+
+  <section class="mo-p-section mo-p-workflow" aria-labelledby="mo-p-workflow-title">
+    <div class="mo-p-section-heading">
+      <p class="kicker">{cs ? "Jak to funguje" : "How it works"}</p>
+      <h2 id="mo-p-workflow-title">{copy.workflowTitle}</h2>
+    </div>
+    <ol>{copy.workflow.map(([title, text]) => <li><h3>{title}</h3><p>{text}</p></li>)}</ol>
+    <a class="mo-p-link" href={guideHref}>{copy.guideAction}<span aria-hidden="true">→</span></a>
+  </section>
+
+  <section class="mo-p-section mo-p-plans" aria-labelledby="mo-p-plans-title">
+    <div class="mo-p-section-heading"><h2 id="mo-p-plans-title">{copy.plansTitle}</h2></div>
+    <div class="mo-p-plan-grid">
+      <div class="mo-p-plan mo-p-plan-free"><h3>{copy.freeTitle}</h3><p>{copy.freeText}</p></div>
+      <div class="mo-p-plan mo-p-plan-premium"><h3>{copy.premiumTitle}</h3><p>{copy.premiumText}</p></div>
+    </div>
+    <a class="mo-p-link" href="https://mojeporce.cz/premium">{copy.plansAction}<span aria-hidden="true">↗</span></a>
+  </section>
+
+  <aside class="mo-p-native" aria-labelledby="mo-p-native-title">
+    <p class="kicker">{copy.nativeEyebrow}</p>
+    <h2 id="mo-p-native-title">{copy.nativeTitle}</h2>
+    <p>{copy.nativeText}</p>
+    {copy.nativeHealth && <p>{copy.nativeHealth}</p>}
+  </aside>
+
+  <section class="mo-p-section mo-p-faq" aria-labelledby="mo-p-faq-title">
+    <div class="mo-p-section-heading"><h2 id="mo-p-faq-title">{copy.faqTitle}</h2></div>
+    {copy.faq.map(([question, answer]) => <details><summary>{question}</summary><p>{answer}</p></details>)}
+  </section>
+
+  <section class="mo-p-section mo-p-help" aria-labelledby="mo-p-help-title">
+    <div class="mo-p-section-heading"><h2 id="mo-p-help-title">{copy.helpTitle}</h2><p>{copy.helpText}</p></div>
+    <ul>{copy.helpLinks.map(([href, label]) => <li><a class="mo-p-link" href={href}>{label}<span aria-hidden="true">↗</span></a></li>)}</ul>
+  </section>
+
+  <section class="mo-p-contact" aria-labelledby="mo-p-contact-title">
+    <p class="kicker">{copy.contactEyebrow}</p>
+    <h2 id="mo-p-contact-title">{copy.contactTitle}</h2>
+    <p>{copy.contactText}</p>
+    <a class="button mo-p-primary" href={appHref}>{copy.contactAction}<span aria-hidden="true">→</span></a>
+    <p>{copy.partnershipText} <a class="mo-p-link" href={`${cs ? "/spoluprace/" : "/en/work-with-us/"}?app=kaloricke-tabulky#poptavka`} data-collaboration-interest="true">{copy.partnershipAction}<span aria-hidden="true">→</span></a></p>
+  </section>
+</div>
+
+<style>
+  :global(.product-detail.moje-porce-showcase-detail) { padding-top:clamp(1.5rem,3vw,2.5rem); }
+  :global(.moje-porce-showcase-detail>.back-link) { margin-bottom:1.25rem; }
+  :global(.product-detail.moje-porce-showcase-detail header) { max-width:none; }
+  .mo-p-showcase { --mo-p-green:#385e23; --mo-p-soft:#edf5e5; --mo-p-border:#d8e5cf; }
+  .mo-p-hero { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr); gap:1.75rem; }
+  .mo-p-intro { min-width:0; }
+  .mo-p-brand { display:flex; align-items:center; gap:.85rem; margin-bottom:1rem; }
+  .mo-p-brand .kicker { margin:0; max-width:24rem; font-size:.75rem; color:var(--mo-p-green); }
+  .mo-p-hero h1 { margin:0; font-size:4.25rem; line-height:1.05; letter-spacing:0; }
+  .mo-p-headline { margin:.85rem 0; font:750 2.25rem/1.25 "Manrope Variable",sans-serif; letter-spacing:0; color:var(--mo-p-green); }
+  .mo-p-lead { max-width:48ch; font-size:1.04rem; line-height:1.7; color:var(--muted); }
+  .mo-p-actions { display:flex; flex-wrap:wrap; align-items:center; gap:.65rem 1rem; margin-top:1.25rem; }
+  .mo-p-primary { background:var(--mo-p-green); color:#fff; }
+  .mo-p-showcase .button { max-width:100%; min-width:0; min-height:44px; line-height:1.5; white-space:normal; overflow-wrap:anywhere; }
+  .mo-p-action-note { max-width:48ch; font-size:.88rem; line-height:1.6; color:var(--muted); }
+  .mo-p-link { display:inline-flex; align-items:center; gap:.7rem; max-width:100%; min-height:44px; font-weight:700; line-height:1.5; color:var(--mo-p-green); text-decoration:underline; text-underline-offset:.25em; overflow-wrap:anywhere; }
+  .mo-p-link span,.mo-p-showcase .button span { flex:none; }
+  .mo-p-hero-image { align-self:center; min-width:0; margin:0; }
+  .mo-p-hero-image a { display:block; min-height:44px; border-radius:.65rem; }
+  .mo-p-hero-image img { display:block; width:100%; height:auto; border:1px solid var(--mo-p-border); border-radius:.65rem; }
+  .mo-p-hero-image figcaption { padding:.65rem .3rem .25rem; text-align:center; font-size:.82rem; line-height:1.5; color:var(--muted); }
+  .mo-p-arrangement { grid-column:1/-1; margin:0; padding-top:1.1rem; border-top:1px solid var(--mo-p-border); font-size:.92rem; line-height:1.6; color:var(--muted); }
+  .mo-p-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:0; padding:1.8rem 0; list-style:none; border-bottom:1px solid var(--line); }
+  .mo-p-facts li { display:flex; flex-direction:column; gap:.3rem; min-width:0; padding:.5rem 1.5rem; border-right:1px solid var(--line); }
+  .mo-p-facts li:first-child { padding-left:0; }
+  .mo-p-facts li:last-child { border:0; }
+  .mo-p-facts strong { font:750 1.4rem/1.3 "Manrope Variable",sans-serif; color:var(--mo-p-green); }
+  .mo-p-facts span { font-size:.9rem; line-height:1.5; color:var(--muted); }
+  .mo-p-section { margin-top:clamp(3rem,6vw,5rem); scroll-margin-top:7rem; }
+  .mo-p-section-heading { max-width:48rem; margin-bottom:1.75rem; }
+  .mo-p-showcase h2 { margin:.5rem 0 1rem; font:750 2.5rem/1.25 "Manrope Variable",sans-serif; letter-spacing:0; color:var(--navy); }
+  .mo-p-showcase h3 { font:720 1.08rem/1.4 "Manrope Variable",sans-serif; letter-spacing:0; color:var(--navy); }
+  .mo-p-showcase h1,.mo-p-showcase h2,.mo-p-showcase h3,.mo-p-showcase p,.mo-p-showcase summary,.mo-p-showcase .kicker,.mo-p-facts strong { overflow-wrap:anywhere; }
+  .mo-p-section-heading>p:last-child { max-width:60ch; line-height:1.7; color:var(--muted); }
+  .mo-p-section-heading>.kicker { color:var(--mo-p-green); }
+  .mo-p-features { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; padding:0; list-style:none; }
+  .mo-p-features li { position:relative; min-width:0; padding:1.6rem 1.6rem 1.2rem; background:#fff; border:1px solid var(--mo-p-border); border-radius:1.15rem; transition:border-color .2s ease,transform .2s ease; }
+  .mo-p-feature-number { display:block; margin-bottom:.8rem; font-size:.78rem; font-weight:750; color:var(--mo-p-green); }
+  .mo-p-features h3 { margin:0 0 .65rem; }
+  .mo-p-features p { margin:0; font-size:.96rem; line-height:1.7; color:var(--muted); }
+  .mo-p-gallery { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.25rem; padding:0; list-style:none; }
+  .mo-p-gallery li { min-width:0; }
+  .mo-p-gallery a { display:block; height:100%; border-radius:1.1rem; }
+  .mo-p-gallery figure { height:100%; margin:0; overflow:hidden; background:#fff; border:1px solid var(--mo-p-border); border-radius:1.1rem; transition:border-color .2s ease; }
+  .mo-p-gallery-image { display:flex; align-items:center; justify-content:center; height:17.5rem; padding:.75rem; background:var(--mo-p-soft); }
+  .mo-p-gallery-image img { display:block; width:100%; height:100%; object-fit:contain; border-radius:.4rem; }
+  .mo-p-gallery figcaption { padding:1.1rem 1.25rem; }
+  .mo-p-gallery h3 { display:flex; justify-content:space-between; gap:1rem; margin:0; }
+  .mo-p-gallery h3 span { flex:none; color:var(--mo-p-green); }
+  .mo-p-gallery p { margin:.5rem 0 0; font-size:.9rem; line-height:1.6; color:var(--muted); }
+  .mo-p-gallery-note { font-size:.88rem; line-height:1.6; color:var(--muted); }
+  .mo-p-workflow { padding:2rem 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .mo-p-workflow ol { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:2rem; padding:0; list-style:none; counter-reset:step; }
+  .mo-p-workflow li { min-width:0; counter-increment:step; }
+  .mo-p-workflow li::before { content:"0" counter(step); font-weight:750; color:var(--mo-p-green); }
+  .mo-p-workflow h3 { margin:.7rem 0; }
+  .mo-p-workflow p { font-size:.95rem; line-height:1.7; color:var(--muted); }
+  .mo-p-plan-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; margin-bottom:1rem; }
+  .mo-p-plan { min-width:0; padding:1.6rem; border:1px solid var(--mo-p-border); border-radius:1.15rem; }
+  .mo-p-plan-free { background:#fff; }
+  .mo-p-plan-premium { background:var(--mo-p-soft); }
+  .mo-p-plan h3 { margin:0 0 .75rem; font-size:1.3rem; }
+  .mo-p-plan p { margin:0; font-size:.96rem; line-height:1.7; color:var(--muted); }
+  .mo-p-native { margin-top:3rem; padding:0 0 0 1.5rem; border-left:3px solid var(--mo-p-green); }
+  .mo-p-native .kicker { color:var(--mo-p-green); }
+  .mo-p-native h2 { font-size:2rem; }
+  .mo-p-native p:not(.kicker) { max-width:70ch; line-height:1.7; color:var(--muted); }
+  .mo-p-native p:last-child { margin-bottom:0; }
+  .mo-p-faq details { padding:.75rem 0; border-bottom:1px solid var(--line); }
+  .mo-p-faq summary { box-sizing:border-box; min-height:44px; padding:.65rem 0; font-weight:700; line-height:1.5; color:var(--navy); cursor:pointer; }
+  .mo-p-faq details p { max-width:65ch; margin:.75rem 0; line-height:1.7; color:var(--muted); }
+  .mo-p-help ul { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.6rem 1.5rem; padding:0; list-style:none; }
+  .mo-p-help li { min-width:0; }
+  .mo-p-contact { margin-top:3rem; padding:2rem; background:var(--mo-p-soft); border:1px solid var(--mo-p-border); border-radius:1.25rem; }
+  .mo-p-contact .kicker { color:var(--mo-p-green); }
+  .mo-p-contact h2 { max-width:24ch; }
+  .mo-p-contact p:not(.kicker) { max-width:62ch; line-height:1.7; color:var(--muted); }
+  .mo-p-contact .button { margin-top:.7rem; }
+  .mo-p-showcase a:focus-visible,.mo-p-showcase summary:focus-visible { outline:3px solid #155e9b; outline-offset:5px; }
+  .mo-p-gallery a:focus-visible { outline-offset:3px; }
+  @media (hover:hover) {
+    .mo-p-features li:hover { border-color:#78955e; transform:translateY(-2px); }
+    .mo-p-gallery a:hover figure { border-color:#78955e; }
+    .mo-p-primary:hover { background:#2b4a1b; }
+  }
+  @media (max-width:1000px) {
+    .mo-p-hero { grid-template-columns:1fr; }
+    .mo-p-hero-image { width:100%; max-width:40rem; }
+    .mo-p-workflow ol { grid-template-columns:1fr; gap:.5rem; }
+  }
+  @media (max-width:600px) {
+    .mo-p-hero h1 { font-size:2.75rem; }
+    .mo-p-brand { align-items:flex-start; }
+    .mo-p-headline { font-size:1.85rem; }
+    .mo-p-features,.mo-p-gallery,.mo-p-plan-grid,.mo-p-help ul { grid-template-columns:1fr; }
+    .mo-p-gallery-image { height:15rem; }
+    .mo-p-facts { grid-template-columns:1fr; gap:1rem; }
+    .mo-p-facts li { padding:0; border:0; }
+    .mo-p-actions { align-items:flex-start; }
+    .mo-p-primary { width:100%; }
+    .mo-p-showcase h2 { font-size:1.8rem; }
+    .mo-p-native { padding-left:1rem; }
+    .mo-p-native h2 { font-size:1.65rem; }
+    .mo-p-contact { padding:1.5rem; }
+  }
+  @media (prefers-reduced-motion:reduce) {
+    .mo-p-features li,.mo-p-gallery figure,.mo-p-showcase .button { transition:none; }
+    .mo-p-features li:hover,.mo-p-showcase .button:hover { transform:none; }
+  }
+</style>
