@@ -9,7 +9,10 @@ export type GameShowcase = {
   titleCs: string; titleEn: string;
   taglineCs: string; taglineEn: string;
   introCs: string; introEn: string;
-  features: { titleCs: string; titleEn: string; bodyCs: string; bodyEn: string }[];
+  features: {
+    titleCs: string; titleEn: string; bodyCs: string; bodyEn: string;
+    storeLink?: { hrefCs: string; hrefEn: string; labelCs: string; labelEn: string };
+  }[];
   steps: { titleCs: string; titleEn: string; bodyCs: string; bodyEn: string }[];
   screenshots: {
     src: string; srcEn?: string; thumbnailSrc?: string; thumbnailSrcEn?: string;

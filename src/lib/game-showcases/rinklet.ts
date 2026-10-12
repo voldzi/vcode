@@ -19,7 +19,13 @@ export const rinkletShowcase = {
       titleCs: "Dva u jednoho stolu",
       titleEn: "Two players. One table.",
       bodyCs: "Položte iPhone nebo iPad mezi sebe a hrajte současně. Každý má svou pálku a svou polovinu stolu. Bez účtu a bez připojení.",
-      bodyEn: "Place your iPhone or iPad between you and play at the same time. Each player controls a mallet on their own half of the table. No account or connection needed."
+      bodyEn: "Place your iPhone or iPad between you and play at the same time. Each player controls a mallet on their own half of the table. No account or connection needed.",
+      storeLink: {
+        hrefCs: "https://apps.apple.com/us/app/rinklet/id6821032563?ppid=ed071722-40ef-4e1d-bdff-008e55a5ca52",
+        hrefEn: "https://apps.apple.com/us/app/rinklet/id6821032563?ppid=ed071722-40ef-4e1d-bdff-008e55a5ca52",
+        labelCs: "Prohlédnout místní duel v App Storu",
+        labelEn: "View the local duel on the App Store"
+      }
     },
     {
       titleCs: "Odveta na dálku",
@@ -31,7 +37,13 @@ export const rinkletShowcase = {
       titleCs: "Stůl nahoře. Prst dole.",
       titleEn: "Table above. Finger below.",
       bodyCs: "V rozděleném ovládání vidíte celou arénu nad samostatnou plochou pro pohyb pálky. Na iPhonu a iPadu ho zapnete volbou „Stůl a ovladač“; pro opřený iPhone Duo je připravené stejné uspořádání. Hodí se proti počítači, pro trénink a online duel. Místní hra ve dvou používá společný souvislý stůl.",
-      bodyEn: "Split controls put the whole arena above a separate surface for moving your mallet. Select “Table & controller” on iPhone or iPad; the same arrangement is designed for a propped iPhone Duo. Use it against the computer, in practice or in an online duel. Local two-player games use one continuous table."
+      bodyEn: "Split controls put the whole arena above a separate surface for moving your mallet. Select “Table & controller” on iPhone or iPad; the same arrangement is designed for a propped iPhone Duo. Use it against the computer, in practice or in an online duel. Local two-player games use one continuous table.",
+      storeLink: {
+        hrefCs: "https://apps.apple.com/us/app/rinklet/id6821032563?ppid=49da0d65-4469-46b6-b886-f7e04babdd47",
+        hrefEn: "https://apps.apple.com/us/app/rinklet/id6821032563?ppid=49da0d65-4469-46b6-b886-f7e04babdd47",
+        labelCs: "Prohlédnout rozdělené ovládání v App Storu",
+        labelEn: "View split controls on the App Store"
+      }
     },
     {
       titleCs: "Váš stůl, vaše tempo",

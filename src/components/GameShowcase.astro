@@ -33,7 +33,7 @@ const privacy = storeProduct ? (en ? storeProduct.privacyEn : storeProduct.priva
   </header>
 
   <section class="game-features" aria-label={en ? "Ways to play" : "Možnosti hraní"}>
-    {showcase.features.map((row, i) => <article class="game-feature"><span class="feature-number" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span><h2>{text(row).title}</h2><p>{text(row).body}</p></article>)}
+    {showcase.features.map((row, i) => <article class="game-feature"><span class="feature-number" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span><h2>{text(row).title}</h2><p>{text(row).body}</p>{row.storeLink && <a class="game-feature-link" href={en ? row.storeLink.hrefEn : row.storeLink.hrefCs}>{en ? row.storeLink.labelEn : row.storeLink.labelCs}<span aria-hidden="true">↗</span></a>}</article>)}
   </section>
 
   <section class="game-gallery" id="ukazky" aria-labelledby="gallery-title">
@@ -93,6 +93,8 @@ const privacy = storeProduct ? (en ? storeProduct.privacyEn : storeProduct.priva
   .feature-number {display:inline-flex;font-size:.8rem;letter-spacing:.12em;font-weight:800;color:var(--game-accent);background:var(--game-soft);padding:.4rem .65rem;border-radius:.5rem;margin-bottom:1rem;}
   .game-feature h2 {font-size:1.12rem;margin:0 0 .7rem;color:var(--game-ink);}
   .game-feature p {font-size:.95rem;line-height:1.75;margin:0;}
+  .game-feature-link {display:inline-flex;align-items:flex-start;gap:.5rem;min-height:44px;margin-top:1rem;padding-block:.35rem;color:var(--game-accent);font-size:.9rem;line-height:1.5;font-weight:650;text-decoration:underline;text-underline-offset:.2em;overflow-wrap:anywhere;}
+  .game-feature-link span {flex:none;}
   .section-heading {display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;margin-bottom:1.5rem;}
   .section-heading h2,.game-rules h2,.game-contact h2 {font-size:clamp(1.5rem,3vw,2.2rem);line-height:1.25;letter-spacing:-.03em;margin:.5rem 0;}
   .section-heading>p {max-width:25ch;font-size:.95rem;}
