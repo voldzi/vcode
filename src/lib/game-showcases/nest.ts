@@ -13,13 +13,25 @@ export const nestShowcase = {
       titleCs: "Souboj ve dvou",
       titleEn: "A duel for two",
       bodyCs: "Střídejte se na jednom zařízení. Dvě strany, jedno hnízdo a prostor pro promyšlené tahy i malé léčky.",
-      bodyEn: "Take turns on one device. Two sides, one nest, and plenty of room for careful moves and clever traps."
+      bodyEn: "Take turns on one device. Two sides, one nest, and plenty of room for careful moves and clever traps.",
+      storeLink: {
+        hrefCs: "https://apps.apple.com/app/nest-the-game/id1336678493?ppid=3272d04f-13b3-47bc-946c-217129a350b7",
+        hrefEn: "https://apps.apple.com/app/nest-the-game/id1336678493?ppid=3272d04f-13b3-47bc-946c-217129a350b7",
+        labelCs: "Hra ve dvou v App Storu",
+        labelEn: "Two-player game on the App Store"
+      }
     },
     {
       titleCs: "AI přímo v zařízení",
       titleEn: "On-device AI",
       bodyCs: "Trénujte proti počítačovému soupeři. AI počítá tahy přímo ve vašem zařízení, takže lokální partii můžete hrát i bez internetu.",
-      bodyEn: "Practice against a computer opponent. The AI plans its moves on your device, so local matches can be played without an internet connection."
+      bodyEn: "Practice against a computer opponent. The AI plans its moves on your device, so local matches can be played without an internet connection.",
+      storeLink: {
+        hrefCs: "https://apps.apple.com/app/nest-the-game/id1336678493?ppid=6c044042-c8d5-4965-9771-14f90e256a36",
+        hrefEn: "https://apps.apple.com/app/nest-the-game/id1336678493?ppid=6c044042-c8d5-4965-9771-14f90e256a36",
+        labelCs: "Prohlédnout hru proti AI v App Storu",
+        labelEn: "View the AI game on the App Store"
+      }
     },
     {
       titleCs: "Soupeř přes Game Center",
