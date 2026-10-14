@@ -2406,6 +2406,7 @@
         "type": "string",
         "maxLength": 100,
         "enum": [
+          "election-analyst",
           "vcode-recall",
           "myslopis",
           "stratos-voice",

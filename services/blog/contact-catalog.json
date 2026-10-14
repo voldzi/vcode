@@ -1,5 +1,9 @@
 [
   {
+    "id": "election-analyst",
+    "name": "Election analyst"
+  },
+  {
     "id": "vcode-recall",
     "name": "VCode Recall"
   },

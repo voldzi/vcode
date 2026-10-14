@@ -27,6 +27,17 @@ export type Product = {
 
 export const products: Product[] = [
   {
+    id: "election-analyst", name: "Election analyst", href: "election-analyst", tone: "azure",
+    categoryCs: "Volební atlas", categoryEn: "Election atlas",
+    headlineCs: "Výsledky voleb. V souvislostech.", headlineEn: "Election results. In context.",
+    summaryCs: "Nezávislý český volební atlas pro občany i odborníky. Prozkoumejte veřejné výsledky na mapě, porovnejte dostupná období a vraťte se od přehledu až k původním podkladům.",
+    summaryEn: "An independent Czech election atlas for citizens and specialists. Explore public results on a map, compare available election periods and follow an overview back to its original sources.",
+    capabilitiesCs: ["Výsledky a volební účast na mapě", "Občanský a odborný pohled", "Vyhledávání obcí a kandidatur", "Porovnání dostupných volebních období", "Dohledatelné zdroje a CSV export"],
+    capabilitiesEn: ["Election results and turnout on a map", "Citizen and specialist views", "Municipality and candidature search", "Comparison of available election periods", "Traceable sources and CSV export"],
+    externalUrl: "https://stratos.zeleznalady.cz/ea/",
+    availabilityCs: "Veřejná webová aplikace v češtině", availabilityEn: "Public web app in Czech"
+  },
+  {
     id: "vcode-recall", name: "VCode Recall", href: "vcode-recall", tone: "azure",
     categoryCs: "Paměť projektů pro AI", categoryEn: "Project memory for AI",
     headlineCs: "Váš projekt. Jeho souvislosti. Na vašem Macu.",
