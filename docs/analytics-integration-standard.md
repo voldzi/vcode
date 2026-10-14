@@ -2,6 +2,8 @@
 
 Stav 7. 10. 2026: společný přehled obsahuje osm webů včetně Myslopisu a Eventu. Všech osm má měření zapnuté. Event má konkrétní schválený a zveřejněný CZ/EN text v `event-analytics-privacy-review.md`, ověřené propojení a měří pouze nepřihlášený úvod a obecné zdroje příchodu; viz `event-integration.md`. Myslopis má vlastní konkrétní schválení a zveřejněný text v `myslopis-analytics-privacy-review.md`. Konkrétní CS/EN doplňky včetně rozšíření o obecné zdroje příchodů a skutečná veřejná kliknutí byly schváleny, zveřejněny a centrální aktivace dokončena. Sedm zapnutých webů používá v2; VCode zachovává původní schválenou integraci. Soukromé části zůstávají vyloučené.
 
+Doplnění 14. 10. 2026: Election analyst je devátá registrace v Přehledu, zatím **s vypnutým měřením**. Dosavadních osm aktivních registrací se nezměnilo. Připravuje se pouze otevření veřejného atlasu `/ea/` a obecný zdroj příchodu; žádná práce s volebními výběry, mapou nebo ostatními aplikacemi stejné domény. Konkrétní CZ/EN text čeká na schválení v `election-analyst-analytics-privacy-review.md`; stav a předání vlastní `election-analyst-analytics-integration.md`.
+
 ## Trvalé uspořádání
 
 VCode spravuje jeden server Umami, neveřejnou databázi, přihlašování, dobu uchování a společný přehled. Každý veřejný web má vlastní identifikátor, schválené veřejné cesty a malou integraci na své doméně. Sdílený tracker a přijímací adaptér mají jednu verzovanou implementaci s automatickými kontrolami; aplikace dodávají konfiguraci, nikoliv kopie analytické logiky. Aktualizace se nasazují po ověření kompatibility, ne slepě při změně sdíleného souboru.
@@ -55,7 +57,8 @@ Seznam vychází ze src/lib/products.ts; není úplným soupisem všech serverov
 | mojeporce.cz (Moje porce) | Proxy ověřena; schválený doplněk zveřejněn, měření zapnuté | Pouze veřejná prezentace; bez jídelního deníku a zdravotních údajů |
 | myslopis.cz | Schválený text zveřejněn, měření zapnuté a propojení ověřené | Jen úvod, katalog a metodika; kontakt a určené veřejné odkazy. Bez dotazníků, odpovědí, výsledků, PDF, účtů a osobního průchodu |
 | events.zeleznalady.cz (Event) | Schválený CZ/EN text zveřejněn, měření zapnuté a propojení ověřené | Pouze nepřihlášený úvod `/` a obecný zdroj. Bez kliknutí, přihlášek, účastníků, docházky, účtů a administrace |
-| STRATOS a AKB | Vyloučeno | Soukromé nasazení |
+| stratos.zeleznalady.cz/ea/ (Election analyst) | Zaregistrováno, sběr vypnutý; konkrétní text a integrace čekají na dokončení | Jen čistý vstup `/ea/` a obecný zdroj; žádná kliknutí, hledání, kandidáti, obce nebo pohyby mapy |
+| Ostatní STRATOS a AKB | Vyloučeno | Soukromé nasazení; registrace veřejného atlasu jejich měření nepovoluje |
 
 NEST a Šibenice mají již měřené produktové stránky na VCode. Nativní používání a instalace z App Storu jsou jiné metriky a vyžadují samostatnou integraci.
 
