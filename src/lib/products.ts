@@ -98,8 +98,8 @@ export const products: Product[] = [
     summaryEn: "A modern take on Nine Men's Morris for iPhone, iPad and Apple TV. Place and move pieces, form mills and think ahead.",
     capabilitiesCs: ["Klasická pravidla Mlýna", "Čtyři úrovně místního soupeře", "Dva hráči na jednom zařízení", "Interaktivní lekce a trénink", "Volitelné tahové hraní přes Game Center", "11 jazyků a volba materiálového tématu", "Vypnutí odlesků, zvuku a haptiky"],
     capabilitiesEn: ["Classic Nine Men's Morris rules", "Four levels of on-device opponent", "Two players on one device", "Interactive lessons and practice", "Optional turn-based play through Game Center", "11 languages and selectable material themes", "Optional reflections, sound and haptics"],
-    availabilityCs: "Dostupné v App Storu pro iPhone a iPad. Apple TV čeká na schválení.",
-    availabilityEn: "Available on the App Store for iPhone and iPad. Apple TV is awaiting review."
+    availabilityCs: "Dostupné v App Storu pro iPhone a iPad. Verze pro Apple TV je vydaná; v App Storu se může zobrazit se zpožděním.",
+    availabilityEn: "Available on the App Store for iPhone and iPad. The Apple TV version has been released; it may take a little time to appear on the App Store."
   },
 
   {

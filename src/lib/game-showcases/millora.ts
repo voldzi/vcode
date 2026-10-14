@@ -8,8 +8,8 @@ export const milloraShowcase = {
   taglineEn: "Nine pieces. Three in a row. Your next move.",
   introCs: "Klasický Mlýn v klidném moderním provedení. Vytvořte trojici, připravte soupeře o kámen a promyslete příští tah. Zahrajte si proti počítači, ve dvou na jednom zařízení nebo online přes Game Center.",
   introEn: "Classic Nine Men's Morris in a calm, modern setting. Form a line of three, capture an opponent's piece and plan your next move. Play the computer, share one device or take turns online through Game Center.",
-  availabilityCs: "Dostupné v App Storu pro iPhone a iPad. Verze pro Apple TV čeká na schválení.",
-  availabilityEn: "Available on the App Store for iPhone and iPad. The Apple TV version is awaiting review.",
+  availabilityCs: "Dostupné v App Storu pro iPhone a iPad. Verze pro Apple TV je vydaná; v App Storu se může zobrazit se zpožděním.",
+  availabilityEn: "Available on the App Store for iPhone and iPad. The Apple TV version has been released; it may take a little time to appear on the App Store.",
   heroSrc: `${assetRoot}/millora-hero-1600.webp`,
   heroThumbnailSrc: `${assetRoot}/millora-hero-1280.webp`,
   heroWidth: 1280,
@@ -160,8 +160,8 @@ export const milloraShowcase = {
       height: 1080,
       altCs: "Herní deska MILLORY na Apple TV s vybraným kamenem a postranním přehledem tahu a zásobníků.",
       altEn: "MILLORA's Apple TV board with a selected piece and a side panel showing the turn and reserves.",
-      captionCs: "Verze pro Apple TV čeká na schválení. Pole vybíráte ovladačem.",
-      captionEn: "The Apple TV version is awaiting review. Select a space with your remote."
+      captionCs: "Verze pro Apple TV je vydaná. Pole vybíráte ovladačem.",
+      captionEn: "The Apple TV version has been released. Select a space with your remote."
     }
   ]
 };
