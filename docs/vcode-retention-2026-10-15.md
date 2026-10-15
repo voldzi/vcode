@@ -104,3 +104,11 @@ tests and the 188-page build passed with the existing signed Recall build proof.
 The first documentation check found private operational paths; those were
 replaced with placeholders before final acceptance. This maintenance does not
 replace web/blog containers.
+
+Before changing these destructive-operation guards, rerun
+`python3 -B -m unittest discover -s scripts/ops -p 'test_*.py'` as well as the
+project gates. Later on the same day the accepted Tomato-click release was
+registered: current `tomato-clicks-20261015-r2`, returns
+`tomato-languages-20261015` and `tomato-showcase-20261015`. The prior dashboard
+image received an explicit stable return tag before its separate feature update.
+The maintenance task itself removed nothing and did not restart production.

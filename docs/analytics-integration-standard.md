@@ -1,5 +1,13 @@
 # Jednotné připojení veřejných webů k analytice VCode
 
+Doplnění 15. 10. 2026 v 19:42 Europe/Prague: VCode má v původní integraci navíc
+úzce schválené `outbound-click` pouze pro určené tlačítko Rajčatové sklizně na
+českém a anglickém detailu. Samostatný verzovaný SRI runtime neposílá pageview;
+brána `tomatoPlayClicks` vyžaduje zveřejněné CZ/EN notice, přesné dvě cesty a vlastní
+skutečný začátek sběru. Ostatní původní měření ani osm dalších registrací se nemění.
+Nezobecňovat tuto výjimku na další odkazy nebo aplikace. Viz
+`tomato-play-clicks-release.md` pro kontrakt, schválení, testy a přejímku.
+
 Stav 7. 10. 2026: společný přehled obsahuje osm webů včetně Myslopisu a Eventu. Všech osm má měření zapnuté. Event má konkrétní schválený a zveřejněný CZ/EN text v `event-analytics-privacy-review.md`, ověřené propojení a měří pouze nepřihlášený úvod a obecné zdroje příchodu; viz `event-integration.md`. Myslopis má vlastní konkrétní schválení a zveřejněný text v `myslopis-analytics-privacy-review.md`. Konkrétní CS/EN doplňky včetně rozšíření o obecné zdroje příchodů a skutečná veřejná kliknutí byly schváleny, zveřejněny a centrální aktivace dokončena. Sedm zapnutých webů používá v2; VCode zachovává původní schválenou integraci. Soukromé části zůstávají vyloučené.
 
 Doplnění 15. 10. 2026: Election analyst je devátá registrace v Přehledu a **měření je aktivní od 16:51:12 Europe/Prague**. Dosavadních osm aktivních registrací se nezměnilo. Vlastník schválil konkrétní CZ/EN text i aktivaci: pouze otevření veřejného atlasu `/ea/` a obecný zdroj příchodu; žádná práce s volebními výběry, mapou nebo ostatními aplikacemi stejné domény. Schválené texty jsou zveřejněné, úzká analytická integrace převzatá a propojení potvrzené monitorem. Schválení zaznamenává `election-analyst-analytics-privacy-review.md`; zveřejnění, přesné meze přejímky a aktivaci vlastní `election-analyst-analytics-integration.md`.

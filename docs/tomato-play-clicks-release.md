@@ -62,3 +62,56 @@ release signal. VCode owns one IndexNow request containing precisely the two
 canonical details. Submission acceptance is not indexing, ranking or AI citation.
 Final runtime identities, times and provider receipts are recorded after actual
 acceptance, not inferred from this preparation document.
+
+## Accepted production result
+
+**Active since 15 October 2026, 19:42:37 Europe/Prague**
+(`collectionStartedAt=2026-10-15T17:42:37.773481+00:00`); accepted at 19:42:38.
+Both notices were read back before activation. Deployed source:
+`0b8516539c737a398b51987957ada02b0daea115`.
+
+- Web: `sha256:2d27a3a9ceaa353ca4bfafba2290a3d76b50b57f86d30dbee6e1eb122bae1cee`.
+- Dashboard: `sha256:b5ddb78deb951c0c1f9ce264e73d7857b9a800c3666627b04486e89ab21a54fb`.
+  Its original configuration/base layers and an explicitly tagged return image
+  are preserved. The actual image passed isolated HTTP tests with no external network.
+- Both mandatory Docker builds passed; the blog candidate was not activated.
+  Actual blog `da133e46…` and the other twelve services remained unchanged.
+- Check, **209 Node tests**, the 188-page build and seven selected asset matches
+  passed. Only two details and two notices changed; 184 HTML pages stayed identical.
+- The versioned client is SHA256 `48128fced125d18a41c80da0c0704b1d4c306081b9201f492c43852078ad2f75`,
+  pinned with `sha384-Z5G0P72Z3Btw/f8JeS0XpbXPytuWLKAYzKeMXNLFGvgO14ik2x/bNraAF4/W8mvz`.
+  The legacy tracker is unchanged, SHA256 `80cde685…`.
+- Real IAB checks covered native CS/EN navigation, integrity/markers, 390px layout
+  and notices at 16/32px root text. Initial QA found the fragment heading obscured
+  by the fixed header; that candidate was not promoted. Scoped scroll margin
+  fixed it before final tests/build. Physical-device/WCAG conformance is not claimed.
+- **36 public HTTP checks passed** including anonymous private 401s, notice
+  hashes and held media 404s. Actual runtime confirmed the active gate and
+  capabilities. All eight other registrations and registry inode/permissions
+  were preserved. Read-only Umami heartbeat returned 200 at 19:50.
+- No genuine visitor records, valid synthetic production events, scores,
+  enquiries or Telegram messages were acceptance inputs. A separate chat also
+  independently checked actual container/image identities, notices, client/SRI,
+  scope and 14 client fixtures without sending production events.
+
+Published full-HTML SHA256: CS `bdd401869fda8fef5bc2ebb47407ad3d25b30fb395224af1581aeffca8a60b5b`;
+EN `8a8882ecc9698ab8f639ada7000e98c34c19f06cab910b67201846f26b98f72d`.
+Retention now protects this release, `tomato-languages-20261015` and
+`tomato-showcase-20261015`. No images, release trees, backups or user data were
+removed; X5 limitations remain in the separate retention audit.
+
+## Actual indexing-request receipts
+
+The game chat performed both Google requests once through the existing property:
+CS **19:30:51**, EN **19:31:46 Europe/Prague**, each with an explicit priority-crawl
+queue confirmation and actual screenshot. The canonical URLs were already final;
+no new account, permission grant, CAPTCHA interaction or duplicate request occurred.
+IndexNow returned **HTTP 200 at 19:44:12** for exactly the two canonical details,
+using the existing public key. No sitemap or additional URL was submitted.
+These are accepted requests/notifications, **not proof of indexing, ranking or
+AI citation**.
+
+Safe receipts/screenshots are in this chat's private `tomato-clicks-20261015`
+artifact archive. Server release identity: `tomato-clicks-20261015-r2`. Raw registry
+backups and runtime configuration stay server-only. Later documentation edits do
+not replace the accepted image or mutate its immutable acceptance receipt.
