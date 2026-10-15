@@ -1,6 +1,6 @@
 # Election analyst: informace o návštěvnosti ke schválení
 
-Stav 14. 10. 2026: **NÁVRH PRO VLASTNÍKA, DOSUD NESCHVÁLENO.** Registrace v Přehledu existuje, ale sběr je vypnutý. Tento dokument ani obecný pokyn přidat aplikaci nepředstavují schválení nového textu soukromí.
+Stav 15. 10. 2026: **SCHVÁLENO VLASTNÍKEM VČETNĚ AKTIVACE.** Vlastník přímo ve VCode chatu uvedl: „Schvaluji CZ/EN text soukromí i aktivaci měření Election analyst. Dokonči napojení s vývojářem a zapni ho v produkci.“ Schválení se vztahuje na níže uvedené konkrétní české a anglické znění a přesný rozsah. Souhlas byl zaznamenán 15. 10. 2026 v 00:56:54 UTC (02:56:54 Europe/Prague). Zapnutí následuje až po zveřejnění obou textů a přejímce integrace; samotné schválení není důkazem aktivního sběru. Schválené odstavce se tímto záznamem nemění.
 
 ## Konkrétní rozsah
 

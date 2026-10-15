@@ -1,8 +1,8 @@
 # Election analyst ve společném Přehledu
 
-## Aktuální stav — 14. 10. 2026
+## Aktuální stav — 15. 10. 2026
 
-Prezentace a návody CS/EN jsou nasazené; viz `election-analyst-showcase.md`. Election analyst je samostatný devátý záznam pro stávajícího analytického vlastníka. **Sběr je vypnutý; čeká na konkrétní souhlas vlastníka, zveřejnění informace a ověření implementace v atlasu.** Předání vývojáři uživatel výslovně povolil.
+Prezentace a návody CS/EN jsou nasazené; viz `election-analyst-showcase.md`. Election analyst je samostatný devátý záznam pro stávajícího analytického vlastníka. **Konkrétní CZ/EN znění i aktivaci vlastník schválil 15. 10. 2026 přímo ve VCode chatu. Sběr zůstává vypnutý do zveřejnění informace a ověření implementace v atlasu.** Předání vývojáři i dokončení nasazení uživatel výslovně povolil.
 
 Dosavadních osm registrací zůstalo beze změny. Přidání nevyžadovalo přestavbu ani restart Přehledu: při obnovení dat načítá aktuální serverový registr a ověřuje oprávnění přes Umami. Nebyly čteny návštěvnické záznamy ani odesílány zkušební návštěvy. Novému webu nebylo povoleno veřejné sdílení.
 
@@ -54,3 +54,11 @@ V archivu je připravený soubor `ea-collector.conf.pending` (0600). Obsahuje je
 `pnpm check` prošlo bez chyb a varování (31 stávajících doporučení). `pnpm test` má 201 úspěšných testů: 62 blog, 107 analytika, 32 stahování. Dva nové testy používají jen syntetické registrace na společném originu a ověřují oddělení klíčů, přesnou atlasovou cestu, odmítnutí politických výběrů i všech kliknutí a nezávislost registrace na souhlasu se sběrem. `pnpm build` ověřilo 182 veřejných stránek a 26 produktů v obou jazycích.
 
 Metadata oprávněného účtu potvrdila novou samostatnou registraci bez veřejného sdílení. Registry přímo v běžícím Přehledu, kolektoru i monitoru obsahují devět položek a novou položku skutečně vypnutou, bez schválení a s jedinou cestou `/ea/`. Nebyla volána souhrnná metrická API původních webů. Neměnily se obrazy ani kontejnery, takže tato příprava nepředstavuje nové vydání webu či blogu nebo důkaz fungujícího frontendového sběru.
+
+## Dokončení po schválení — 15. 10. 2026
+
+Souhlas vlastníka je zaznamenaný v připojeném dokumentu soukromí; české i anglické schválené odstavce zůstaly shodné s `b93af41`. Vývojář chatu **Volební atlas** dostal výslovný pokyn dokončit a nasadit tento rozsah a zveřejnit text. Schválení nevyžaduje další opakované potvrzení.
+
+Čerstvý serverový předběžný stav potvrdil devět registrací, atlas stále vypnutý, předchozí provozní obrazy a nulové restarty. Během následné přípravy přestalo fungovat soukromé spojení: SSH na Docker host skončilo timeoutem i na jeho již ověřené adrese; překlad DMZ selhal a spojení na jeho ověřenou adresu také skončilo timeoutem. Nebyla změněna VPN, DNS, firewall ani ověřování klíčů. Vlastník byl požádán o obnovu připojení. Neproběhla instalace collector include, reload proxy, aktivace registru ani přepnutí produkčních obrazů.
+
+Místní `pnpm check`, 201 testů a `pnpm build` (182 stránek, 26 produktů) opět prošly. Sestavily se také oba předepsané obrazy pro `linux/amd64`; tato místní sestavení nenahrazují produkční web/blog a nejsou důkazem nasazení. Po obnově spojení je nutné znovu načíst aktuální serverový stav a dokončit všechny kroky přejímky výše. Před zapnutím ověřit skutečné zveřejnění CS/EN znění, frontendové testy a obraz atlasu, přesnou proxy lokaci a oddělený syntetický sběr. Žádná skutečná ani zkušební návštěva produkčního atlasu nebyla tímto pokusem zapsána.
