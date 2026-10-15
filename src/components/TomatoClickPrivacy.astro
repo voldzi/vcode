@@ -1,0 +1,14 @@
+---
+const { lang = "cs" } = Astro.props;
+---
+<section id="tomato-play-clicks" data-notice-version="tomato-play-2026-10-15">
+  {lang === "cs" ? <>
+    <h2>Kliknutí na hraní Rajčatové sklizně</h2>
+    <p>Na české a anglické prezentaci Rajčatové sklizně počítáme kliknutí na určené tlačítko Hrát zdarma / Play for free. Zaznamenáváme pouze pojmenovanou událost a veřejnou stránku prezentace, ze které se hra otevírá. Do této události neposíláme adresu webu, ze kterého jste přišli, cílovou adresu hry, parametry adresy, fragment, text odkazu, údaje o účtu ani herní postup. Kliknutí nepotvrzuje spuštění partie a neznamená počet hráčů.</p>
+    <p>Měření zajišťuje naše stávající služba VCode/Umami bez analytických cookies a přihlašovací identity návštěvníka. Události neukládáme pro pozdější odeslání. Při zapnutém Do Not Track nebo Global Privacy Control a při práci offline se kliknutí neodesílá. Přístup ke statistikám mají pouze pověřené osoby po přihlášení a podrobné záznamy uchováváme nejvýše 180 dní. Samotný odkaz na hru funguje i bez měření.</p>
+  </> : <>
+    <h2>Clicks to play Tomato Harvest</h2>
+    <p>On the Czech and English Tomato Harvest presentations, we count clicks on the designated Hrát zdarma / Play for free button. We record only a named event and the public presentation page from which the game is opened. This event does not include the referring website address, the game's destination URL, URL parameters, fragments, link text, account information or game progress. A click does not establish that a round was started or represent a count of players.</p>
+    <p>Our existing self-hosted VCode/Umami service handles this measurement without analytics cookies or a visitor's signed-in identity. Events are not queued for later delivery. Clicks are not sent when Do Not Track or Global Privacy Control is enabled, or while offline. Statistics are accessible only to authorized people after sign-in, and detailed records are retained for no more than 180 days. The game link works without measurement.</p>
+  </>}
+</section>

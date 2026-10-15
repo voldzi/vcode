@@ -1,5 +1,6 @@
 ---
 import AppStoreBadge from "./AppStoreBadge.astro";
+import { tomatoPlayScript } from "../lib/tomatoPlayClicks";
 import ProductIcon from "./ProductIcon.astro";
 import type { Product } from "../lib/products";
 import type { AppStoreProduct } from "../lib/appStore";
@@ -15,7 +16,7 @@ const text = (row: { titleCs: string; titleEn: string; bodyCs: string; bodyEn: s
 const hero = getShowcaseHero(showcase, lang);
 const playUrl = en ? showcase.playUrlEn ?? showcase.playUrl : showcase.playUrl;
 const support = storeProduct ? (en ? storeProduct.supportEn : storeProduct.supportCs) : showcase.playUrl ? (en ? `/en/guides/apps/${product.href}/` : `/navody/aplikace/${product.href}/`) : (en ? "/en/support/" : "/podpora/");
-const privacy = storeProduct ? (en ? storeProduct.privacyEn : storeProduct.privacyCs) : undefined;
+const privacy = storeProduct ? (en ? storeProduct.privacyEn : storeProduct.privacyCs) : product.id === "rajcatova-sklizen" ? (en ? "/en/privacy/#tomato-play-clicks" : "/soukromi/#tomato-play-clicks") : undefined;
 ---
 <div class:list={["game-showcase", `game-${product.id}`]}>
   <header class="game-hero">
@@ -26,7 +27,7 @@ const privacy = storeProduct ? (en ? storeProduct.privacyEn : storeProduct.priva
       <p class="game-description">{en ? showcase.introEn : showcase.introCs}</p>
       <p class="game-availability"><span aria-hidden="true" class:list={["status-dot", {pending: !storeProduct?.appStoreUrl && !showcase.playUrl}]}></span>{en ? showcase.availabilityEn : showcase.availabilityCs}</p>
       <div class="game-actions">
-        {playUrl ? <a class="button primary" href={playUrl}>{en ? "Play for free" : "Hrát zdarma"}<span aria-hidden="true">↗</span></a> : storeProduct?.appStoreUrl ? <AppStoreBadge href={storeProduct.appStoreUrl} {lang} /> : <a class="button primary" href="#pravidla">{en ? "Discover the game" : "Poznejte hru"}<span aria-hidden="true">→</span></a>}
+        {playUrl ? <a class="button primary" href={playUrl} data-tomato-play={product.id === "rajcatova-sklizen" ? "true" : undefined}>{en ? "Play for free" : "Hrát zdarma"}<span aria-hidden="true">↗</span></a> : storeProduct?.appStoreUrl ? <AppStoreBadge href={storeProduct.appStoreUrl} {lang} /> : <a class="button primary" href="#pravidla">{en ? "Discover the game" : "Poznejte hru"}<span aria-hidden="true">→</span></a>}
         <a class="game-text-link" href={showcase.hideGallery ? "#pravidla" : "#ukazky"}>{showcase.hideGallery ? (en ? "How to play" : "Jak hrát") : (en ? "See it in action" : "Podívejte se na hru")}<span aria-hidden="true">↓</span></a>
       </div>
     </div>
@@ -132,3 +133,5 @@ const privacy = storeProduct ? (en ? storeProduct.privacyEn : storeProduct.priva
   @media(max-width:560px) {.game-features {grid-template-columns:1fr;}.section-heading,.game-contact {display:block;}.section-heading>p {max-width:none;}.game-contact .button {margin-top:1rem;}.game-hero {border-radius:1.3rem;}.game-intro h1 {font-size:2.5rem;}.screenshot-frame {height:330px;}.game-help a {width:100%;justify-content:space-between;}.game-video {grid-template-columns:1fr;padding:1.25rem;}}
   @media(prefers-reduced-motion:reduce) {.game-hero-art {animation:none;}.game-feature,.screenshot-frame img {transition:none;}.game-feature:hover,.screenshot-link:hover img {transform:none;}}
 </style>
+
+{product.id === "rajcatova-sklizen" && <script is:inline defer src={tomatoPlayScript.src} integrity={tomatoPlayScript.integrity} crossorigin="anonymous" referrerpolicy="no-referrer"></script>}

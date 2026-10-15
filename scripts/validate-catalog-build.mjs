@@ -23,3 +23,19 @@ for (const path of ['dist/index.html', 'dist/en/index.html']) {
   assert.ok(!cards.get('apsyd-central')?.some(target => target.startsWith('tvos:')), `${path}: Czech prose must not be mistaken for a tvOS mention`);
   console.log(`${path}: ${cards.size} public cards; availability and platform boundaries verified.`);
 }
+
+// The exact, integrity-pinned Tomato click runtime belongs to only two public details.
+const {createHash} = await import('node:crypto');
+const {tomatoPlayScript} = await import('../src/lib/tomatoPlayClicks.ts');
+const clickBytes = await readFile('public' + tomatoPlayScript.src);
+assert.equal(tomatoPlayScript.integrity, 'sha384-' + createHash('sha384').update(clickBytes).digest('base64'));
+for (const [path, lang] of [['dist/aplikace/rajcatova-sklizen/index.html', 'cs'], ['dist/en/apps/rajcatova-sklizen/index.html', 'en']]) {
+  const html = await readFile(path, 'utf8');
+  assert.ok(html.includes(`href="https://games.zeleznalady.cz/tomato/?lang=${lang}" data-tomato-play="true"`));
+  assert.ok(html.includes(`src="${tomatoPlayScript.src}" integrity="${tomatoPlayScript.integrity}"`));
+  assert.equal(html.split(tomatoPlayScript.src).length - 1, 1);
+}
+for (const path of ['dist/aplikace/nest/index.html','dist/en/apps/nest/index.html','dist/hry/index.html','dist/en/games/index.html']) {
+  assert.ok(!(await readFile(path,'utf8')).includes(tomatoPlayScript.src));
+}
+console.log('Tomato CTA: exact CS/EN destinations, scoped marker and pinned runtime integrity verified.');

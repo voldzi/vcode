@@ -1,6 +1,13 @@
+import {tomatoClicksEnabled,TOMATO_CLICK_PATHS} from './tomato-click-policy.mjs';
 export function sanitizeEvent(input, sites) {
   const site = sites.find(s => s.id === input.website);
-  if (!site || !['pageview','app-store-click','contact-click','collaboration-click'].includes(input.name)) throw new Error('invalid event');
+  if (!site || !['pageview','app-store-click','contact-click','collaboration-click','outbound-click'].includes(input.name)) throw new Error('invalid event');
+  if(input.name==='outbound-click'){
+    if(!tomatoClicksEnabled(site)||Object.keys(input).sort().join(',')!=='name,url,website')throw new Error('invalid event');
+    const url=new URL(input.url);
+    if(!TOMATO_CLICK_PATHS.includes(url.pathname)||input.url!=='https://vcode.zeleznalady.cz'+url.pathname)throw new Error('invalid event');
+    return{site,payload:{website:site.id,hostname:site.domain,url:input.url,referrer:'',name:'outbound-click'}};
+  }
   const url = new URL(input.url, `https://${site.domain}`);
   if (url.hostname !== site.domain || url.protocol !== 'https:' || url.username || url.password) throw new Error('invalid host');
   if (!/^\/(?:en\/)?(?:$|aplikace\/|apps\/|app-store\/|blog\/|navody\/|guides\/|podpora\/|support\/|soukromi\/|privacy\/|nest\/|sibenice\/|jizda\/|cop-mobile\/|spoluprace\/$|work-with-us\/$)/.test(url.pathname)) throw new Error('private or unknown page');
