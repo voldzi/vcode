@@ -1,5 +1,10 @@
 # Rajčatová sklizeň — prezentace VCode
 
+Tento dokument zachycuje první prezentační vydání. Pozdější aktualizace pro
+českou i anglickou hru byla přijata v 18:18 Europe/Prague; viz
+`rajcatova-sklizen-language-release.md`. Historická zmínka o českém rozhraní níže
+se týká původního vydání a už nepopisuje aktuální hru.
+
 Stav 15. 10. 2026: **NASAZENO A OVĚŘENO**, přejímka v 16:18:17 Europe/Prague. Přímý souhlas uživatele s přidáním, skutečným snímkem a ověřeným nasazením byl ověřen v chatu Rajčatové sklizně. Prezentace VCode je samostatné vydání; nemění provoz ani data hry.
 
 ## Rozsah

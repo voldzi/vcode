@@ -114,6 +114,10 @@ indexing of the two product details, then checking actual coverage later.
 
 ## Follow-up when the bilingual game is publicly accepted
 
+Completed later the same day: the presentation update was accepted at 18:18
+Europe/Prague; see `rajcatova-sklizen-language-release.md`. The missing free-play
+click collection and the provider-indexing limitations above remain unchanged.
+
 After the game developer supplies the final language URL contract and successful
 public-release evidence, update the intentional CS/EN product/showcase/guide copy
 and English CTA together. Remove the obsolete Czech-only UI warning. Keep the
