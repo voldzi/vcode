@@ -4,6 +4,8 @@ Stav 15. 10. 2026: **SCHVÁLENO VLASTNÍKEM VČETNĚ AKTIVACE.** Vlastník pří
 
 ## Konkrétní rozsah
 
+Produkční přejímka tohoto rozsahu je dokončená a měření aktivované od 15. 10. 2026 16:51:12 Europe/Prague. České a anglické odstavce níže jsou zveřejněné beze změny na `/ea/privacy/analytics/`; provozní doklady a přesné meze přejímky jsou v `election-analyst-analytics-integration.md`.
+
 - Aplikace: Election analyst / Volební atlas, `https://stratos.zeleznalady.cz/ea/`.
 - Pouze jedno otevření čisté vstupní adresy `/ea/` za načtení dokumentu; žádné další události při práci v atlasu.
 - Přenáší se pevná cesta `/ea/`, druh `pageview` a případně obecná kategorie veřejného zdroje příchodu. Adresa s parametrem či fragmentem měření nespouští.
