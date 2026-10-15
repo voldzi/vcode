@@ -47,6 +47,6 @@ kontrola browseru, sestavení obou Docker obrazů a veřejná přejímka jsou do
   shodný; nový sběr, skutečná poptávka, herní skóre ani Telegram zpráva se neodeslaly.
 
 Neveřejný doklad a návratový obraz jsou v
-`/srv/vcode/releases/tomato-languages-20261015`. Snímky a bezpečné přejímkové
+chráněném serverovém adresáři vydání `tomato-languages-20261015`. Snímky a bezpečné přejímkové
 výsledky jsou v archivu `tomato-languages-20261015` tohoto chatu. Tento pozdější
 dokumentační doplněk nemění přijatý runtime ani jeho zmrazený zdrojový balík.
