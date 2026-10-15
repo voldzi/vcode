@@ -32,12 +32,12 @@ export const products: Product[] = [
     headlineCs: "Čtyři pozice. Padající rajčata. Ještě jeden pokus.",
     headlineEn: "Four positions. Falling tomatoes. One more try.",
     summaryCs: "Rychlá retro arkáda na pár minut. Přepínejte mezi čtyřmi pozicemi, chytejte padající rajčata a zkuste překonat vlastní rekord. Tři chyby a sklizeň končí.",
-    summaryEn: "A quick retro arcade game for a short break. Switch between four positions, catch the falling tomatoes and try to beat your personal best. Three misses end the harvest. The game interface is currently in Czech.",
+    summaryEn: "A quick retro arcade game for a short break. Switch between four positions, catch the falling tomatoes and try to beat your personal best. Three misses end the harvest.",
     capabilitiesCs: ["Hraní zdarma v prohlížeči", "Čtyři pozice chytu a tři chyby", "Denní výzva", "Dobrovolný veřejný žebříček", "Offline hraní po prvním online načtení"],
     capabilitiesEn: ["Play for free in your browser", "Four catch positions and three misses", "Daily challenge", "Optional public leaderboard", "Offline play after the first online load"],
     externalUrl: "https://games.zeleznalady.cz/tomato/",
-    availabilityCs: "Zdarma v prohlížeči · české rozhraní",
-    availabilityEn: "Free browser game · interface in Czech"
+    availabilityCs: "Zdarma v prohlížeči · česky i anglicky",
+    availabilityEn: "Free browser game · English and Czech"
   },
   {
     id: "election-analyst", name: "Election analyst", href: "election-analyst", tone: "azure",

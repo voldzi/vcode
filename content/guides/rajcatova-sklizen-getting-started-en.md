@@ -9,17 +9,21 @@ classification: public
 status: published
 document_type: manual
 documentation_profile: akb-application-docs-1
-document_revision: "1.0"
+document_revision: "1.1"
 reviewed_on: 2026-10-15
 slug: rajcatova-sklizen-getting-started
 order: 96
 ---
 
-Open [Tomato Harvest (Rajčatová sklizeň)](https://games.zeleznalady.cz/tomato/). Play for free in your browser. **The game interface is currently in Czech.**
+Open [Tomato Harvest (Rajčatová sklizeň)](https://games.zeleznalady.cz/tomato/?lang=en). Play for free in your browser, in English or Czech.
+
+## Change the language
+
+Choose English or Czech in **Game language**. You can switch during a game without starting over. Help, results and the leaderboard change language too. Your browser remembers your choice; links from the English or Czech presentation open the game directly in that language.
 
 ## Catch the tomatoes
 
-1. Start the daily challenge with **Hrát hned** (Play now).
+1. Start the daily challenge with **Play now**.
 2. Watch the tomatoes and switch between four catch positions using the directional controls below the play area.
 3. Each catch adds to your score. Three misses end the game; try again to beat your personal best.
 

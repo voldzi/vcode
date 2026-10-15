@@ -8,6 +8,7 @@ import { tomatoShowcase } from "./rajcatova-sklizen";
 export type GameShowcase = {
   id: string;
   playUrl?: string;
+  playUrlEn?: string;
   hideGallery?: boolean;
   titleCs: string; titleEn: string;
   taglineCs: string; taglineEn: string;

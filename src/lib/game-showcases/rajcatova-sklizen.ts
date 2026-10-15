@@ -1,7 +1,8 @@
 export const tomatoShowcase = {
   id: "rajcatova-sklizen",
   titleCs: "Rajčatová sklizeň", titleEn: "Tomato Harvest",
-  playUrl: "https://games.zeleznalady.cz/tomato/",
+  playUrl: "https://games.zeleznalady.cz/tomato/?lang=cs",
+  playUrlEn: "https://games.zeleznalady.cz/tomato/?lang=en",
   hideGallery: true,
   taglineCs: "Ještě jedno rajče. Ještě jeden rekord.",
   taglineEn: "One more tomato. One more record.",
@@ -27,8 +28,8 @@ export const tomatoShowcase = {
   steps: [
     {
       titleCs: "Otevřete a hrajte", titleEn: "Open and play",
-      bodyCs: "Hru spustíte zdarma přímo v prohlížeči. Každý den vás čeká stejná výzva jako ostatní hráče.",
-      bodyEn: "Play for free in your browser. Each day, take on the same challenge as other players."
+      bodyCs: "Hru spustíte zdarma přímo v prohlížeči. Češtinu nebo angličtinu můžete přepnout i během hry, bez nového začátku. Každý den vás čeká stejná výzva jako ostatní hráče.",
+      bodyEn: "Play for free in your browser. Switch between English and Czech, even during a game, without starting over. Each day, take on the same challenge as other players."
     },
     {
       titleCs: "Hlídejte čtyři směry", titleEn: "Watch all four positions",
@@ -44,10 +45,10 @@ export const tomatoShowcase = {
   screenshots: [{
     src: "/showcases/rajcatova-sklizen/gameplay.webp", width: 343, height: 694,
     altCs: "Rajčatová sklizeň: celý červený herní přístroj se čtyřmi směrovými ovladači, skóre 2 a právě chyceným rajčetem.",
-    altEn: "Tomato Harvest: the complete red game console with four directional controls, a score of 2 and a tomato being caught. The interface is in Czech.",
+    altEn: "Tomato Harvest: the complete red game console with four directional controls, a score of 2 and a tomato being caught. This screenshot shows the Czech interface.",
     captionCs: "Čtyři směry. Správný okamžik. Další chycené rajče.",
     captionEn: "Four directions. The right moment. Another tomato caught."
   }],
-  availabilityCs: "Zdarma v prohlížeči. Hra má české rozhraní.",
-  availabilityEn: "Free in your browser. The game interface is currently in Czech."
+  availabilityCs: "Zdarma v prohlížeči. Česky i anglicky.",
+  availabilityEn: "Free in your browser. In English and Czech."
 };

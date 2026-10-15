@@ -9,13 +9,17 @@ classification: public
 status: published
 document_type: manual
 documentation_profile: akb-application-docs-1
-document_revision: "1.0"
+document_revision: "1.1"
 reviewed_on: 2026-10-15
 slug: rajcatova-sklizen-prvni-hra
 order: 96
 ---
 
-Otevřete [Rajčatovou sklizeň](https://games.zeleznalady.cz/tomato/). Hraje se zdarma přímo v prohlížeči a má české rozhraní.
+Otevřete [Rajčatovou sklizeň](https://games.zeleznalady.cz/tomato/?lang=cs). Hraje se zdarma přímo v prohlížeči, česky i anglicky.
+
+## Změna jazyka
+
+V nabídce **Jazyk hry** vyberte češtinu nebo angličtinu. Jazyk můžete změnit i během rozehrané partie, aniž byste začínali znovu. Přeloží se také nápověda, výsledky a žebříček. Prohlížeč si vaši volbu zapamatuje; odkaz z české nebo anglické prezentace otevře hru rovnou v příslušném jazyce.
 
 ## Jak chytat rajčata
 
