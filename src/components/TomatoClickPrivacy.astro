@@ -12,3 +12,7 @@ const { lang = "cs" } = Astro.props;
     <p>Our existing self-hosted VCode/Umami service handles this measurement without analytics cookies or a visitor's signed-in identity. Events are not queued for later delivery. Clicks are not sent when Do Not Track or Global Privacy Control is enabled, or while offline. Statistics are accessible only to authorized people after sign-in, and detailed records are retained for no more than 180 days. The game link works without measurement.</p>
   </>}
 </section>
+
+<style>
+  #tomato-play-clicks { scroll-margin-top: calc(7rem + env(safe-area-inset-top)); }
+</style>
