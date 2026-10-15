@@ -7,7 +7,7 @@ const cs = lang === "cs";
 <section class="products-section games-section" id={cs ? "hry" : "games"}>
   <div class="section-heading">
     <div><span class="section-index">PLAY</span><h2>{cs ? "Malé hry. Velká radost." : "Small games. Big delight."}</h2></div>
-    <p>{cs ? "Strategie, slovní hříčky, stolní hokej i příběhy v ulicích. Vyberte si hru pro svou chvíli volna." : "Strategy, word games, table hockey and stories in the streets. Find a game for your next break."}</p>
+    <p>{cs ? "Strategie, retro arkády, slovní hříčky i příběhy v ulicích. Vyberte si hru pro svou chvíli volna." : "Strategy, retro arcades, word games and stories in the streets. Find a game for your next break."}</p>
   </div>
   <div class="product-grid">{games.map(product => <ProductCard product={product} lang={lang} />)}</div>
   {!hub && <p class="games-hub-link"><a class="button secondary" href={cs ? "/hry/" : "/en/games/"}>{cs ? "Všechny hry na jednom místě" : "Explore all our games"}</a></p>}

@@ -3,7 +3,7 @@ const { id, size = 64 } = Astro.props as { id: string; size?: number };
 const flowApps = ["stratos", "budget-contract", "projectflow", "archflow", "akb", "stratos-voice", "executive-center"];
 const clinicalIcons: Record<string, string> = { apsyd: "apsyd-990b76f0527a", "apsyd-central": "apsyd-central-dcaaa0627b91" };
 const icon = id === "kaloricke-tabulky" ? "mojeporce-b244faa9e68a" : clinicalIcons[id] ?? (flowApps.includes(id) ? `${id}-flow-v1` : id);
-const extension = (id === "kaloricke-tabulky" || id in clinicalIcons || icon.endsWith("-flow-v1") || ["apsyd", "kaloricke-tabulky", "event", "myslopis"].includes(icon)) ? "svg" : ["nest", "pas", "mestem-hrou", "sibenice", "election-analyst"].includes(icon) ? "png" : "webp";
+const extension = (id === "kaloricke-tabulky" || id in clinicalIcons || icon.endsWith("-flow-v1") || ["apsyd", "kaloricke-tabulky", "event", "myslopis"].includes(icon)) ? "svg" : ["nest", "pas", "mestem-hrou", "sibenice", "election-analyst", "rajcatova-sklizen"].includes(icon) ? "png" : "webp";
 const source = id === "vcode-recall" ? "/images/products/recall-icon.webp" : `/apps/${icon}.${extension}`;
 ---
 <span class:list={["product-icon", `product-icon-${id}`]} style={`--icon-size:${size}px`} aria-hidden="true">

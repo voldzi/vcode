@@ -736,6 +736,7 @@
         "type": "string",
         "maxLength": 100,
         "enum": [
+          "rajcatova-sklizen",
           "election-analyst",
           "vcode-recall",
           "myslopis",

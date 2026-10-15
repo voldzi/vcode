@@ -3,9 +3,12 @@ import { rinkletShowcase } from "./rinklet";
 import { milloraShowcase } from "./millora";
 import { foldlightShowcase } from "./foldlight";
 import { sibeniceShowcase } from "./sibenice";
+import { tomatoShowcase } from "./rajcatova-sklizen";
 
 export type GameShowcase = {
   id: string;
+  playUrl?: string;
+  hideGallery?: boolean;
   titleCs: string; titleEn: string;
   taglineCs: string; taglineEn: string;
   introCs: string; introEn: string;
@@ -29,7 +32,7 @@ export type GameShowcase = {
   availabilityCs: string; availabilityEn: string;
 };
 
-const showcases: GameShowcase[] = [nestShowcase, rinkletShowcase, milloraShowcase, foldlightShowcase, sibeniceShowcase];
+const showcases: GameShowcase[] = [nestShowcase, rinkletShowcase, milloraShowcase, foldlightShowcase, sibeniceShowcase, tomatoShowcase];
 export const getGameShowcase = (id: string) => showcases.find(item => item.id === id);
 
 export function getShowcaseHero(showcase: GameShowcase, lang: "cs" | "en") {

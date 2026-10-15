@@ -13,7 +13,7 @@ const text = (row: { titleCs: string; titleEn: string; bodyCs: string; bodyEn: s
   title: en ? row.titleEn : row.titleCs, body: en ? row.bodyEn : row.bodyCs
 });
 const hero = getShowcaseHero(showcase, lang);
-const support = storeProduct ? (en ? storeProduct.supportEn : storeProduct.supportCs) : (en ? "/en/support/" : "/podpora/");
+const support = storeProduct ? (en ? storeProduct.supportEn : storeProduct.supportCs) : showcase.playUrl ? (en ? `/en/guides/apps/${product.href}/` : `/navody/aplikace/${product.href}/`) : (en ? "/en/support/" : "/podpora/");
 const privacy = storeProduct ? (en ? storeProduct.privacyEn : storeProduct.privacyCs) : undefined;
 ---
 <div class:list={["game-showcase", `game-${product.id}`]}>
@@ -23,10 +23,10 @@ const privacy = storeProduct ? (en ? storeProduct.privacyEn : storeProduct.priva
       <h1>{en ? (product.nameEn ?? product.name) : product.name}</h1>
       <p class="game-tagline">{en ? showcase.taglineEn : showcase.taglineCs}</p>
       <p class="game-description">{en ? showcase.introEn : showcase.introCs}</p>
-      <p class="game-availability"><span aria-hidden="true" class:list={["status-dot", {pending: !storeProduct?.appStoreUrl}]}></span>{en ? showcase.availabilityEn : showcase.availabilityCs}</p>
+      <p class="game-availability"><span aria-hidden="true" class:list={["status-dot", {pending: !storeProduct?.appStoreUrl && !showcase.playUrl}]}></span>{en ? showcase.availabilityEn : showcase.availabilityCs}</p>
       <div class="game-actions">
-        {storeProduct?.appStoreUrl ? <AppStoreBadge href={storeProduct.appStoreUrl} {lang} /> : <a class="button primary" href="#pravidla">{en ? "Discover the game" : "Poznejte hru"}<span aria-hidden="true">→</span></a>}
-        <a class="game-text-link" href="#ukazky">{en ? "See it in action" : "Podívejte se na hru"}<span aria-hidden="true">↓</span></a>
+        {showcase.playUrl ? <a class="button primary" href={showcase.playUrl}>{en ? "Play for free" : "Hrát zdarma"}<span aria-hidden="true">↗</span></a> : storeProduct?.appStoreUrl ? <AppStoreBadge href={storeProduct.appStoreUrl} {lang} /> : <a class="button primary" href="#pravidla">{en ? "Discover the game" : "Poznejte hru"}<span aria-hidden="true">→</span></a>}
+        <a class="game-text-link" href={showcase.hideGallery ? "#pravidla" : "#ukazky"}>{showcase.hideGallery ? (en ? "How to play" : "Jak hrát") : (en ? "See it in action" : "Podívejte se na hru")}<span aria-hidden="true">↓</span></a>
       </div>
     </div>
     <div class="game-hero-art"><img src={hero.src} alt={hero.alt} width={hero.width} height={hero.height} loading="eager" fetchpriority="high" decoding="async" /><span class="art-glow" aria-hidden="true"></span></div>
@@ -36,7 +36,7 @@ const privacy = storeProduct ? (en ? storeProduct.privacyEn : storeProduct.priva
     {showcase.features.map((row, i) => <article class="game-feature"><span class="feature-number" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span><h2>{text(row).title}</h2><p>{text(row).body}</p>{row.storeLink && <a class="game-feature-link" href={en ? row.storeLink.hrefEn : row.storeLink.hrefCs}>{en ? row.storeLink.labelEn : row.storeLink.labelCs}<span aria-hidden="true">↗</span></a>}</article>)}
   </section>
 
-  <section class="game-gallery" id="ukazky" aria-labelledby="gallery-title">
+  {!showcase.hideGallery && <section class="game-gallery" id="ukazky" aria-labelledby="gallery-title">
     <div class="section-heading"><div><p class="kicker">{en ? showcase.galleryKickerEn ?? "Inside the game" : showcase.galleryKickerCs ?? "Přímo ze hry"}</p><h2 id="gallery-title">{en ? showcase.galleryTitleEn ?? "Find your favourite view." : showcase.galleryTitleCs ?? "Najděte si svůj pohled."}</h2></div><p>{en ? "Open a picture to explore the details." : "Otevřete snímek a prohlédněte si detaily."}</p></div>
     <div class="gallery-grid">
       {showcase.screenshots.map((shot, i) => {
@@ -45,7 +45,7 @@ const privacy = storeProduct ? (en ? storeProduct.privacyEn : storeProduct.priva
         return <figure><a class="screenshot-link" href={src} aria-label={`${en ? "Open image" : "Otevřít snímek"}: ${en ? shot.captionEn : shot.captionCs}`}><div class="screenshot-frame"><img src={thumbnail} width={shot.width} height={shot.height} alt={en ? shot.altEn : shot.altCs} loading="lazy" decoding="async" /><span class="image-open" aria-hidden="true">↗</span></div></a><figcaption><span aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>{en ? shot.captionEn : shot.captionCs}</figcaption></figure>;
       })}
     </div>
-  </section>
+  </section>}
 
   {showcase.video && <section class="game-video" aria-labelledby="video-title"><div><p class="kicker">{en ? "A moment of play" : "Chvilka hraní"}</p><h2 id="video-title">{en ? showcase.video.titleEn : showcase.video.titleCs}</h2><p>{en ? showcase.video.captionEn : showcase.video.captionCs}</p></div><video controls playsinline preload="none" poster={showcase.video.poster} width={showcase.video.width} height={showcase.video.height} aria-label={en ? showcase.video.titleEn : showcase.video.titleCs}><source src={showcase.video.src} type="video/mp4" /><a href={showcase.video.src}>{en ? "Open the gameplay video" : "Otevřít video ze hry"}</a></video></section>}
 
@@ -67,6 +67,7 @@ const privacy = storeProduct ? (en ? storeProduct.privacyEn : storeProduct.priva
   :global(.game-product-detail) {padding-top:2rem;}
   :global(.game-product-detail > .back-link) {margin-bottom:1rem;}
   .game-rinklet { --game-accent:#006b73; --game-soft:#dcf2ef; --game-ink:#113237; }
+  .game-rajcatova-sklizen { --game-accent:#a33d2c; --game-soft:#fff0e5; --game-ink:#572b21; }
   .game-millora { --game-accent:#805516; --game-soft:#f5ead8; --game-ink:#362915; }
   .game-foldlight { --game-accent:#365f36; --game-soft:#e8eddd; --game-ink:#293824; }
   .game-sibenice { --game-accent:#426130; --game-soft:#edf2df; --game-ink:#233f28; }

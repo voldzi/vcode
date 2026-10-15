@@ -27,6 +27,19 @@ export type Product = {
 
 export const products: Product[] = [
   {
+    id: "rajcatova-sklizen", name: "Rajčatová sklizeň", nameEn: "Tomato Harvest", href: "rajcatova-sklizen", tone: "amber", kind: "game",
+    categoryCs: "Retro arkáda", categoryEn: "Retro arcade",
+    headlineCs: "Čtyři pozice. Padající rajčata. Ještě jeden pokus.",
+    headlineEn: "Four positions. Falling tomatoes. One more try.",
+    summaryCs: "Rychlá retro arkáda na pár minut. Přepínejte mezi čtyřmi pozicemi, chytejte padající rajčata a zkuste překonat vlastní rekord. Tři chyby a sklizeň končí.",
+    summaryEn: "A quick retro arcade game for a short break. Switch between four positions, catch the falling tomatoes and try to beat your personal best. Three misses end the harvest. The game interface is currently in Czech.",
+    capabilitiesCs: ["Hraní zdarma v prohlížeči", "Čtyři pozice chytu a tři chyby", "Denní výzva", "Dobrovolný veřejný žebříček", "Offline hraní po prvním online načtení"],
+    capabilitiesEn: ["Play for free in your browser", "Four catch positions and three misses", "Daily challenge", "Optional public leaderboard", "Offline play after the first online load"],
+    externalUrl: "https://games.zeleznalady.cz/tomato/",
+    availabilityCs: "Zdarma v prohlížeči · české rozhraní",
+    availabilityEn: "Free browser game · interface in Czech"
+  },
+  {
     id: "election-analyst", name: "Election analyst", href: "election-analyst", tone: "azure",
     categoryCs: "Volební atlas", categoryEn: "Election atlas",
     headlineCs: "Výsledky voleb. V souvislostech.", headlineEn: "Election results. In context.",
@@ -426,7 +439,7 @@ export function getPublicProducts(): Product[] {
 }
 
 /** Shared order for the homepage and bilingual games hub. */
-export const games = ["nest", "sibenice", "mestem-hrou", "foldlight", "rinklet", "millora"].map(id => getPublicProducts().find(product => product.id === id)).filter((product): product is Product => Boolean(product));
+export const games = ["nest", "sibenice", "mestem-hrou", "rajcatova-sklizen", "foldlight", "rinklet", "millora"].map(id => getPublicProducts().find(product => product.id === id)).filter((product): product is Product => Boolean(product));
 
 /** Public services presented first on the bilingual homepage. */
 export const everydayProducts = ["kaloricke-tabulky", "masaze", "studio-balance"].map(id => getPublicProducts().find(product => product.id === id)).filter((product): product is Product => Boolean(product));
