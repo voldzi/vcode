@@ -1,6 +1,6 @@
 # Rajčatová sklizeň — prezentace VCode
 
-Stav 15. 10. 2026: připravená česká i anglická prezentace, před produkční přejímkou. Přímý souhlas uživatele s přidáním, skutečným snímkem a ověřeným nasazením byl ověřen v chatu Rajčatové sklizně. Prezentace VCode je samostatné vydání; nemění provoz ani data hry.
+Stav 15. 10. 2026: **NASAZENO A OVĚŘENO**, přejímka v 16:18:17 Europe/Prague. Přímý souhlas uživatele s přidáním, skutečným snímkem a ověřeným nasazením byl ověřen v chatu Rajčatové sklizně. Prezentace VCode je samostatné vydání; nemění provoz ani data hry.
 
 ## Rozsah
 
@@ -24,3 +24,11 @@ Ikona `public/apps/rajcatova-sklizen.png` je původní `favicon_512.png` hry. Zd
 ## Ověření a vydání
 
 Vyžaduje se kontrola obou jazyků a herních katalogů na desktopu a mobilu, skutečný snímek a přímé CTA, standardní kontroly VCode a potvrzení nezměněných integračních hranic. Soukromé potvrzení nasazení uchovává skutečný zdrojový základ, obrazy, návrat a veřejné výsledky. Dokud tato přejímka neproběhne, stav tohoto dokumentu se nesmí zaměnit za nasazeno.
+
+### Přijatý výsledek
+
+Nasazený zdrojový commit je `645c4e13db9cebbef9001bf77830e2a33bbfcabc`. Kontrola, 201 testů i sestavení prošly; 188 HTML a šest vybraných assetů se bajtově shodovaly se sestaveným webovým obrazem. Osm vlastních skutečných IAB kontrol pokrylo detail i katalog v CS/EN při šířkách 390 a 1280 px, načtené původní obrázky, obousměrnou změnu jazyka a absenci vodorovného přetékání. Fyzický telefon ani 200% textové zvětšení tímto protokolem nejsou potvrzené. První mylná zmínka o volbě běžného režimu byla opravena před finální přejímkou; hra nabízí denní výzvu.
+
+Veřejných 33 HTTP kontrol zahrnulo oba jazyky, návody, katalog, zdraví webu a blogu, chráněné dashboardové cesty a zachované mediální výluky. Skutečný veřejný IAB potvrdil detail, načtené obrázky a přímé CTA. Aktivní web je `sha256:6ed19c38acce7a4bee8e03f30bfaf222a0f93322c5af4893e4c0eb1ba71a95e1`. Blog používá úzkou vrstvu dvou kontaktních JSON nad předchozím skutečným runtime, obraz `sha256:da133e46dd68a0bb549e0adb4c657c282334e87884a81fe4c34e45e5cd354edc`; kompletní zdrojový blog kandidát se nenasazoval. Osm dalších služeb, původní procesní konfigurace, svazky, sítě a ochrany byly zachované. Neodeslala se skutečná poptávka, skóre ani Telegram zpráva.
+
+Tento závěrečný dokumentační doplněk nemění přijatý runtime ani jeho historický zdrojový balík. Potvrzení a produkční snímek jsou v neveřejném archivu `tomato-showcase-20261015`.
