@@ -736,6 +736,7 @@
         "type": "string",
         "maxLength": 100,
         "enum": [
+          "ai-v-praci",
           "rajcatova-sklizen",
           "election-analyst",
           "vcode-recall",
