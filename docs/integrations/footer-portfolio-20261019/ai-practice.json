@@ -22,15 +22,24 @@
   "referrerPolicy": "no-referrer",
   "offline": "discard",
   "privacyPath": "/prezentaceAI/privacy/portfolio.html",
-  "status": "active_verified_2026-10-19",
-  "pageviewsEnabled": false,
+  "status": "footer_runtime_active_with_separate_usage_scope",
+  "pageviewsEnabled": true,
   "noticeSHA256": {
-    "cs": "53224bb1d59909817321ff0d3920c2980bb93aa7d2dcdf4201dea1141bb481c0",
-    "en": "ed68674725c132b29ee106f93502b319f8b8dfd62d536a405d9c7c44c37e0e98"
+    "cs": "c7e89732acd69cac6f5c4fafc90d2e9d52773ae80fa67d614c0d06cddf6153e2",
+    "en": "30b10460de82b33a810a777aa98a0ab3241b97a9c1e891c016347ab06af285f8"
   },
   "trackerPath": "/prezentaceAI/vcode-ai-footer-v1.js",
   "runtimeSRI": "sha384-nm/lSOBg6KGdiCeaiiqTOPA6S+YCHYqZvgogmki08II9ooqDowr/dYIbzF9EBfXJ",
   "eligibleSurface": "initial-and-current-clean-public-root",
   "registered": true,
-  "collectionStartedAt": "2026-10-19T17:30:20.513187+00:00"
+  "collectionStartedAt": "2026-10-19T17:30:20.513187+00:00",
+  "scope": "footer-runtime-only",
+  "initialFooterNoticeSHA256": {
+    "cs": "53224bb1d59909817321ff0d3920c2980bb93aa7d2dcdf4201dea1141bb481c0",
+    "en": "ed68674725c132b29ee106f93502b319f8b8dfd62d536a405d9c7c44c37e0e98"
+  },
+  "noticeVersion": "ai-practice-usage-2026-10-19-r2",
+  "pageviewsCollectionStartedAt": "2026-10-19T17:57:03.474092+00:00",
+  "practiceUsageCollectionStartedAt": "2026-10-19T17:57:03.474092+00:00",
+  "separateUsageContract": "ai-practice-usage.json"
 }

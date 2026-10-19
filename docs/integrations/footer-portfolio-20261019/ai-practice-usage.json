@@ -1,5 +1,5 @@
 {
-  "status": "owner_approved_pending_public_readback_and_activation",
+  "status": "active_verified_2026-10-19",
   "contractVersion": "vcode-public-v2",
   "websiteId": "724a2354-e5dd-49c8-add0-c2105491ef65",
   "name": "AI v práci",
@@ -30,8 +30,8 @@
   ],
   "preservedFooterCollectionStartedAt": "2026-10-19T17:30:20.513187+00:00",
   "captureSources": false,
-  "pageviewsCollectionStartedAt": null,
-  "practiceUsageCollectionStartedAt": null,
+  "pageviewsCollectionStartedAt": "2026-10-19T17:57:03.474092+00:00",
+  "practiceUsageCollectionStartedAt": "2026-10-19T17:57:03.474092+00:00",
   "payloadKeys": [
     "website",
     "name",
@@ -42,5 +42,9 @@
   "milestoneFrequency": "once-per-open-attempt-in-memory",
   "offline": "discard",
   "credentials": "omit",
-  "referrerPolicy": "no-referrer"
+  "referrerPolicy": "no-referrer",
+  "collectionEnabled": true,
+  "pageviewsEnabled": true,
+  "practiceUsageMetricsApprovedAt": "2026-10-19T17:57:03.474092+00:00",
+  "connectionVerifiedAt": "2026-10-19T17:57:39.517Z"
 }

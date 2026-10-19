@@ -1,5 +1,8 @@
 # AI v práci — přesné měření čtyř odkazů v patičce
 
+**Aktuální stav:** od 19. 10. 2026 19:57 CEST má stejná registrace vedle čtyř původních prokliků také návštěvnost a pět souhrnných milníků. Aktuální schválený text, samostatné podmínky a přejímka: `docs/ai-practice-usage-analytics.md`. Níže uvedené omezení na čtyři prokliky popisuje původní převzetí a samotný nezměněný footer runtime; historii a jeho původní datum zachováváme.
+
+
 ## Aktuální stav
 
 Příprava: 19. října 2026. Prokliky jsou centrálně **vypnuté** do konkrétního schválení nového textu, ověření jeho zveřejnění a přijetí aplikace. Lidské zadání ke koordinaci, implementaci a nasazení je ověřené; pravidlo AGENTS.md navíc vyžaduje kontrolu konkrétního právního znění. Centrální kód se připravuje. Samostatná registrace Umami skutečně vytvořena 19. 10. 2026 v 16:55:44 UTC. Sběr je vypnutý, sdílení a replay nejsou zapnuté. Exact proxy je nasazená a prošla Nginx testem/reloadem. Centrální zákaz pageviews a správné zobrazení event-only režimu v Přehledu jsou implementované a probíhá jejich přejímka; ještě nejsou nasazené. Proto sběr zůstává vypnutý.

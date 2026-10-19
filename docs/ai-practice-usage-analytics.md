@@ -1,6 +1,6 @@
 # AI v práci: návrh návštěvnosti a souhrnných milníků
 
-Stav: revize 2 **vlastníkem schválená; nové měření zatím není aktivní**. Navazuje na upřesnění v chatu cvičebny dne 19. 10. 2026. Čtyři schválené prokliky zůstávají zapnuté; tento návrh nezakládá novou registraci ani neopravňuje k rozšíření sběru.
+Stav: revize 2 **schválená, nasazená a aktivní od 2026-10-19T17:57:03.474092+00:00**. Navazuje na upřesnění v chatu cvičebny dne 19. 10. 2026. Čtyři schválené prokliky zůstávají zapnuté; tento návrh nezakládá novou registraci ani neopravňuje k rozšíření sběru.
 
 ## Stejná registrace, oddělená data zahájení
 
@@ -39,7 +39,7 @@ Nový usage runtime ověří jen HTTPS, přesný host a `pathname === '/prezenta
 
 Pageview nejvýše jednou v životě dokumentu, ne při React remountu, změně příběhu nebo návratu z chatu. Milníky pouze z výslovných aplikačních handlerů; žádné globální click listenery nebo automatická detekce obrazovek. Do handlerů nesmí vstupovat URL, scenario, participant, cohort, variant ani return code. Izolované testy nastaví getter search/hash/href/title/referrer tak, aby vyhodil chybu při jakémkoli přístupu. Stávající footer runtime zůstává byte-exact se svými dosavadními pravidly; oprávnění nového usage klienta jeho původní rozsah nerozšiřuje.
 
-Nový usage runtime `/prezentaceAI/vcode-ai-usage-v1.js` (zdroj `public/vcode-ai-usage-v1.js`), namespace `vcodeAiPracticeUsage`, revize `ai-usage-1`, má pouze explicitní rozhraní `pageview()` / `event(name)`. Dodané místní bajty mají SRI `sha384-OfkMTUtuoV6C0ihpkUglvNBgZaQvTjPsOSC8f35lQ71dHY5xAvX/YRXFyuXmtNxh`; veřejné bajty a aplikační přejímku zbývá ověřit. Monitor tento samostatný runtime ověřuje navíc k původnímu footer runtime. Samotný název runtime není doklad přejímky.
+Nový usage runtime `/prezentaceAI/vcode-ai-usage-v1.js` (zdroj `public/vcode-ai-usage-v1.js`), namespace `vcodeAiPracticeUsage`, revize `ai-usage-1`, má pouze explicitní rozhraní `pageview()` / `event(name)`. Dodané místní bajty mají SRI `sha384-OfkMTUtuoV6C0ihpkUglvNBgZaQvTjPsOSC8f35lQ71dHY5xAvX/YRXFyuXmtNxh`; veřejné bajty a aplikační přejímka byly ověřeny při aktivaci níže. Monitor tento samostatný runtime ověřuje navíc k původnímu footer runtime. Samotný název runtime není doklad přejímky.
 
 Nový usage runtime oddělit od stávajícího footer runtime. Oba musí být idempotentní; usage nesmí znovu emitovat footer kliky a footer nesmí emitovat pageview. Dodavatel má předat veřejný samostatný JS do 10 KiB, SRI, skutečně použité HTML/CSP, izolované testy a veřejné doklady. Žádný automatický export existujících privátních backendových událostí. Nedotýkat se jejich schématu ani účastnických záznamů.
 
@@ -53,7 +53,7 @@ Přehled: návštěvnost od vlastního data; **Souhrnná aktivita ve cvičebně*
 
 ## Přesné CZ/EN znění k revizi
 
-Nové konkrétní sekce: `docs/integrations/footer-portfolio-20261019/ai-practice-usage.cs.html` a `.en.html`. Zamýšlená náhrada dosavadních portfolio sekcí ve stejné veřejné stránce soukromí, protože původní výslovně vylučují návštěvnost a průchod. Definice režimů byly zpřesněny podle předání vývojáře. Vlastník obě jazykové verze revize 2 schválil 19. 10. 2026 v původním chatu cvičebny odpovědí „Schvaluji znění i opravené měření“. VCode ověřil přímo lidskou zprávu i konkrétní otázku. Zbývá technická přejímka skutečného klienta a veřejné r2 stránky; nové měření zatím není aktivní. Souhlas s dřívějšími čtyřmi kliky sám tuto změnu nepovoluje.
+Nové konkrétní sekce: `docs/integrations/footer-portfolio-20261019/ai-practice-usage.cs.html` a `.en.html`. Zamýšlená náhrada dosavadních portfolio sekcí ve stejné veřejné stránce soukromí, protože původní výslovně vylučují návštěvnost a průchod. Definice režimů byly zpřesněny podle předání vývojáře. Vlastník obě jazykové verze revize 2 schválil 19. 10. 2026 v původním chatu cvičebny odpovědí „Schvaluji znění i opravené měření“. VCode ověřil přímo lidskou zprávu i konkrétní otázku. Technická přejímka skutečného klienta, veřejné r2 stránky a aktivace jsou doloženy níže. Souhlas s dřívějšími čtyřmi kliky sám tuto změnu nepovoluje.
 
 ## Nasazení a návrat
 
@@ -78,4 +78,23 @@ Při původní kontrole textů byly změněny pouze tři dokumenty, žádná pro
 
 Sběrač má samostatnou podmínku pro pět milníků a pro návštěvnost, oba druhy vyžadují vlastní datum zahájení; čtyři footer události zůstávají nezávislé. Přehled zobrazuje pět souhrnných počtů, ne individuální funnel nebo konverzní procenta. Dotazy návštěvnosti začínají nejdříve novým datem, staré prokliky zachovávají historii. Období před zahájením má chybějící pokrytí místo naměřené nuly; srovnání s neměřeným předchozím obdobím se nezobrazuje. Monitor ověřuje samostatný usage asset/SRI navíc ke stávajícímu footer runtime.
 
-`pnpm check`: 0 chyb, 0 varování. `pnpm test`: 235/235 (62 blog, 141 analytika, 32 stahování). Nové HTTP fixture ověřují skutečný sběrač i chráněné API, aktivaci a vypnutí nového rozsahu, DNT/GPC, zachování footerů a správné časové hranice. Syntetická prohlížečová kontrola Přehledu prošla v šířkách 390 a 1440 px, bez JS chyb a bez přetečení při 200% textu. Produkční registrace dosud nebyla rozšířena; před aktivací je nutná serverová kvalifikace a veřejná přejímka klienta.
+`pnpm check`: 0 chyb, 0 varování. `pnpm test`: 235/235 (62 blog, 141 analytika, 32 stahování). Nové HTTP fixture ověřují skutečný sběrač i chráněné API, aktivaci a vypnutí nového rozsahu, DNT/GPC, zachování footerů a správné časové hranice. Syntetická prohlížečová kontrola Přehledu prošla v šířkách 390 a 1440 px, bez JS chyb a bez přetečení při 200% textu. Tato místní přejímka předcházela následné serverové kvalifikaci a veřejné aktivaci doložené níže.
+
+## Finální produkční převzetí 19. 10. 2026
+
+- Stejná registrace `724a2354-e5dd-49c8-add0-c2105491ef65`, aktuální název **AI v práci**, `collectionEnabled:true`, `pageviewsEnabled:true`, `captureSources:false`.
+- Návštěvnost i pět milníků od **2026-10-19T17:57:03.474092+00:00**; čtyři dosavadní prokliky a jejich začátek **2026-10-19T17:30:20.513187+00:00** zachované.
+- Přesně devět kategorií: původní čtyři portfolio události a pět `practice-…` uvedených v tomto kontraktu. Živý sběrač potvrdil nové podmínky; čistá syntetická funkce v reálném obrazu ověřila i vypnutí nového rozsahu při zachování footerů. Žádné platné syntetické události do produkce.
+- Veřejná frontendová verze `20261019-usage-13e53705599f`, manifest SHA-256 `51a63300b20c2e3f3f74d45986a6b4823cc39dcc26e7aadfc23d3be906af2854`. Nezávislý readback skutečné veřejné stránky ověřil obě přesné r2 sekce, nový usage SRI, nezměněný footer runtime/SRI i jejich použití v HTML. Plné HTML soukromí SHA-256 `12d77396c1ff224fb784761ef15f6245bd9960e9f9af52b5d230f7adb2c23b31`.
+- Centrální přijatý zdroj `1dbede7f2c93853e00b12bbea08cf398dc32724f`. Na serveru prošly check, **235 testů**, sestavení obou Docker obrazů a izolované testy skutečných collector/dashboard obrazů včetně nového rozsahu. Statický veřejný web byte-exact, **194 HTML**; web/blog nebylo nutné přepínat.
+- Nasazeny jen tři analytické služby, původní prostředí a úložiště zachované. Finální kontrola **17:58:11 UTC** potvrdila ostatních **9 registrací**, **11 kontejnerů** i skutečně dostupné původní obrazy pro návrat.
+- Čerstvý monitor **2026-10-19T17:57:39.517Z**: propojení ověřeno, včetně samostatného usage skriptu/SRI a prázdného neplatného POST →400.
+- Nový veřejný JS balíček Přehledu odpovídá přijatému zdroji; PWA worker připíná jeho novou obsahovou verzi. Soukromé API bez přihlášení vrací **401**. Produkční smoke ověřilo zdraví webu/blogu, oba jazyky, prezentace, návody a oba blogy.
+
+Aktivní analytické obrazy:
+
+- collector: `sha256:7d89af609ad25faa1d3b3d1fe9d4b670897fa5e5f6d948396b132cc5f8df3114`
+- dashboard: `sha256:e8754aa0e542de2fb261dd76057c6f658aba6d69d838f5426d405570b099b89a`
+- monitor: `sha256:ae62d51936d274fc61fb330fbeecb13a4fec1344fac6992da93c2a1b1fedb725`
+
+Soukromé registry, klíče, provozní doklady a konfigurace návratu zůstávají na serveru. Návrat musí nejprve nastavit `pageviewsEnabled:false` a odebrat jen pět nových událostí z povoleného seznamu; původní čtyři kliky, všechna data zahájení a zveřejněná informace o již proběhlém měření zůstanou zachované. Teprve poté případně vrátit původní obrazy. Pro přejímku nebyly čteny skutečné návštěvnické záznamy.
