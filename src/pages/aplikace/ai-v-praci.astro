@@ -1,0 +1,11 @@
+---
+import AiPracticeShowcase from "../../components/AiPracticeShowcase.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getPublicProducts } from "../../lib/products";
+const product = getPublicProducts().find(p => p.id === "ai-v-praci")!;
+const socialPreview = {src:"/images/ai-v-praci/01-overview.webp",width:1280,height:720,alt:"AI v práci — česká cvičebna"};
+const pageStructuredData = {"@context":"https://schema.org","@type":"SoftwareApplication","@id":"https://vcode.zeleznalady.cz/aplikace/ai-v-praci/#application",name:product.name,description:product.summaryCs,inLanguage:"cs",applicationCategory:"EducationalApplication",operatingSystem:"Web browser",url:"https://vcode.zeleznalady.cz/aplikace/ai-v-praci/",image:"https://vcode.zeleznalady.cz/images/ai-v-praci/01-overview.webp",publisher:{"@id":"https://vcode.zeleznalady.cz/#organization"}};
+---
+<BaseLayout title="AI v práci — VCode" description={product.summaryCs} lang="cs" path="/aplikace/ai-v-praci/" alternatePath="/en/apps/ai-v-praci/" {pageStructuredData} {socialPreview}>
+<article class="product-detail tone-azure"><a class="back-link" href="/#aplikace">← Všechny aplikace</a><AiPracticeShowcase lang="cs" /></article>
+</BaseLayout>

@@ -1,7 +1,13 @@
-import {tomatoClicksEnabled,TOMATO_CLICK_PATHS} from './tomato-click-policy.mjs';
+import {tomatoClicksEnabled,TOMATO_CLICK_PATHS,aiPracticeClicksEnabled,AI_PRACTICE_CLICK_PATHS} from './tomato-click-policy.mjs';
 export function sanitizeEvent(input, sites) {
   const site = sites.find(s => s.id === input.website);
-  if (!site || !['pageview','app-store-click','contact-click','collaboration-click','outbound-click'].includes(input.name)) throw new Error('invalid event');
+  if (!site || !['pageview','app-store-click','contact-click','collaboration-click','outbound-click','practice-open-click'].includes(input.name)) throw new Error('invalid event');
+  if(input.name==='practice-open-click'){
+    if(!aiPracticeClicksEnabled(site)||Object.keys(input).sort().join(',')!=='name,url,website')throw new Error('invalid event');
+    const url=new URL(input.url);
+    if(!AI_PRACTICE_CLICK_PATHS.includes(url.pathname)||input.url!=='https://vcode.zeleznalady.cz'+url.pathname)throw new Error('invalid event');
+    return{site,payload:{website:site.id,hostname:site.domain,url:input.url,referrer:'',name:'practice-open-click'}};
+  }
   if(input.name==='outbound-click'){
     if(!tomatoClicksEnabled(site)||Object.keys(input).sort().join(',')!=='name,url,website')throw new Error('invalid event');
     const url=new URL(input.url);

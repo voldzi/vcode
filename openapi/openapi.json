@@ -172,6 +172,9 @@
       "post": {
         "operationId": "collectPublicAnalytics",
         "responses": {
+          "204": {
+            "description": "Event accepted or collection disabled"
+          },
           "400": {
             "description": "Invalid request"
           },
@@ -186,9 +189,6 @@
           },
           "502": {
             "description": "Analytics dependency unavailable"
-          },
-          "204": {
-            "description": "Event accepted or collection disabled"
           }
         },
         "requestBody": {
@@ -2406,6 +2406,7 @@
         "type": "string",
         "maxLength": 100,
         "enum": [
+          "ai-v-praci",
           "rajcatova-sklizen",
           "election-analyst",
           "vcode-recall",

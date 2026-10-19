@@ -27,6 +27,19 @@ export type Product = {
 
 export const products: Product[] = [
   {
+    id: "ai-v-praci", name: "AI v práci", href: "ai-v-praci", tone: "azure",
+    categoryCs: "Praktická cvičebna", categoryEn: "Workplace practice app",
+    headlineCs: "Vyzkoušejte si, co vám AI ulehčí v práci.",
+    headlineEn: "Discover how AI can help with everyday work.",
+    summaryCs: "Procvičte si práci s dokumenty a zadáváním úkolů pro Copilot. Devět pracovních příběhů, připravené odpovědi a prostor ověřit si závěry vlastním tempem.",
+    summaryEn: "Practise working with documents and writing instructions for Copilot. Nine workplace stories, prepared responses and room to check the conclusions at your own pace. The practice app is in Czech.",
+    capabilitiesCs: ["Devět pracovních příběhů se čtyřmi variantami", "Nácvik s připravenými dokumenty a odpověďmi", "Průvodce a ověřování zdrojů", "Cvičení bez účtu nebo s dobrovolným uložením", "Instalace na plochu a veřejné příklady offline"],
+    capabilitiesEn: ["Nine workplace stories with four variants each", "Practice with prepared documents and responses", "Guidance and source checking", "Guest practice or optional saved progress", "Home screen installation and public examples offline"],
+    externalUrl: "https://games.zeleznalady.cz/prezentaceAI/",
+    availabilityCs: "Veřejná webová cvičebna · české rozhraní",
+    availabilityEn: "Public web practice app · Czech interface"
+  },
+  {
     id: "rajcatova-sklizen", name: "Rajčatová sklizeň", nameEn: "Tomato Harvest", href: "rajcatova-sklizen", tone: "amber", kind: "game",
     categoryCs: "Retro arkáda", categoryEn: "Retro arcade",
     headlineCs: "Čtyři pozice. Padající rajčata. Ještě jeden pokus.",

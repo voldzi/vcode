@@ -5,7 +5,7 @@ import { isAbsolute } from 'node:path';
 import {createSessionStore} from './sessions.mjs';
 import {periodWindow,dailySeries} from './dashboard-data.mjs';
 import { sanitizeEvent, sameOrigin } from './security.mjs';
-import {legacyEventCapabilities,tomatoClicksEnabled} from './tomato-click-policy.mjs';
+import {legacyEventCapabilities,tomatoClicksEnabled,aiPracticeClicksEnabled} from './tomato-click-policy.mjs';
 import {effectiveApprovedEvents} from './collector-security.mjs';
 import {canReadDownloadMetrics,readDownloadMetrics,unavailableDownloadMetrics} from './lib/download-metrics.mjs';
 import {createPublicShell} from './public-shell.mjs';
@@ -165,7 +165,7 @@ createServer(async(req,res)=>{try{
    const hasSources=legacy||(expanded&&site.captureSources===true),hasEvents=legacy||approvedEvents.length>0;
    const portfolioEnabled=approvedEvents.some(name=>name.startsWith('portfolio-'));
    const portfolioStartedAt=portfolioEnabled?(Number.isFinite(Date.parse(site.portfolioMetricsCollectionStartedAt))?site.portfolioMetricsCollectionStartedAt:site.portfolioMetricsApprovedAt):null;
-   const metadata={name:site.name,domain:site.domain,collectionEnabled:site.collectionEnabled??(site.domain===new URL(origin).hostname&&enabled),approvedAt:site.approvedAt??null,collectionStartedAt:site.collectionStartedAt??null,metricsCollectionStartedAt:site.metricsCollectionStartedAt??null,portfolioMetricsCollectionStartedAt:portfolioStartedAt,registeredAt:website.createdAt??null,integrationVersion:site.integrationVersion??'vcode-legacy',capabilities:{referrers:hasSources,events:legacy?legacyEventCapabilities(site):approvedEvents,...(legacy&&tomatoClicksEnabled(site)?{scopes:{'outbound-click':'tomato-play'},eventCollectionStartedAt:{'outbound-click':site.tomatoPlayClicks.collectionStartedAt}}:{})},connection:connections.find(c=>c.domain===site.domain)??null};
+   const metadata={name:site.name,domain:site.domain,collectionEnabled:site.collectionEnabled??(site.domain===new URL(origin).hostname&&enabled),approvedAt:site.approvedAt??null,collectionStartedAt:site.collectionStartedAt??null,metricsCollectionStartedAt:site.metricsCollectionStartedAt??null,portfolioMetricsCollectionStartedAt:portfolioStartedAt,registeredAt:website.createdAt??null,integrationVersion:site.integrationVersion??'vcode-legacy',capabilities:{referrers:hasSources,events:legacy?legacyEventCapabilities(site):approvedEvents,...(legacy&&aiPracticeClicksEnabled(site)?{eventCollectionStartedAt:{'practice-open-click':site.aiPracticeClicks.collectionStartedAt,...(tomatoClicksEnabled(site)?{'outbound-click':site.tomatoPlayClicks.collectionStartedAt}:{})}}:{}),...(legacy&&tomatoClicksEnabled(site)?{scopes:{'outbound-click':'tomato-play'},eventCollectionStartedAt:{'outbound-click':site.tomatoPlayClicks.collectionStartedAt,...(aiPracticeClicksEnabled(site)?{'practice-open-click':site.aiPracticeClicks.collectionStartedAt}:{})}}:{})},connection:connections.find(c=>c.domain===site.domain)??null};
    const q=`startAt=${startAt}&endAt=${endAt}&timezone=Europe%2FPrague`;
    try {
     const [stats,pages,referrers,events,series]=await Promise.all([

@@ -21,7 +21,7 @@ import AppStoreBadge from "../../components/AppStoreBadge.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getPublicProducts } from "../../lib/products";
 import { appStoreProducts } from "../../lib/appStore";
-export function getStaticPaths() { return getPublicProducts().map(product => ({ params: { slug: product.href }, props: { product } })); }
+export function getStaticPaths() { return getPublicProducts().filter(product => product.id !== "ai-v-praci").map(product => ({ params: { slug: product.href }, props: { product } })); }
 const { product } = Astro.props;
 const showcase = getGameShowcase(product.id);
 const operationsHero = product.id === "election-analyst" ? electionScreenshots[0] : product.id === "studio-balance" ? studioScreenshots[0] : product.id === "masaze" ? masazeScreenshots[0] : product.id === "event" ? eventScreenshots[0] : undefined;
