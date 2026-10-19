@@ -22,7 +22,7 @@
   "referrerPolicy": "no-referrer",
   "offline": "discard",
   "privacyPath": "/prezentaceAI/privacy/portfolio.html",
-  "status": "owner_approved_pending_central_deployment_and_app_readback",
+  "status": "active_verified_2026-10-19",
   "pageviewsEnabled": false,
   "noticeSHA256": {
     "cs": "53224bb1d59909817321ff0d3920c2980bb93aa7d2dcdf4201dea1141bb481c0",
@@ -31,5 +31,6 @@
   "trackerPath": "/prezentaceAI/vcode-ai-footer-v1.js",
   "runtimeSRI": "sha384-nm/lSOBg6KGdiCeaiiqTOPA6S+YCHYqZvgogmki08II9ooqDowr/dYIbzF9EBfXJ",
   "eligibleSurface": "initial-and-current-clean-public-root",
-  "registered": true
+  "registered": true,
+  "collectionStartedAt": "2026-10-19T17:30:20.513187+00:00"
 }

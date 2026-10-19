@@ -58,3 +58,13 @@ SRI: `sha384-nm/lSOBg6KGdiCeaiiqTOPA6S+YCHYqZvgogmki08II9ooqDowr/dYIbzF9EBfXJ`. 
 ## Aktuální proxy přejímka
 
 Přidána pouze přesná analytická lokace. Předchozí tři lokace zůstávají beze změny. Aktuální SHA-256 vlastního snippetu: `ae8d00096febb4acf3e89f1f2d74a26cfeae761cf225bab6056ab07ed410c06f`; předchozí SHA-256 `ea7b7b70965b347fe9028bb695b0b2d1a46239a8152201913165ca36596f3ced`. Nginx test i reload úspěšné, privátní konfigurace má režim0600. Přesná privátní cesta zálohy je v provozním dokladu a commentary tohoto chatu; nepatří do veřejné aplikace. Aplikační web/API upstreamy beze změny.
+
+## Produkční aktivace
+
+Vlastník schválil přesné CZ/EN znění i aktivaci přímo v chatu VCode dne 19. 10. 2026. Registrace je aktivní od **2026-10-19T17:30:20.513187+00:00**. Živý sběrač nezávisle potvrdil přesně čtyři povolené portfolio události, `pageviewsEnabled:false` a `captureSources:false`. Serverové odmítnutí pageview bylo ověřeno čistou syntetickou funkcí v reálném obrazu, bez odesílání produkčních událostí. Ostatní registrace zachované.
+
+Veřejný frontend převzat jako `20261019-clicks-aea8d4ee53c5`, manifest SHA-256 `7b0e6cd4d4682443b6b4d54be64feae88f6682ca032ab755596d46718be6cedc`. VCode znovu ověřil veřejné HTML, přesné schválené sekce soukromí a SRI skutečně použitého skriptu. Prázdný POST skončil 400; GET 405; dotaz s parametrem 404; DNT 204.
+
+Centrální kód: `c7f7439436a5d15bd71c7e9d86824e71a738c5da`; 227 testů, kontrola a sestavení obou Docker obrazů. Veřejný statický výstup byte-exact, 194 HTML. Nasazeny pouze tři analytické služby, prostředí a ostatních jedenáct kontejnerů zachované. Veřejné smoke ověřilo zdraví webu/blogu, oba jazyky, prezentace, návody a blogy; API Přehledu bez přihlášení vrací 401. Souhrnné hodnoty návštěvníků nebyly pro přejímku čteny.
+
+Čerstvý monitor **2026-10-19T17:31:19.295Z**: propojení ověřeno (veřejný runtime/SRI a neplatný POST →400). Závěrečná kontrola **17:31:38 UTC** potvrdila zachování ostatních služeb, prostředí a úložišť. Původní obrazy a oddělená záloha registrací jsou zachované pouze na serveru. Podrobný provozní doklad zůstává neveřejný.
