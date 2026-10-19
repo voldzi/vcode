@@ -22,5 +22,15 @@
   "referrerPolicy": "no-referrer",
   "offline": "discard",
   "privacyPath": "/ea/privacy/analytics/",
-  "status": "prepared_collection_off_pending_concrete_notice_review_and_app_acceptance"
+  "status": "owner_approved_pending_central_deployment_and_app_readback",
+  "pageviewsEnabled": true,
+  "noticeSHA256": {
+    "cs": "58c5bfa0901af5d12421a5030283ccbe57f0990c484c820a8d3fe644502c9c31",
+    "en": "801092605b585adce5df7f82a3d0b33927fd36dc2b13a490dfb8a243711746d9"
+  },
+  "clickTrackerPath": "/ea/assets/ea-portfolio-clicks.js",
+  "clickRuntimeSRI": "sha384-E8XumpgdkYX3/eIF/ndlJMBKe8SWSENEP85pRbFwkR5hjw4DTcmTc1MzoEKhoCJx",
+  "eligibleSurface": "explicit-public-footer-after-spa-and-on-public-static-pages",
+  "queryHashHrefTitleReferrerRead": false,
+  "existingCleanEntryPageviewUnchanged": true
 }
