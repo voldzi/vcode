@@ -1,6 +1,6 @@
 import {timingSafeEqual} from 'node:crypto';
 import {isIP} from 'node:net';
-export function acceptPublicEvent(input,headers,sites){
+function acceptPublicBase(input,headers,sites){
  if(!input || Object.keys(input).some(k=>!['website','name','path'].includes(k)))throw new Error('Unexpected properties');
  const site=sites.find(s=>s.id===input.website);
  if(site?.collectionEnabled!==true || !site.approvedAt || !site.collectorKey || !Array.isArray(site.allowedPaths))throw new Error('Unapproved site');
@@ -11,6 +11,11 @@ export function acceptPublicEvent(input,headers,sites){
  const ip=String(headers['x-vcode-client-ip']??'');
  if(!isIP(ip))throw new Error('Invalid edge address');
  return {payload:{website:site.id,hostname:site.domain,url:`https://${site.domain}${input.path}`,referrer:''},ip};
+}
+
+export function acceptPublicEvent(input,headers,sites){
+ if(sites.find(site=>site.id===input?.website)?.pageviewsEnabled===false)throw new Error('Pageviews unapproved');
+ return acceptPublicBase(input,headers,sites);
 }
 
 const sourceDomains={google:'google.com',seznam:'seznam.cz',bing:'bing.com',duckduckgo:'duckduckgo.com',facebook:'facebook.com',instagram:'instagram.com',tiktok:'tiktok.com',linkedin:'linkedin.com',openai:'chatgpt.com',claude:'claude.ai',perplexity:'perplexity.ai'};
@@ -25,7 +30,8 @@ export function acceptExpandedPublicEvent(input,headers,sites){
  if(!input||Object.keys(input).some(k=>!['website','name','path','source'].includes(k)))throw new Error('Unexpected properties');
  const site=sites.find(s=>s.id===input.website);
  if(site?.integrationVersion!=='vcode-public-v2'||!site.metricsApprovedAt)throw new Error('Expanded metrics unapproved');
- const accepted=acceptPublicEvent({website:input.website,name:'pageview',path:input.path},headers,sites);
+ if(input.name==='pageview'&&site.pageviewsEnabled===false)throw new Error('Pageviews unapproved');
+ const accepted=acceptPublicBase({website:input.website,name:'pageview',path:input.path},headers,sites);
  if(input.name!=='pageview'){
   if(!effectiveApprovedEvents(site).includes(input.name)||Object.hasOwn(input,'source'))throw new Error('Unapproved event');
   accepted.payload.name=input.name;

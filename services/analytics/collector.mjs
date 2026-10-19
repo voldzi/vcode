@@ -14,7 +14,7 @@ createServer(async(req,res)=>{
   if(req.method==='GET'&&path==='/health'){send(200,'{"ok":true}');return;}
   if(req.method==='GET'&&runtimes.has(path)){send(200,runtimes.get(path),'text/javascript');return;}
   if(req.method!=='POST'||!['/v1/events','/v2/events'].includes(path)){send(404);return;}
-  if(req.headers.dnt==='1'||req.headers['sec-gpc']==='1'){req.resume();send(204);return;}
+  if(['1','yes'].includes(String(req.headers.dnt??'').toLowerCase())||req.headers['sec-gpc']==='1'){req.resume();send(204);return;}
   if(!/^application\/json(?:\s*;|$)/i.test(req.headers['content-type']??'')){send(415);return;}
   let size=0;const chunks=[];for await(const chunk of req){size+=chunk.length;if(size>2048){send(413);return;}chunks.push(chunk);}
   let accepted;try{accepted=(path==='/v2/events'?acceptExpandedPublicEvent:acceptPublicEvent)(JSON.parse(Buffer.concat(chunks).toString()),req.headers,JSON.parse(await readFile(registry,'utf8')));}catch{send(400);return;}

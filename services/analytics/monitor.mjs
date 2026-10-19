@@ -13,6 +13,12 @@ async function run(){
    if(!response.ok||!response.headers.get('content-type')?.includes('javascript'))throw new Error('Tracker missing');
    if(Number(response.headers.get('content-length')??0)>10000)throw new Error('Invalid tracker');
    const source=await response.text();if(source.length>10000||'sha384-'+createHash('sha384').update(source).digest('base64')!==(s.runtimeIntegrity??'sha384-'+expected))throw new Error('Tracker mismatch');
+   if(s.portfolioMetricsApprovedAt&&s.allowedEvents?.some(name=>name.startsWith('portfolio-'))&&s.portfolioTrackerPath){
+    if(!/^\/[a-zA-Z0-9_./-]+$/.test(s.portfolioTrackerPath)||s.portfolioTrackerPath.includes('..')||!/^sha384-[A-Za-z0-9+/]+={0,2}$/.test(s.portfolioRuntimeIntegrity??''))throw new Error('Invalid portfolio runtime');
+    const extra=await fetch(`https://${s.domain}${s.portfolioTrackerPath}`,{redirect:'error',signal:AbortSignal.timeout(12000),headers:{'User-Agent':'VCode analytics connection check'}});
+    if(!extra.ok||!extra.headers.get('content-type')?.includes('javascript')||Number(extra.headers.get('content-length')??0)>10000)throw new Error('Portfolio runtime missing');
+    const code=await extra.text();if(code.length>10000||'sha384-'+createHash('sha384').update(code).digest('base64')!==s.portfolioRuntimeIntegrity)throw new Error('Portfolio runtime mismatch');
+   }
    const rejected=await fetch(`https://${s.domain}${s.collectorPath}`,{method:'POST',redirect:'error',headers:{'Content-Type':'application/json',Origin:`https://${s.domain}`,'User-Agent':'VCode analytics connection check'},body:'{}',signal:AbortSignal.timeout(12000)});
    if(rejected.status!==400)throw new Error('Collector missing');
    status.connected=true;
