@@ -1,6 +1,6 @@
 # AI v práci: návrh návštěvnosti a souhrnných milníků
 
-Stav: návrh k připomínkám a schválení vlastníkem, **není aktivní**. Navazuje na upřesnění v chatu cvičebny dne 19. 10. 2026. Čtyři schválené prokliky zůstávají zapnuté; tento návrh nezakládá novou registraci ani neopravňuje k rozšíření sběru.
+Stav: finální znění k předložení vlastníku, revize 2, **dosud neschválené a není aktivní**. Navazuje na upřesnění v chatu cvičebny dne 19. 10. 2026. Čtyři schválené prokliky zůstávají zapnuté; tento návrh nezakládá novou registraci ani neopravňuje k rozšíření sběru.
 
 ## Stejná registrace, oddělená data zahájení
 
@@ -16,20 +16,30 @@ Stav: návrh k připomínkám a schválení vlastníkem, **není aktivní**. Nav
 | Jméno | Skutečný okamžik | Omezení |
 | --- | --- | --- |
 | `practice-start` | Otevření nebo výslovné pokračování cvičení | Jednou na otevřený pokus v paměti |
-| `practice-answer-viewed` | První nově dokončené přehrání připravené hlavní odpovědi | Obnovené hotové odpovědi nepočítat zpětně |
-| `practice-source-opened` | První skutečné otevření konkrétní citované pasáže odpovědi | Není to otevření obecného seznamu zdrojů |
-| `practice-complete` | Nově dosažené dokončení všech hlavních odpovědí zvoleného režimu | Počet závisí na příběhu/režimu; bonusy nevyžadovat |
+| `practice-answer-viewed` | První nově dokončené přehrání libovolné připravené odpovědi, včetně doplňující | Bez vlastního textu; obnovené hotové odpovědi nepočítat zpětně |
+| `practice-source-opened` | První skutečné otevření konkrétní citované pasáže odpovědi | Nové kliknutí na konkrétní citaci, i po obnově; ne obecný seznam nebo obnovený stav |
+| `practice-complete` | Nově dosažené dokončení podle zvoleného režimu, viz definice níže | Počet závisí na příběhu/režimu; bonusy nevyžadovat |
 | `practice-reset` | Výslovně potvrzený restart pokusu | Ne při načtení, obnovení nebo běžném návratu |
 
-První čtyři události nejvýše jednou v daném otevřeném pokusu. Potvrzený reset odešle reset starého pokusu a smaže jeho paměťové příznaky. Nový start nastane až při skutečném zahájení nového pokusu. Událost se považuje za spotřebovanou i při potlačení DNT/GPC/offline nebo chybě sítě; žádné pozdější dohnání. Nové načtení stránky může vytvořit nový paměťový pokus, proto počty neznamenají jedinečné lidi ani jedinečné uložené práce.
+První čtyři události nejvýše jednou v daném otevřeném pokusu. Potvrzený reset odešle reset starého pokusu a smaže jeho paměťové příznaky. V této aplikaci potvrzení zároveň skutečně otevře nový prázdný pokus, a proto následuje právě jeden nový start. Samotné načtení, obnova nebo mount reset ani tento nový start nespouštějí. Událost se považuje za spotřebovanou i při potlačení DNT/GPC/offline nebo chybě sítě; žádné pozdější dohnání. Nové načtení stránky může vytvořit nový paměťový pokus, proto počty neznamenají jedinečné lidi ani jedinečné uložené práce.
 
-Režimy nemají shodný počet hlavních kroků. Nepoužívat univerzální step1–3, skóre ani počet všech odpovědí jako náhražku dokončení. Obnovený již dokončený pokus nevytváří zpětně answer/source/complete. Při obnovení částečně hotového pokusu počítat až skutečné nové akce; dokončení pouze při novém přechodu do splněných hlavních odpovědí.
+Režimy nemají shodný počet hlavních kroků. Nepoužívat univerzální step1–3, skóre ani počet všech odpovědí jako náhražku dokončení. Obnovený již dokončený pokus nevytváří zpětně answer/source/complete. Při obnovení částečně hotového pokusu počítat až skutečné nové akce; dokončení pouze při novém splnění příslušné podmínky režimu. Nové kliknutí na konkrétní citaci po obnově se může započítat jako source-opened; pouhé obnovení otevřené citace nikoli. Samotný mount nevyvolává answer/source/complete.
+
+Přesná definice `practice-complete`:
+
+- **Guided:** všechny hlavní položky skutečného `guidedPromptIds`, bez bonusů; při chybějícím seznamu použít stejný fallback jako samotné UI.
+- **Case:** všechny hlavní odpovědi lekce, bez bonusů.
+- **Skill:** první nově hotová připravená odpověď ke zvolené dovednosti; tento krátký režim nemá pevnou vícekrokovou posloupnost.
+
+Tyto aplikační seznamy a režimy slouží jen k rozhodnutí v lokálním handleru. Jejich názvy, hodnoty a identifikátory se neposílají analytice. `practice-answer-viewed` naopak není omezené na hlavní odpovědi: započítá první nově hotovou připravenou odpověď i z doplňujících možností, nikdy však vlastní napsaný text.
 
 ## Veřejný vstup a SPA
 
 Nový usage runtime ověří jen HTTPS, přesný host a `pathname === '/prezentaceAI/'`. **Search, hash, href, title a referrer vůbec nečte.** Tím pokryje i veřejné hluboké vstupy a běžný tréninkový stav po SPA změně, ale všechny požadavky mají stejnou konstantní cestu. Ve zdroji ověřeno: administrace se směruje podle jiné cesty `/admin`, nikoli podle parametrů (`src/App.tsx`). Admin, instruktor, API a jiné cesty jsou vždy vyloučené; analytika nečte účastnický účet ani jeho práci.
 
 Pageview nejvýše jednou v životě dokumentu, ne při React remountu, změně příběhu nebo návratu z chatu. Milníky pouze z výslovných aplikačních handlerů; žádné globální click listenery nebo automatická detekce obrazovek. Do handlerů nesmí vstupovat URL, scenario, participant, cohort, variant ani return code. Izolované testy nastaví getter search/hash/href/title/referrer tak, aby vyhodil chybu při jakémkoli přístupu. Stávající footer runtime zůstává byte-exact se svými dosavadními pravidly; oprávnění nového usage klienta jeho původní rozsah nerozšiřuje.
+
+Nový usage runtime `/prezentaceAI/vcode-ai-usage-v1.js` (zdroj `public/vcode-ai-usage-v1.js`), namespace `vcodeAiPracticeUsage`, revize `ai-usage-1`, má pouze explicitní rozhraní `pageview()` / `event(name)`. Konkrétní bajty, SRI a klientské testy zbývá převzít; označení runtime není doklad přejímky.
 
 Nový usage runtime oddělit od stávajícího footer runtime. Oba musí být idempotentní; usage nesmí znovu emitovat footer kliky a footer nesmí emitovat pageview. Dodavatel má předat veřejný samostatný JS do 10 KiB, SRI, skutečně použité HTML/CSP, izolované testy a veřejné doklady. Žádný automatický export existujících privátních backendových událostí. Nedotýkat se jejich schématu ani účastnických záznamů.
 
@@ -43,7 +53,7 @@ Přehled: návštěvnost od vlastního data; **Souhrnná aktivita ve cvičebně*
 
 ## Přesné CZ/EN znění k revizi
 
-Nové konkrétní sekce: `docs/integrations/footer-portfolio-20261019/ai-practice-usage.cs.html` a `.en.html`. Zamýšlená náhrada dosavadních portfolio sekcí ve stejné veřejné stránce soukromí, protože původní výslovně vylučují návštěvnost a průchod. Nejprve potvrdit implementovatelnost významu událostí s vývojářem, poté vlastník schválí přesné obě jazykové verze. Souhlas s dřívějšími čtyřmi kliky sám tuto změnu nepovoluje.
+Nové konkrétní sekce: `docs/integrations/footer-portfolio-20261019/ai-practice-usage.cs.html` a `.en.html`. Zamýšlená náhrada dosavadních portfolio sekcí ve stejné veřejné stránce soukromí, protože původní výslovně vylučují návštěvnost a průchod. Definice režimů byly zpřesněny podle předání vývojáře. Vlastník musí schválit přesné obě jazykové verze revize 2; poté zbývá technická přejímka skutečného klienta. Souhlas s dřívějšími čtyřmi kliky sám tuto změnu nepovoluje.
 
 ## Nasazení a návrat
 
@@ -52,3 +62,14 @@ Nové konkrétní sekce: `docs/integrations/footer-portfolio-20261019/ai-practic
 3. Po schválení zveřejnit přesné notice a nový klient s dosud zakázanou novou centrální větví.
 4. Nezávislý veřejný readback, SRI, negativní collector probe, teprve poté datovaná aktivace návštěvnosti/aktivity při zachování starých kliků a původního začátku.
 5. Návrat vypne pouze nové pageviews a pět milníků. Čtyři schválené kliky pokračují; zveřejněný text o již proběhlém sběru se nemaže.
+
+## Identita textu k předložení vlastníku
+
+Verze notice: `ai-practice-usage-2026-10-19-r2`. SHA-256 úplných souborů včetně koncového nového řádku:
+
+- CS: `c7e89732acd69cac6f5c4fafc90d2e9d52773ae80fa67d614c0d06cddf6153e2`
+- EN: `30b10460de82b33a810a777aa98a0ab3241b97a9c1e891c016347ab06af285f8`
+
+## Kontrola revize 2
+
+Změněny pouze tyto tři dokumenty, žádná produkční konfigurace nebo klient. `pnpm check`: 0 chyb, 0 varování. `pnpm test`: 227/227 (62 blog, 133 analytika, 32 stahování); testy potřebovaly povolit pouze lokální testovací port. Veřejná hranice a kontrola diffu prošly. `pnpm build` se po generování webu zastavil na požadovaném soukromém podepsaném dokladu Recall a jeho důvěryhodném klíči, které nejsou v lokálním prostředí dostupné. Doklad nebyl kopírován a publikační ochrana nebyla vypnuta. Tento lokální běh není úplný úspěšný build ani přejímka nového měření.
