@@ -1,0 +1,46 @@
+{
+  "status": "owner_approved_pending_public_readback_and_activation",
+  "contractVersion": "vcode-public-v2",
+  "websiteId": "724a2354-e5dd-49c8-add0-c2105491ef65",
+  "name": "AI v práci",
+  "publicOrigin": "https://games.zeleznalady.cz",
+  "sourcePath": "/prezentaceAI/",
+  "collectorPath": "/prezentaceAI/analytics/v2/events",
+  "privacyPath": "/prezentaceAI/privacy/portfolio.html",
+  "noticeVersion": "ai-practice-usage-2026-10-19-r2",
+  "noticeSHA256": {
+    "cs": "c7e89732acd69cac6f5c4fafc90d2e9d52773ae80fa67d614c0d06cddf6153e2",
+    "en": "30b10460de82b33a810a777aa98a0ab3241b97a9c1e891c016347ab06af285f8"
+  },
+  "practiceUsageMetricsRequired": true,
+  "practiceUsageTrackerPath": "/prezentaceAI/vcode-ai-usage-v1.js",
+  "practiceUsageRuntimeIntegrity": "sha384-OfkMTUtuoV6C0ihpkUglvNBgZaQvTjPsOSC8f35lQ71dHY5xAvX/YRXFyuXmtNxh",
+  "usageEvents": [
+    "practice-start",
+    "practice-answer-viewed",
+    "practice-source-opened",
+    "practice-complete",
+    "practice-reset"
+  ],
+  "preservedFooterEvents": [
+    "portfolio-vcode-click",
+    "portfolio-moje-porce-click",
+    "portfolio-mestem-hrou-click",
+    "portfolio-myslopis-click"
+  ],
+  "preservedFooterCollectionStartedAt": "2026-10-19T17:30:20.513187+00:00",
+  "captureSources": false,
+  "pageviewsCollectionStartedAt": null,
+  "practiceUsageCollectionStartedAt": null,
+  "payloadKeys": [
+    "website",
+    "name",
+    "path"
+  ],
+  "queryHashHrefTitleReferrerRead": false,
+  "pageviewFrequency": "once-per-document",
+  "milestoneFrequency": "once-per-open-attempt-in-memory",
+  "offline": "discard",
+  "credentials": "omit",
+  "referrerPolicy": "no-referrer"
+}

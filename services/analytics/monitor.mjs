@@ -19,6 +19,12 @@ async function run(){
     if(!extra.ok||!extra.headers.get('content-type')?.includes('javascript')||Number(extra.headers.get('content-length')??0)>10000)throw new Error('Portfolio runtime missing');
     const code=await extra.text();if(code.length>10000||'sha384-'+createHash('sha384').update(code).digest('base64')!==s.portfolioRuntimeIntegrity)throw new Error('Portfolio runtime mismatch');
    }
+   if(s.practiceUsageMetricsRequired===true&&typeof s.practiceUsageMetricsApprovedAt==='string'&&Number.isFinite(Date.parse(s.practiceUsageMetricsApprovedAt))){
+    if(!/^\/[a-zA-Z0-9_./-]+$/.test(s.practiceUsageTrackerPath??'')||s.practiceUsageTrackerPath.includes('..')||!/^sha384-[A-Za-z0-9+/]+={0,2}$/.test(s.practiceUsageRuntimeIntegrity??''))throw new Error('Invalid practice runtime');
+    const extra=await fetch(`https://${s.domain}${s.practiceUsageTrackerPath}`,{redirect:'error',signal:AbortSignal.timeout(12000),headers:{'User-Agent':'VCode analytics connection check'}});
+    if(!extra.ok||!extra.headers.get('content-type')?.includes('javascript')||Number(extra.headers.get('content-length')??0)>10000)throw new Error('Practice runtime missing');
+    const code=await extra.text();if(code.length>10000||'sha384-'+createHash('sha384').update(code).digest('base64')!==s.practiceUsageRuntimeIntegrity)throw new Error('Practice runtime mismatch');
+   }
    const rejected=await fetch(`https://${s.domain}${s.collectorPath}`,{method:'POST',redirect:'error',headers:{'Content-Type':'application/json',Origin:`https://${s.domain}`,'User-Agent':'VCode analytics connection check'},body:'{}',signal:AbortSignal.timeout(12000)});
    if(rejected.status!==400)throw new Error('Collector missing');
    status.connected=true;

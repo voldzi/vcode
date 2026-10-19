@@ -1,6 +1,6 @@
 # AI v práci: návrh návštěvnosti a souhrnných milníků
 
-Stav: finální znění k předložení vlastníku, revize 2, **dosud neschválené a není aktivní**. Navazuje na upřesnění v chatu cvičebny dne 19. 10. 2026. Čtyři schválené prokliky zůstávají zapnuté; tento návrh nezakládá novou registraci ani neopravňuje k rozšíření sběru.
+Stav: revize 2 **vlastníkem schválená; nové měření zatím není aktivní**. Navazuje na upřesnění v chatu cvičebny dne 19. 10. 2026. Čtyři schválené prokliky zůstávají zapnuté; tento návrh nezakládá novou registraci ani neopravňuje k rozšíření sběru.
 
 ## Stejná registrace, oddělená data zahájení
 
@@ -8,7 +8,7 @@ Stav: finální znění k předložení vlastníku, revize 2, **dosud neschvále
 - Veřejný origin `https://games.zeleznalady.cz`, endpoint `/prezentaceAI/analytics/v2/events`, tělo pouze `{website,name,path}` a vždy `path:'/prezentaceAI/'`.
 - Dosavadní čtyři `portfolio-…-click` a jejich začátek **2026-10-19T17:30:20.513187+00:00** zachovat.
 - Návštěvnost a aktivita mají vlastní skutečné datum spuštění: `pageviewsCollectionStartedAt` a `practiceUsageCollectionStartedAt`. Historii nedopočítávat a staré kliky nevydávat za návštěvy.
-- Nový samostatný datovaný souhlas `practiceUsageMetricsApprovedAt`; bez něj server odmítá všech pět nových událostí. Samotné přidání názvů do seznamu nestačí. Pageview lze povolit jen současně s publikovaným schváleným rozšířením a výslovným `pageviewsEnabled:true`.
+- Označení samostatného rozsahu `practiceUsageMetricsRequired:true` a nový datovaný souhlas `practiceUsageMetricsApprovedAt`; bez něj server odmítá všech pět nových událostí. Samotné přidání názvů do seznamu nestačí; milníky vyžadují i platné `practiceUsageCollectionStartedAt`, návštěvnost své `pageviewsCollectionStartedAt`. Pageview lze povolit jen současně s publikovaným schváleným rozšířením a výslovným `pageviewsEnabled:true`.
 - `captureSources:false`; nezasílat `source` ani referrer. Čtyři portfolio kliky mají nadále vlastní schválení a vlastní runtime.
 
 ## Pět souhrnných událostí
@@ -39,7 +39,7 @@ Nový usage runtime ověří jen HTTPS, přesný host a `pathname === '/prezenta
 
 Pageview nejvýše jednou v životě dokumentu, ne při React remountu, změně příběhu nebo návratu z chatu. Milníky pouze z výslovných aplikačních handlerů; žádné globální click listenery nebo automatická detekce obrazovek. Do handlerů nesmí vstupovat URL, scenario, participant, cohort, variant ani return code. Izolované testy nastaví getter search/hash/href/title/referrer tak, aby vyhodil chybu při jakémkoli přístupu. Stávající footer runtime zůstává byte-exact se svými dosavadními pravidly; oprávnění nového usage klienta jeho původní rozsah nerozšiřuje.
 
-Nový usage runtime `/prezentaceAI/vcode-ai-usage-v1.js` (zdroj `public/vcode-ai-usage-v1.js`), namespace `vcodeAiPracticeUsage`, revize `ai-usage-1`, má pouze explicitní rozhraní `pageview()` / `event(name)`. Konkrétní bajty, SRI a klientské testy zbývá převzít; označení runtime není doklad přejímky.
+Nový usage runtime `/prezentaceAI/vcode-ai-usage-v1.js` (zdroj `public/vcode-ai-usage-v1.js`), namespace `vcodeAiPracticeUsage`, revize `ai-usage-1`, má pouze explicitní rozhraní `pageview()` / `event(name)`. Dodané místní bajty mají SRI `sha384-OfkMTUtuoV6C0ihpkUglvNBgZaQvTjPsOSC8f35lQ71dHY5xAvX/YRXFyuXmtNxh`; veřejné bajty a aplikační přejímku zbývá ověřit. Monitor tento samostatný runtime ověřuje navíc k původnímu footer runtime. Samotný název runtime není doklad přejímky.
 
 Nový usage runtime oddělit od stávajícího footer runtime. Oba musí být idempotentní; usage nesmí znovu emitovat footer kliky a footer nesmí emitovat pageview. Dodavatel má předat veřejný samostatný JS do 10 KiB, SRI, skutečně použité HTML/CSP, izolované testy a veřejné doklady. Žádný automatický export existujících privátních backendových událostí. Nedotýkat se jejich schématu ani účastnických záznamů.
 
@@ -53,7 +53,7 @@ Přehled: návštěvnost od vlastního data; **Souhrnná aktivita ve cvičebně*
 
 ## Přesné CZ/EN znění k revizi
 
-Nové konkrétní sekce: `docs/integrations/footer-portfolio-20261019/ai-practice-usage.cs.html` a `.en.html`. Zamýšlená náhrada dosavadních portfolio sekcí ve stejné veřejné stránce soukromí, protože původní výslovně vylučují návštěvnost a průchod. Definice režimů byly zpřesněny podle předání vývojáře. Vlastník musí schválit přesné obě jazykové verze revize 2; poté zbývá technická přejímka skutečného klienta. Souhlas s dřívějšími čtyřmi kliky sám tuto změnu nepovoluje.
+Nové konkrétní sekce: `docs/integrations/footer-portfolio-20261019/ai-practice-usage.cs.html` a `.en.html`. Zamýšlená náhrada dosavadních portfolio sekcí ve stejné veřejné stránce soukromí, protože původní výslovně vylučují návštěvnost a průchod. Definice režimů byly zpřesněny podle předání vývojáře. Vlastník obě jazykové verze revize 2 schválil 19. 10. 2026 v původním chatu cvičebny odpovědí „Schvaluji znění i opravené měření“. VCode ověřil přímo lidskou zprávu i konkrétní otázku. Zbývá technická přejímka skutečného klienta a veřejné r2 stránky; nové měření zatím není aktivní. Souhlas s dřívějšími čtyřmi kliky sám tuto změnu nepovoluje.
 
 ## Nasazení a návrat
 
@@ -70,6 +70,12 @@ Verze notice: `ai-practice-usage-2026-10-19-r2`. SHA-256 úplných souborů vče
 - CS: `c7e89732acd69cac6f5c4fafc90d2e9d52773ae80fa67d614c0d06cddf6153e2`
 - EN: `30b10460de82b33a810a777aa98a0ab3241b97a9c1e891c016347ab06af285f8`
 
-## Kontrola revize 2
+## Kontrola textů revize 2 před implementací
 
-Změněny pouze tyto tři dokumenty, žádná produkční konfigurace nebo klient. `pnpm check`: 0 chyb, 0 varování. `pnpm test`: 227/227 (62 blog, 133 analytika, 32 stahování); testy potřebovaly povolit pouze lokální testovací port. Veřejná hranice a kontrola diffu prošly. `pnpm build` se po generování webu zastavil na požadovaném soukromém podepsaném dokladu Recall a jeho důvěryhodném klíči, které nejsou v lokálním prostředí dostupné. Doklad nebyl kopírován a publikační ochrana nebyla vypnuta. Tento lokální běh není úplný úspěšný build ani přejímka nového měření.
+Při původní kontrole textů byly změněny pouze tři dokumenty, žádná produkční konfigurace nebo klient. `pnpm check`: 0 chyb, 0 varování. `pnpm test`: 227/227 (62 blog, 133 analytika, 32 stahování); testy potřebovaly povolit pouze lokální testovací port. Veřejná hranice a kontrola diffu prošly. `pnpm build` se po generování webu zastavil na požadovaném soukromém podepsaném dokladu Recall a jeho důvěryhodném klíči, které nejsou v lokálním prostředí dostupné. Doklad nebyl kopírován a publikační ochrana nebyla vypnuta. Tento lokální běh není úplný úspěšný build ani přejímka nového měření.
+
+## Připravená centrální implementace
+
+Sběrač má samostatnou podmínku pro pět milníků a pro návštěvnost, oba druhy vyžadují vlastní datum zahájení; čtyři footer události zůstávají nezávislé. Přehled zobrazuje pět souhrnných počtů, ne individuální funnel nebo konverzní procenta. Dotazy návštěvnosti začínají nejdříve novým datem, staré prokliky zachovávají historii. Období před zahájením má chybějící pokrytí místo naměřené nuly; srovnání s neměřeným předchozím obdobím se nezobrazuje. Monitor ověřuje samostatný usage asset/SRI navíc ke stávajícímu footer runtime.
+
+`pnpm check`: 0 chyb, 0 varování. `pnpm test`: 235/235 (62 blog, 141 analytika, 32 stahování). Nové HTTP fixture ověřují skutečný sběrač i chráněné API, aktivaci a vypnutí nového rozsahu, DNT/GPC, zachování footerů a správné časové hranice. Syntetická prohlížečová kontrola Přehledu prošla v šířkách 390 a 1440 px, bez JS chyb a bez přetečení při 200% textu. Produkční registrace dosud nebyla rozšířena; před aktivací je nutná serverová kvalifikace a veřejná přejímka klienta.

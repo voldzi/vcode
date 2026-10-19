@@ -5,6 +5,11 @@ export function periodWindow(days,now=Date.now()) {
  if(![7,30,90].includes(days))throw Object.assign(new Error('Invalid period'),{status:400});
  return {days,startAt:now-days*DAY,endAt:now,timezone:'Europe/Prague',comparison:'previous-equal-duration'};
 }
+export function measurementWindow(window,since=null){
+ const cutoff=typeof since==='string'?Date.parse(since):NaN;
+ const first=Number.isFinite(cutoff)?cutoff:window.startAt;
+ return {startAt:Math.max(window.startAt,first),endAt:window.endAt,started:first<=window.endAt,comparisonCovered:!Number.isFinite(cutoff)||cutoff<=window.startAt-(window.endAt-window.startAt)};
+}
 export function dailySeries(raw,window,since=null) {
  const rows=new Map();
  for(const row of raw?.pageviews??[]) {

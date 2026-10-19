@@ -14,23 +14,34 @@ function acceptPublicBase(input,headers,sites){
 }
 
 export function acceptPublicEvent(input,headers,sites){
- if(sites.find(site=>site.id===input?.website)?.pageviewsEnabled===false)throw new Error('Pageviews unapproved');
+ if(!pageviewsAllowed(sites.find(site=>site.id===input?.website)))throw new Error('Pageviews unapproved');
  return acceptPublicBase(input,headers,sites);
 }
 
 const sourceDomains={google:'google.com',seznam:'seznam.cz',bing:'bing.com',duckduckgo:'duckduckgo.com',facebook:'facebook.com',instagram:'instagram.com',tiktok:'tiktok.com',linkedin:'linkedin.com',openai:'chatgpt.com',claude:'claude.ai',perplexity:'perplexity.ai'};
 const portfolioEvents=new Set(['portfolio-vcode-click','portfolio-moje-porce-click','portfolio-mestem-hrou-click','portfolio-myslopis-click']);
-const supportedEvents=new Set(['app-store-click','contact-click','outbound-click',...portfolioEvents]);
+const practiceEvents=new Set(['practice-start','practice-answer-viewed','practice-source-opened','practice-complete','practice-reset']);
+const dated=value=>typeof value==='string'&&Number.isFinite(Date.parse(value));
+export function practiceUsageApproved(site){
+ return site?.integrationVersion==='vcode-public-v2'&&site.practiceUsageMetricsRequired===true&&site.captureSources===false&&dated(site.practiceUsageMetricsApprovedAt);
+}
+export function pageviewsAllowed(site){
+ if(site?.pageviewsEnabled===false)return false;
+ if(site?.practiceUsageMetricsRequired===true||Object.hasOwn(site??{},'practiceUsageMetricsApprovedAt'))return site.pageviewsEnabled===true&&practiceUsageApproved(site)&&dated(site.pageviewsCollectionStartedAt);
+ return true;
+}
+const supportedEvents=new Set(['app-store-click','contact-click','outbound-click',...portfolioEvents,...practiceEvents]);
 export function effectiveApprovedEvents(site){
  if(site?.integrationVersion!=='vcode-public-v2'||!site.metricsApprovedAt||!Array.isArray(site.allowedEvents))return [];
  const portfolioApproved=typeof site.portfolioMetricsApprovedAt==='string'&&Number.isFinite(Date.parse(site.portfolioMetricsApprovedAt));
- return [...new Set(site.allowedEvents)].filter(name=>supportedEvents.has(name)&&(!portfolioEvents.has(name)||portfolioApproved));
+ const practiceApproved=practiceUsageApproved(site)&&dated(site.practiceUsageCollectionStartedAt);
+ return [...new Set(site.allowedEvents)].filter(name=>supportedEvents.has(name)&&(!portfolioEvents.has(name)||portfolioApproved)&&(!practiceEvents.has(name)||practiceApproved));
 }
 export function acceptExpandedPublicEvent(input,headers,sites){
  if(!input||Object.keys(input).some(k=>!['website','name','path','source'].includes(k)))throw new Error('Unexpected properties');
  const site=sites.find(s=>s.id===input.website);
  if(site?.integrationVersion!=='vcode-public-v2'||!site.metricsApprovedAt)throw new Error('Expanded metrics unapproved');
- if(input.name==='pageview'&&site.pageviewsEnabled===false)throw new Error('Pageviews unapproved');
+ if(input.name==='pageview'&&!pageviewsAllowed(site))throw new Error('Pageviews unapproved');
  const accepted=acceptPublicBase({website:input.website,name:'pageview',path:input.path},headers,sites);
  if(input.name!=='pageview'){
   if(!effectiveApprovedEvents(site).includes(input.name)||Object.hasOwn(input,'source'))throw new Error('Unapproved event');

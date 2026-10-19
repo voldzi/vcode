@@ -3,10 +3,10 @@ import { readFile, open } from 'node:fs/promises';
 import { constants } from 'node:fs';
 import { isAbsolute } from 'node:path';
 import {createSessionStore} from './sessions.mjs';
-import {periodWindow,dailySeries} from './dashboard-data.mjs';
+import {periodWindow,dailySeries,measurementWindow} from './dashboard-data.mjs';
 import { sanitizeEvent, sameOrigin } from './security.mjs';
 import {legacyEventCapabilities,tomatoClicksEnabled,aiPracticeClicksEnabled} from './tomato-click-policy.mjs';
-import {effectiveApprovedEvents} from './collector-security.mjs';
+import {effectiveApprovedEvents,pageviewsAllowed} from './collector-security.mjs';
 import {canReadDownloadMetrics,readDownloadMetrics,unavailableDownloadMetrics} from './lib/download-metrics.mjs';
 import {createPublicShell} from './public-shell.mjs';
 import {createPartnershipProxy,partnershipList} from './lib/partnership-proxy.mjs';
@@ -162,21 +162,28 @@ createServer(async(req,res)=>{try{
    const legacy=!['vcode-public-v1','vcode-public-v2'].includes(site.integrationVersion);
    const expanded=site.integrationVersion==='vcode-public-v2'&&Boolean(site.metricsApprovedAt);
    const approvedEvents=effectiveApprovedEvents(site);
-   const hasPageviews=site.pageviewsEnabled!==false;
+   const hasPageviews=pageviewsAllowed(site);
    const hasSources=hasPageviews&&(legacy||(expanded&&site.captureSources===true)),hasEvents=legacy||approvedEvents.length>0;
    const portfolioEnabled=approvedEvents.some(name=>name.startsWith('portfolio-'));
    const portfolioStartedAt=portfolioEnabled?(Number.isFinite(Date.parse(site.portfolioMetricsCollectionStartedAt))?site.portfolioMetricsCollectionStartedAt:site.portfolioMetricsApprovedAt):null;
    const metadata={name:site.name,domain:site.domain,collectionEnabled:site.collectionEnabled??(site.domain===new URL(origin).hostname&&enabled),approvedAt:site.approvedAt??null,collectionStartedAt:site.collectionStartedAt??null,metricsCollectionStartedAt:site.metricsCollectionStartedAt??null,portfolioMetricsCollectionStartedAt:portfolioStartedAt,registeredAt:website.createdAt??null,integrationVersion:site.integrationVersion??'vcode-legacy',capabilities:{...(hasPageviews?{}:{pageviews:false}),referrers:hasSources,events:legacy?legacyEventCapabilities(site):approvedEvents,...(legacy&&aiPracticeClicksEnabled(site)?{eventCollectionStartedAt:{'practice-open-click':site.aiPracticeClicks.collectionStartedAt,...(tomatoClicksEnabled(site)?{'outbound-click':site.tomatoPlayClicks.collectionStartedAt}:{})}}:{}),...(legacy&&tomatoClicksEnabled(site)?{scopes:{'outbound-click':'tomato-play'},eventCollectionStartedAt:{'outbound-click':site.tomatoPlayClicks.collectionStartedAt,...(aiPracticeClicksEnabled(site)?{'practice-open-click':site.aiPracticeClicks.collectionStartedAt}:{})}}:{})},connection:connections.find(c=>c.domain===site.domain)??null};
+   const practice=approvedEvents.filter(name=>name.startsWith('practice-'));
+   if(practice.length){metadata.practiceUsageCollectionStartedAt=site.practiceUsageCollectionStartedAt;metadata.capabilities.practiceUsage=true;metadata.capabilities.eventCollectionStartedAt=Object.fromEntries(approvedEvents.filter(name=>practice.includes(name)||name.startsWith('portfolio-')).map(name=>[name,practice.includes(name)?site.practiceUsageCollectionStartedAt:portfolioStartedAt]));}
+   if(hasPageviews&&site.practiceUsageMetricsRequired===true)metadata.pageviewsCollectionStartedAt=site.pageviewsCollectionStartedAt;
+   const traffic=measurementWindow(window,metadata.pageviewsCollectionStartedAt??metadata.collectionStartedAt??metadata.registeredAt);
+   if(hasPageviews&&metadata.pageviewsCollectionStartedAt)metadata.pageviewsWindowStarted=traffic.started;
    const q=`startAt=${startAt}&endAt=${endAt}&timezone=Europe%2FPrague`;
+   const trafficQuery=metadata.pageviewsCollectionStartedAt?`startAt=${traffic.startAt}&endAt=${endAt}&timezone=Europe%2FPrague`:q;
+   const fetchTraffic=hasPageviews&&traffic.started;
    try {
     const [stats,pages,referrers,events,series]=await Promise.all([
-     hasPageviews?api(`websites/${site.id}/stats?${q}&compare=prev`,s.token):{pageviews:null,visitors:null,visits:null},
-     hasPageviews?api(`websites/${site.id}/metrics?${q}&type=path&limit=200`,s.token):[],
+     fetchTraffic?api(`websites/${site.id}/stats?${trafficQuery}${!metadata.pageviewsCollectionStartedAt||traffic.comparisonCovered?'&compare=prev':''}`,s.token):{pageviews:null,visitors:null,visits:null},
+     fetchTraffic?api(`websites/${site.id}/metrics?${trafficQuery}&type=path&limit=200`,s.token):[],
      hasSources?api(`websites/${site.id}/metrics?${q}&type=referrer&limit=10`,s.token):[],
      hasEvents?api(`websites/${site.id}/metrics?${q}&type=event&limit=10`,s.token):[],
-     hasPageviews?api(`websites/${site.id}/pageviews?${q}&unit=day`,s.token):null
+     fetchTraffic?api(`websites/${site.id}/pageviews?${trafficQuery}&unit=day`,s.token):null
     ]);
-    return {...metadata,available:true,stats,pages,referrers,events:legacy?events:events.filter(event=>approvedEvents.includes(event.x)),series:hasPageviews?dailySeries(series,window,metadata.collectionStartedAt??metadata.registeredAt):[]};
+    return {...metadata,available:true,stats:metadata.pageviewsCollectionStartedAt&&!traffic.comparisonCovered?Object.fromEntries(Object.entries(stats).filter(([key])=>key!=='comparison')):stats,pages,referrers,events:legacy?events:events.filter(event=>approvedEvents.includes(event.x)),series:hasPageviews?dailySeries(series,window,metadata.pageviewsCollectionStartedAt??metadata.collectionStartedAt??metadata.registeredAt):[]};
    } catch(error) {if(error.status===401)throw error;return {...metadata,available:false,stats:null,pages:[],referrers:[],events:[],series:[]};}
   }));const downloads=canReadDownloadMetrics(rows,process.env.VCODE_ANALYTICS_WEBSITE_ID)?await readDownloadMetrics(process.env.DOWNLOAD_METRICS_PATH,{days}):unavailableDownloadMetrics('not-authorized');send(res,200,{...window,collectionEnabled:enabled,partnershipsEnabled,generatedAt:new Date().toISOString(),sessionExpiresAt:new Date(s.until).toISOString(),incomplete:data.some(site=>site&&site.available===false),sites:data.filter(Boolean),downloads});return;
  }
