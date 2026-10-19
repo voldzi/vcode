@@ -22,7 +22,7 @@
   "referrerPolicy": "no-referrer",
   "offline": "discard",
   "privacyPath": "/ea/privacy/analytics/",
-  "status": "owner_approved_pending_central_deployment_and_app_readback",
+  "status": "active_verified_2026-10-19",
   "pageviewsEnabled": true,
   "noticeSHA256": {
     "cs": "58c5bfa0901af5d12421a5030283ccbe57f0990c484c820a8d3fe644502c9c31",
@@ -32,5 +32,6 @@
   "clickRuntimeSRI": "sha384-E8XumpgdkYX3/eIF/ndlJMBKe8SWSENEP85pRbFwkR5hjw4DTcmTc1MzoEKhoCJx",
   "eligibleSurface": "explicit-public-footer-after-spa-and-on-public-static-pages",
   "queryHashHrefTitleReferrerRead": false,
-  "existingCleanEntryPageviewUnchanged": true
+  "existingCleanEntryPageviewUnchanged": true,
+  "portfolioMetricsCollectionStartedAt": "2026-10-19T17:41:12.378313+00:00"
 }

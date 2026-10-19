@@ -56,3 +56,13 @@ Lze použít přesnou kopii `services/analytics/public-v2-portfolio-2.js` s `cap
 ## Finální klient od vývojáře
 
 Zvolený vlastní event-only adaptér `/ea/assets/ea-portfolio-clicks.js` je samostatný a nemění globální pageview runtime ani jeho SRI/bridge. SHA-256 `3a5b741a4fe3cecdcd1ef3373ee63b359d07427974001a951fa9e7a0aa627a18`, SRI `sha384-E8XumpgdkYX3/eIF/ndlJMBKe8SWSENEP85pRbFwkR5hjw4DTcmTc1MzoEKhoCJx`. Doporučení portfolio-2 runtime výše je pouze možnost; tento dodaný adaptér je určen k aktuálnímu převzetí. Před zapnutím se ověří skutečné veřejné bajty a nová informace; původní návštěvnost zůstává zapnutá.
+
+## Produkční aktivace
+
+Vlastník dne 19. 10. 2026 schválil přesné CZ/EN znění i aktivaci přímo v chatu VCode. Frontend `0.17.0-20261019-footer2` prošel interní i veřejnou přejímkou **187/187**, včetně **18/18 PWA**. Samostatná veřejná kontrola patičky prošla 10/10. VCode nezávisle přečetl veřejnou aplikaci, plné HTML soukromí (SHA-256 `ff3900a45303fdd85d0fefcf83d0c91ea6d1a4320836c148c1b3ddfe9d8e973b`), přesné nové JS/SRI i nezměněný původní pageview skript.
+
+Přesně čtyři nové prokliky aktivní od **2026-10-19T17:41:12.378313+00:00**. Zachován původní sběr návštěv, zdrojů, původní datum návštěvnosti, primární tracker a klíč; všechny ostatní registrace beze změny. Monitor kontroluje navíc samostatný klikací skript podle jeho SRI. Centrální kód `c7f7439436a5d15bd71c7e9d86824e71a738c5da`, 227 testů, oba Docker obrazy sestavené; nasazeny jen tři analytické služby. Veřejný web a ostatních jedenáct služeb zachované. Soukromé provozní doklady a návratové konfigurace zůstávají pouze na serveru.
+
+Při přejímce nebyly čteny skutečné návštěvnické záznamy ani odeslány platné syntetické produkční události.
+
+Čerstvý monitor **2026-10-19T17:41:51.991Z** potvrdil `connected:true` po aktivaci obou runtime pinů. Živý collector readback **17:41:30 UTC** obsahuje právě čtyři schválené názvy pro obě registrace. Finální kontrola **17:41:53 UTC** potvrdila původní prostředí a úložiště, všech jedenáct ostatních kontejnerů i skutečně dostupné původní rollback obrazy. Veřejná ochrana API Přehledu ověřena odpovědí 401 bez přihlášení.
