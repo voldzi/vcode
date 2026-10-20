@@ -1,3 +1,4 @@
+import {monitorIdentity} from './connection-identity.mjs';
 import {readFile,writeFile,rename} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 const registry=process.env.ANALYTICS_SITES_FILE??'/run/config/sites.json';
@@ -6,7 +7,7 @@ const expected=createHash('sha384').update(await readFile(new URL('./public-v1.j
 async function run(){
  const sites=JSON.parse(await readFile(registry,'utf8'));
  const statuses=await Promise.all(sites.filter(s=>['vcode-public-v1','vcode-public-v2'].includes(s.integrationVersion)).map(async s=>{
-  const status={domain:s.domain,checkedAt:new Date().toISOString(),connected:false};
+  const status={...monitorIdentity(s),checkedAt:new Date().toISOString(),connected:false};
   try{
    if(!/^[a-z0-9.-]+$/.test(s.domain)||!s.trackerPath?.startsWith('/')||!s.collectorPath?.startsWith('/'))throw new Error('Invalid registry');
    const response=await fetch(`https://${s.domain}${s.trackerPath}`,{redirect:'error',signal:AbortSignal.timeout(12000),headers:{'User-Agent':'VCode analytics connection check'}});
