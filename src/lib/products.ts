@@ -235,6 +235,23 @@ export const products: Product[] = [
     availabilityEn: "Public beta on the web"
   },
   {
+    id: "kosik",
+    name: "Živý Košík",
+    href: "kosik",
+    tone: "forest",
+    categoryCs: "Obec a místní život",
+    categoryEn: "Village and community",
+    headlineCs: "Čtyři místní části. Jedno živé místo.",
+    headlineEn: "Four localities. One connected community.",
+    summaryCs: "Připravovaný web a PWA pro Košík, Doubravany, Tuchom a Sovolusky. Spojuje zprávy, akce, dokumenty, orientační ankety a neveřejné podněty se správou pro obec. Pilot zatím nenahrazuje oficiální web obce.",
+    summaryEn: "A website and PWA being prepared for Košík, Doubravany, Tuchom and Sovolusky. It brings together news, events, documents, indicative polls, private reports and municipal administration. The pilot does not yet replace the official municipal website.",
+    capabilitiesCs: ["Zprávy a události podle místní části", "PWA a dobrovolná upozornění v zařízení", "Neveřejné podněty a orientační ankety", "Administrace s rolemi a dvoufázovým ověřením", "Neveřejný přehled dotačních příležitostí", "E-mailový odběr připravený k nastavení"],
+    capabilitiesEn: ["News and events by locality", "PWA and optional device notifications", "Private reports and indicative polls", "Administration with roles and two-factor verification", "Private overview of grant opportunities", "Email subscriptions prepared for configuration"],
+    externalUrl: "https://games.zeleznalady.cz/kosik/",
+    availabilityCs: "Připravovaný web — pilot",
+    availabilityEn: "Preparing website — pilot in Czech"
+  },
+  {
     id: "masaze",
     name: "Masáže",
     href: "masaze",
