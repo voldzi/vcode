@@ -5,6 +5,23 @@ export const reviewTokenHash = (token, secret) => digest(secret, `review:${token
 export const callbackSignature = (action, id, secret) => digest(secret, `callback:${action}:${id}`).slice(0, 16);
 export const callbackData = (action, id, secret) => `v1:${action}:${id}:${callbackSignature(action, id, secret)}`;
 
+export const reviewFormSignature = (token, action, secret) => digest(secret, `review-form:${action}:${token}`);
+
+export function validReviewForm(headers, token, action, signature, siteOrigin, secret) {
+  if (!/^[A-Za-z0-9_-]{40,80}$/.test(String(token)) || !["publish", "reject"].includes(action) || typeof secret !== "string" || secret.length < 32) return false;
+  if (!/^[a-f0-9]{64}$/.test(String(signature ?? ""))) return false;
+  try {
+    const expectedOrigin = new URL(siteOrigin).origin;
+    for (const value of [headers.origin, headers.referer]) {
+      if (value !== undefined && value !== "null" && new URL(String(value)).origin !== expectedOrigin) return false;
+    }
+    if (headers["sec-fetch-site"] !== undefined && !["same-origin", "none"].includes(headers["sec-fetch-site"])) return false;
+    // no-referrer can produce Origin:null. The action-bound proof still
+    // requires access to this private review page; foreign origins stay denied.
+    return timingSafeEqual(Buffer.from(signature), Buffer.from(reviewFormSignature(token, action, secret)));
+  } catch { return false; }
+}
+
 export function parseCallbackData(value, secret) {
   const match = String(value ?? "").match(/^v1:([prcxz]):([1-9][0-9]*):([a-f0-9]{16})$/);
   if (!match) return null;

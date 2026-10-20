@@ -9,7 +9,7 @@ import { createContactService } from "./contacts.mjs";
 import { createPartnershipService } from "./partnerships.mjs";
 import { moderateComment } from "./openai.mjs";
 import { renderArticle, renderHeroSvg, renderIndex, renderReviewPage, renderReviewResult } from "./render.mjs";
-import { applyEditorialAction, findReviewByToken } from "./review.mjs";
+import { applyEditorialAction, findReviewByToken, reviewFormSignature, validReviewForm } from "./review.mjs";
 import { handleTelegramUpdate, notifyComment, telegramReady, validWebhookSecret } from "./telegram.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -140,11 +140,14 @@ async function reviewPage(request, response, token, action = false) {
   if (!telegramReady(config)) return send(response, 404, "text/plain; charset=utf-8", "Not found");
   const review = await findReviewByToken(pool, token, config);
   if (!review) return send(response, 404, "text/plain; charset=utf-8", "Not found", privateHeaders);
-  if (!action) return send(response, 200, "text/html; charset=utf-8", renderReviewPage(review, token), privateHeaders);
-  if (!validOrigin(request)) return send(response, 403, "text/plain; charset=utf-8", "Forbidden", privateHeaders);
+  if (!action) return send(response, 200, "text/html; charset=utf-8", renderReviewPage(review, token, {
+    publish: reviewFormSignature(token, "publish", config.reviewSigningSecret),
+    reject: reviewFormSignature(token, "reject", config.reviewSigningSecret)
+  }), privateHeaders);
   const form = await bodyParams(request);
   const requested = form.get("action");
   if (!["publish", "reject"].includes(requested) || form.get("confirm") !== requested) return send(response, 400, "text/plain; charset=utf-8", "Akci je nutné potvrdit.", privateHeaders);
+  if (!validReviewForm(request.headers, token, requested, form.get("csrf"), config.siteOrigin, config.reviewSigningSecret)) return send(response, 403, "text/plain; charset=utf-8", "Neplatné potvrzení. Otevřete stránku návrhu znovu.", privateHeaders);
   const result = await applyEditorialAction(pool, review.request_id, requested, `telegram-link:${review.intended_user_id}`);
   return send(response, 200, "text/html; charset=utf-8", renderReviewResult(result.status), privateHeaders);
 }

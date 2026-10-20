@@ -69,7 +69,7 @@ function confirmKeyboard(parsed, message, config) {
   ] };
 }
 
-export async function handleTelegramUpdate(client, update, config) {
+export async function handleTelegramUpdate(client, update, config, fetchImpl = fetch) {
   const updateId = Number(update?.update_id);
   if (!Number.isSafeInteger(updateId)) return;
   const callback = update.callback_query;
@@ -79,23 +79,30 @@ export async function handleTelegramUpdate(client, update, config) {
   const userId = String(callback.from?.id ?? "");
   const chatId = String(callback.message?.chat?.id ?? "");
   if (userId !== config.telegramUserId || chatId !== config.telegramChatId) {
-    await telegramCall(config, "answerCallbackQuery", { callback_query_id: callback.id, text: "Tato akce není povolena.", show_alert: true });
+    await telegramCall(config, "answerCallbackQuery", { callback_query_id: callback.id, text: "Tato akce není povolena.", show_alert: true }, fetchImpl);
     return;
   }
   const parsed = parseCallbackData(callback.data, config.reviewSigningSecret);
-  if (!parsed) return telegramCall(config, "answerCallbackQuery", { callback_query_id: callback.id, text: "Neplatná nebo zastaralá akce.", show_alert: true });
+  if (!parsed) return telegramCall(config, "answerCallbackQuery", { callback_query_id: callback.id, text: "Neplatná nebo zastaralá akce.", show_alert: true }, fetchImpl);
   if (["p", "r"].includes(parsed.action)) {
-    await telegramCall(config, "editMessageReplyMarkup", { chat_id: chatId, message_id: callback.message.message_id, reply_markup: confirmKeyboard(parsed, callback.message, config) });
-    return telegramCall(config, "answerCallbackQuery", { callback_query_id: callback.id, text: "Potvrďte prosím ještě jednou." });
+    await telegramCall(config, "editMessageReplyMarkup", { chat_id: chatId, message_id: callback.message.message_id, reply_markup: confirmKeyboard(parsed, callback.message, config) }, fetchImpl);
+    return telegramCall(config, "answerCallbackQuery", { callback_query_id: callback.id, text: "Potvrďte prosím ještě jednou." }, fetchImpl);
   }
   if (parsed.action === "z") {
     const url = callback.message?.reply_markup?.inline_keyboard?.flat().find((button) => button.url)?.url;
-    if (url) await telegramCall(config, "editMessageReplyMarkup", { chat_id: chatId, message_id: callback.message.message_id, reply_markup: keyboard(parsed.requestId, url, config.reviewSigningSecret) });
-    return telegramCall(config, "answerCallbackQuery", { callback_query_id: callback.id, text: "Akce zrušena." });
+    if (url) await telegramCall(config, "editMessageReplyMarkup", { chat_id: chatId, message_id: callback.message.message_id, reply_markup: keyboard(parsed.requestId, url, config.reviewSigningSecret) }, fetchImpl);
+    return telegramCall(config, "answerCallbackQuery", { callback_query_id: callback.id, text: "Akce zrušena." }, fetchImpl);
   }
   const action = parsed.action === "c" ? "publish" : "reject";
-  const result = await applyEditorialAction(client, parsed.requestId, action, `telegram:${userId}`);
+  let result;
+  try { result = await applyEditorialAction(client, parsed.requestId, action, `telegram:${userId}`); }
+  catch (error) {
+    const messages = {404: "Návrh se nepodařilo najít.", 409: "Návrh už byl zpracován.", 410: "Platnost schválení vypršela. Otevřete nový návrh."};
+    if (!messages[error.status]) throw error;
+    await client.query("UPDATE blog_telegram_updates SET handled=true,detail=$2 WHERE update_id=$1", [updateId, JSON.stringify({ action, outcome: error.status })]);
+    return telegramCall(config, "answerCallbackQuery", { callback_query_id: callback.id, text: messages[error.status], show_alert: true }, fetchImpl);
+  }
   await client.query("UPDATE blog_telegram_updates SET handled=true,article_id=$2,detail=$3 WHERE update_id=$1", [updateId, result.articleId, JSON.stringify({ action })]);
-  await telegramCall(config, "editMessageReplyMarkup", { chat_id: chatId, message_id: callback.message.message_id, reply_markup: { inline_keyboard: [] } });
-  await telegramCall(config, "answerCallbackQuery", { callback_query_id: callback.id, text: action === "publish" ? "Článek byl publikován." : "Návrh byl zamítnut.", show_alert: true });
+  await telegramCall(config, "editMessageReplyMarkup", { chat_id: chatId, message_id: callback.message.message_id, reply_markup: { inline_keyboard: [] } }, fetchImpl);
+  await telegramCall(config, "answerCallbackQuery", { callback_query_id: callback.id, text: action === "publish" ? "Článek byl publikován." : "Návrh byl zamítnut.", show_alert: true }, fetchImpl);
 }
