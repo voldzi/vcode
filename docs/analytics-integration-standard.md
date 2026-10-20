@@ -45,6 +45,7 @@ Seznam vychází ze src/lib/products.ts; není úplným soupisem všech serverov
 | mojeporce.cz (Moje porce) | Proxy ověřena; schválený doplněk zveřejněn, měření zapnuté | Pouze veřejná prezentace; bez jídelního deníku a zdravotních údajů |
 | myslopis.cz | Schválený text zveřejněn, měření zapnuté a propojení ověřené | Jen úvod, katalog a metodika; kontakt a určené veřejné odkazy. Bez dotazníků, odpovědí, výsledků, PDF, účtů a osobního průchodu |
 | events.zeleznalady.cz (Event) | Schválený CZ/EN text zveřejněn, měření zapnuté a propojení ověřené | Pouze nepřihlášený úvod `/` a obecný zdroj. Bez kliknutí, přihlášek, účastníků, docházky, účtů a administrace |
+| games.zeleznalady.cz/kosik/ (Živý Košík, připravovaný obecní pilot) | Konkrétní text schválen a zveřejněn, registrace aktivována 20. 10. 2026, samostatné propojení ověřeno | Jen osm schválených veřejných přehledů; bez kliknutí, zdrojů, formulářů, účtů, podnětů, polohy a parametrů URL. [Doklad integrace](kosik-integration.md) |
 | STRATOS a AKB | Vyloučeno | Soukromé nasazení |
 
 NEST a Šibenice mají již měřené produktové stránky na VCode. Nativní používání a instalace z App Storu jsou jiné metriky a vyžadují samostatnou integraci.
@@ -57,4 +58,4 @@ Zdrojovým místem vendorizovaného assetu zůstává VCode. Běžný release ap
 
 ## Více aplikací na jedné doméně
 
-Registrace je identita webu, samotná doména jí není. Monitor zapisuje `siteId`, doménu a přesné cesty runtime/přijímače. Přehled páruje odpovídající identifikátor a kontroluje doménu i cesty. Starší stav bez identifikátoru se použije pouze pro jedinečnou doménu v registru. Při kolizi se vrací neověřený stav místo převzetí cizího spojení. [Košík](kosik-integration.md) má samostatnou připravenou registraci; sběr zůstává vypnutý do konkrétního schválení.
+Registrace je identita webu, samotná doména jí není. Monitor zapisuje `siteId`, doménu a přesné cesty runtime/přijímače. Přehled páruje odpovídající identifikátor a kontroluje doménu i cesty. Starší stav bez identifikátoru se použije pouze pro jedinečnou doménu v registru. Při kolizi se vrací neověřený stav místo převzetí cizího spojení. [Košík](kosik-integration.md) má samostatnou registraci; konkrétní rozsah a text byly schváleny a po zveřejnění i samostatné kontrole bylo měření aktivováno 20. 10. 2026. Schválení Košíku se nevztahuje na jiné aplikace na stejné doméně.
