@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "websiteId": "44d46e58-a29f-45c7-aa2e-7243efdf7adc",
+  "activatedAt": "2026-10-22T07:09:30.589Z",
+  "captureSources": true,
+  "allowedEvents": [
+    "contact-click",
+    "outbound-click"
+  ],
+  "trafficCollectionStartedAt": "2026-10-20T20:33:58.269Z",
+  "otherRegistrationsPreserved": 10,
+  "registryInodePreserved": true,
+  "approvedNoticeSha256": "fb7670c278d9edfefc7209174a1a00b166633737d59dc8f32bda632d8ea09bc8",
+  "monitorConnected": true,
+  "monitorCheckedAt": "2026-10-22T07:10:00.749Z",
+  "productionEventsSent": false,
+  "visitorRecordsRead": false,
+  "runtimeImage": "sha256:7f3f24fabeb61a845f62de698edbec52a6da2e95ea2a3676e70d2b0b40152b65",
+  "release": "20261022-v16-metrics"
+}

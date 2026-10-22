@@ -114,3 +114,14 @@ Myslopis ji může použít pro stejné původní tři cíle. Dostupnost čtyř 
 novém klientovi sama žádný web nerozšiřuje: každý zachová svůj přesný schválený
 allowlist. Předání dalších webů a jejich odlišné veřejné cesty jsou v
 `portfolio-footer-analytics.md`; aktivace se přebírá samostatně.
+
+
+## Živý košík — rozšíření 22. 10. 2026
+
+Vlastník konkrétní text v `docs/kosik-expanded-metrics-privacy-review.md` výslovně schválil odpovědí „Schvaluji text i aktivaci“. Přesné znění bylo ověřeno ve veřejném DOM i v nasazeném balíčku před centrální aktivací. Od **2026-10-22T07:09:30.589Z** má stejná registrace `44d46e58-a29f-45c7-aa2e-7243efdf7adc` na `games.zeleznalady.cz` `captureSources:true` a právě `contact-click`, `outbound-click`. Osm původních cest a počátek návštěvnosti z 20. 10. 2026 zůstávají; dva časy rozšířených metrik zaznamenávají nové zahájení.
+
+Bridge sleduje pouze označené telefonní/e-mailové kontakty a pevné externí odkazy. Přenáší kategorii a schválenou zdrojovou cestu; nečte href, text odkazů, hodnoty kontaktů nebo formulářů. Sdílený nezměněný runtime převádí referrer jen na povolenou službu. DNT/GPC, vyloučené soukromé cesty, žádné parametry/fragmenty a zahození offline zůstávají.
+
+Kolektor načetl nové podmínky přes zachovaný bind-mount. Izolované čisté funkce v jeho skutečném obrazu ověřily schválené zdroje i obě kategorie a odmítnutí soukromých cest/dodatečných údajů bez platné testovací produkční události. Nezávislý monitor `siteId` potvrdil propojení **2026-10-22T07:10:00.749Z**. Ostatních deset registrací, inode/mód a původní návštěvnost se zachovaly. Sanitizovaný doklad: `docs/kosik-expanded-metrics-activation-20261022.json`.
+
+Nástroj `deploy/analytics/expand-kosik-metrics.py` mění pouze čtyři schválená pole tohoto UUID, požaduje zveřejněné bajty a konkrétní doklad schválení, má výchozí režim bez zápisu a ukládá chráněnou zálohu. Opakované spuštění odmítá již změněný rozsah. Návrat musí obnovit jen vlastní čtyři pole při shodě současných hodnot; nesmí přepsat celý sdílený registr přes změny jiných aplikací.
